@@ -5,6 +5,7 @@ import 'package:nasha_ott/view_model/primium_controller/premium_controller.dart'
 import '../../app/theme/app_colors.dart';
 import '../../view_model/home_controller/home_controller.dart';
 import '../../widgets/expendable_plan_card.dart';
+import '../../widgets/golden_button.dart';
 import '../auth/signInPage.dart';
 import '../popUp/promo_code_popup.dart';
 import '../popUp/redeem_voucher_page.dart';
@@ -203,8 +204,9 @@ class GoPremiumPage extends StatelessWidget {
             onPressed: () => Get.back(),
             child: const Text("Cancel", style: TextStyle(color: Colors.white)),
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+          GoldenButton(
+            width: 120,
+            height: 40,
             onPressed: () {
               Get.back();
               Get.to(() => const SignInPage());

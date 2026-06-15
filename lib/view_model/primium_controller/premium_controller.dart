@@ -8,6 +8,7 @@ import '../../data/models/response_model/plan_response/plan_model.dart';
 import '../../data/network/base_api_service.dart';
 import '../../data/repositories/premium_repository.dart';
 import '../../utils/constants.dart';
+import '../../widgets/golden_button.dart';
 import '../../utils/custom_snackbar.dart';
 import '../auth_controller/auth_controller.dart';
 
@@ -232,12 +233,13 @@ class PremiumController extends GetxController {
         content: const Text("Do you want to purchase this plan?", style: TextStyle(color: Colors.white70)),
         actions: [
           TextButton(onPressed: () => Get.back(), child: const Text("Cancel")),
-          ElevatedButton(
+          GoldenButton(
+            width: 80,
+            height: 40,
             onPressed: () {
               Get.back();
               _setDemoActiveSubscription(planId);
             },
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.buttonColor),
             child: const Text("OK", style: TextStyle(color: Colors.white)),
           ),
         ],

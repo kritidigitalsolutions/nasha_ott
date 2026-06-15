@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nasha_ott/utils/responsive.dart';
+import 'package:nasha_ott/widgets/golden_button.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
 import '../../view_model/profile/create_profile_controller.dart';
@@ -107,19 +108,11 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                   const SizedBox(height: 30),
 
                   /// Save Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: Obx(() => ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.buttonColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          onPressed: authController.isLoading.value
-                              ? null
-                              : () async {
+                  Obx(() => GoldenButton(
+                        height: 50,
+                        onPressed: authController.isLoading.value
+                            ? null
+                            : () async {
                                   if (nameController.text.trim().isEmpty) {
                                     CustomSnackbar.show(title: "Error", message: "Name is required", isError: true);
                                     return;
@@ -138,14 +131,13 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                                     Get.offAllNamed('/'); // Navigate to home
                                   }
                                 },
-                          child: authController.isLoading.value
-                              ? const CircularProgressIndicator(color: Colors.white)
-                              : const Text(
-                                  "Save",
-                                  style: TextStyle(color: AppColors.white, fontSize: 16),
-                                ),
-                        )),
-                  )
+                        child: authController.isLoading.value
+                            ? const CircularProgressIndicator(color: Colors.white)
+                            : const Text(
+                                "Save",
+                                style: TextStyle(color: AppColors.white, fontSize: 16),
+                              ),
+                      ))
                 ],
               ),
             ),

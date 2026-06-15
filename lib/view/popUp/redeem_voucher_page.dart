@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nasha_ott/utils/app_images.dart';
 import 'package:nasha_ott/utils/responsive.dart';
+import 'package:nasha_ott/widgets/golden_button.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/primium_controller/premium_controller.dart';
 
@@ -86,24 +87,18 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
                 const SizedBox(height: 20),
 
                 /// 🔴 Apply Button
-                SizedBox(
-                  width: double.infinity,
+                GoldenButton(
                   height: 45,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.buttonColor,
-                    ),
-                    onPressed: controller.isRedeeming.value
-                        ? null
-                        : () => controller.redeemVoucher(voucherController.text.trim()),
-                    child: controller.isRedeeming.value
-                        ? const CircularProgressIndicator(color: AppColors.buttonTextColor)
-                        : const Text(
-                      "Apply",
-                      style: TextStyle(
-                          color: AppColors.buttonTextColor,
-                          fontWeight: FontWeight.bold),
-                    ),
+                  onPressed: controller.isRedeeming.value
+                      ? null
+                      : () => controller.redeemVoucher(voucherController.text.trim()),
+                  child: controller.isRedeeming.value
+                      ? const CircularProgressIndicator(color: AppColors.buttonTextColor)
+                      : const Text(
+                    "Apply",
+                    style: TextStyle(
+                        color: AppColors.buttonTextColor,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
               ],

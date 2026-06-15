@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:nasha_ott/utils/app_images.dart';
 import 'package:nasha_ott/utils/responsive.dart';
 import 'package:nasha_ott/widgets/custom_network_image.dart';
+import 'package:nasha_ott/widgets/golden_button.dart';
+import 'package:nasha_ott/widgets/golden_text.dart';
 import '../../app/routes/app_routes.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
@@ -61,10 +63,9 @@ class _SignInPageState extends State<SignInPage> {
                       SizedBox(height: MediaQuery.of(context).size.height * 0.05),
                       Image.asset(AppImages.logo, height: 100),
                       const SizedBox(height: 25),
-                      const Text(
+                      const GoldenText(
                         "Welcome",
                         style: TextStyle(
-                            color: Colors.white,
                             fontSize: 28,
                             fontWeight: FontWeight.bold),
                       ),
@@ -134,7 +135,7 @@ class _SignInPageState extends State<SignInPage> {
                           SizedBox(
                             width: double.infinity,
                             height: 55,
-                            child: Obx(() => ElevatedButton(
+                            child: Obx(() => GoldenButton(
                                   onPressed: authController.isGoogleLoading.value
                                       ? null
                                       : () async {
@@ -148,15 +149,6 @@ class _SignInPageState extends State<SignInPage> {
                                             }
                                           }
                                         },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.buttonColor,
-                                    disabledBackgroundColor:
-                                        AppColors.buttonColor.withOpacity(0.6),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    elevation: 0,
-                                  ),
                                   child: authController.isGoogleLoading.value
                                       ? const SizedBox(
                                           height: 24,
@@ -176,12 +168,14 @@ class _SignInPageState extends State<SignInPage> {
                                               errorWidget: const Icon(Icons.g_mobiledata, color: Colors.white, size: 30),
                                             ),
                                             const SizedBox(width: 12),
-                                            const Text(
-                                              "Continue with Google",
-                                              style: TextStyle(
-                                                color: AppColors.buttonTextColor,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600,
+                                            const FittedBox(
+                                              child: Text(
+                                                "Continue with Google",
+                                                style: TextStyle(
+                                                  color: AppColors.buttonTextColor,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
                                               ),
                                             ),
                                           ],
@@ -234,26 +228,22 @@ class _SignInPageState extends State<SignInPage> {
               ),
             ),
             const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
+            GoldenButton(
               height: 50,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: AppColors.buttonColor),
-                onPressed: () async {
-                  if (emailPicker.text.contains('@')) {
-                    String email = emailPicker.text.trim();
-                    Get.back();
-                    await Future.delayed(const Duration(milliseconds: 250));
-                    bool success = await authController.sendOtp(email);
-                    if (success) {
-                      Get.to(() => OtpPage(phoneNumber: email));
-                    }
-                  } else {
-                    Get.snackbar("Error", "Please enter a valid email", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white);
+              onPressed: () async {
+                if (emailPicker.text.contains('@')) {
+                  String email = emailPicker.text.trim();
+                  Get.back();
+                  await Future.delayed(const Duration(milliseconds: 250));
+                  bool success = await authController.sendOtp(email);
+                  if (success) {
+                    Get.to(() => OtpPage(phoneNumber: email));
                   }
-                },
-                child: const Text("Continue", style: TextStyle(color: Colors.white)),
-              ),
+                } else {
+                  Get.snackbar("Error", "Please enter a valid email", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white);
+                }
+              },
+              child: const Text("Continue", style: TextStyle(color: Colors.white)),
             ),
             const SizedBox(height: 10),
           ],
@@ -279,28 +269,19 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   Widget _buildGetOtpButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 55,
-      child: Obx(() => ElevatedButton(
-            onPressed: (isAgeConfirmed.value && !authController.isLoading.value)
-                ? () async {
-                    if (_formKey.currentState!.validate()) {
-                      String valueToSend = "+91${phoneController.text.trim()}";
-                      bool success = await authController.sendOtp(valueToSend);
-                      if (success) Get.to(() => OtpPage(phoneNumber: valueToSend));
-                    }
+    return Obx(() => GoldenButton(
+          onPressed: (isAgeConfirmed.value && !authController.isLoading.value)
+              ? () async {
+                  if (_formKey.currentState!.validate()) {
+                    String valueToSend = "+91${phoneController.text.trim()}";
+                    bool success = await authController.sendOtp(valueToSend);
+                    if (success) Get.to(() => OtpPage(phoneNumber: valueToSend));
                   }
-                : null,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.buttonColor,
-              disabledBackgroundColor: Colors.grey,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            ),
-            child: authController.isLoading.value
-                ? const CircularProgressIndicator(color: AppColors.buttonTextColor)
-                : const Text("Get OTP", style: TextStyle(fontSize: 16, color: AppColors.buttonTextColor)),
-          )),
-    );
+                }
+              : null,
+          child: authController.isLoading.value
+              ? const CircularProgressIndicator(color: AppColors.buttonTextColor)
+              : const FittedBox(child: Text("Get OTP", style: TextStyle(fontSize: 16, color: AppColors.buttonTextColor))),
+        ));
   }
 }

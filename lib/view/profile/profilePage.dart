@@ -8,6 +8,8 @@ import 'package:nasha_ott/view_model/primium_controller/premium_controller.dart'
 import 'package:nasha_ott/utils/constants.dart';
 import 'package:nasha_ott/view_model/home_controller/home_controller.dart';
 import 'package:nasha_ott/widgets/custom_network_image.dart';
+import 'package:nasha_ott/widgets/golden_text.dart';
+import 'package:nasha_ott/widgets/golden_button.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
 import '../auth/signInPage.dart';
@@ -52,7 +54,7 @@ class ProfilePage extends StatelessWidget {
         leading: Responsive.backButton(context, onPressed: () {
           homeController.selectedIndex.value = 1; 
         }),
-        title: const Text("Profile", style: TextStyle(color: AppColors.white)),
+        title: const GoldenText("Profile", style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       body: Center(
@@ -102,14 +104,12 @@ class ProfilePage extends StatelessWidget {
                                       ],
                                     ),
                                   ),
-                                  ElevatedButton(
+                                  GoldenButton(
+                                    width: 100,
+                                    height: 35,
                                     onPressed: () => Get.to(() => const SignInPage()),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.buttonColor,
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                    ),
-                                    child: const Text("SIGN IN", style: TextStyle(color: AppColors.buttonTextColor, fontSize: 12, fontWeight: FontWeight.bold)),
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: const FittedBox(child: Text("SIGN IN", style: TextStyle(color: AppColors.buttonTextColor, fontSize: 12, fontWeight: FontWeight.bold))),
                                   ),
                                 ],
                               );
@@ -205,7 +205,7 @@ class ProfilePage extends StatelessWidget {
                                     Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                       decoration: BoxDecoration(
-                                        color: AppColors.buttonColor,
+                                        gradient: AppColors.buttonGradient,
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: const Text("SUBSCRIBE", style: TextStyle(color: AppColors.buttonTextColor, fontSize: 12, fontWeight: FontWeight.bold)),
@@ -237,12 +237,10 @@ class ProfilePage extends StatelessWidget {
 
                 const SizedBox(height: 20),
                 Center(
-                  child: Obx(() => ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.buttonColor,
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-                    ),
+                  child: Obx(() => GoldenButton(
+                    width: 180,
+                    height: 45,
+                    borderRadius: BorderRadius.circular(25),
                     onPressed: authController.isLoggedIn.value 
                         ? onLogout 
                         : () => Get.to(() => const SignInPage()),

@@ -7,6 +7,7 @@ import 'package:nasha_ott/view/auth/signInPage.dart';
 import 'package:nasha_ott/view/premium/goPremium.dart';
 import 'package:nasha_ott/view_model/auth_controller/auth_controller.dart';
 import 'package:nasha_ott/view_model/primium_controller/premium_controller.dart';
+import 'package:nasha_ott/widgets/golden_button.dart';
 import '../../app/theme/app_colors.dart';
 
 class VerticalShortsPlayer extends StatefulWidget {
@@ -237,12 +238,10 @@ class _ShortVideoItemState extends State<ShortVideoItem> {
             style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 30),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-            ),
+          GoldenButton(
+            width: 180,
+            height: 45,
+            borderRadius: BorderRadius.circular(25),
             onPressed: () {
               if (loggedIn) {
                 Get.to(() => const GoPremiumPage());

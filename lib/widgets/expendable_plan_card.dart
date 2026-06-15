@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nasha_ott/app/theme/app_colors.dart';
+import 'golden_button.dart';
 
 class ExpandablePlanCard extends StatefulWidget {
   final String title;
@@ -120,19 +121,11 @@ class _ExpandablePlanCardState extends State<ExpandablePlanCard> {
                           ),
                         )),
                     const SizedBox(height: 20),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                        onPressed: widget.onBuy,
-                        child: const Text(
-                          "SELECT PLAN",
-                          style: TextStyle(color: AppColors.buttonTextColor, fontWeight: FontWeight.bold),
-                        ),
+                    GoldenButton(
+                      onPressed: widget.onBuy,
+                      child: const Text(
+                        "SELECT PLAN",
+                        style: TextStyle(color: AppColors.buttonTextColor, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],

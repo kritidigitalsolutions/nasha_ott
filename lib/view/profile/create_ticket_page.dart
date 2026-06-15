@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nasha_ott/utils/responsive.dart';
 import '../../app/theme/app_colors.dart';
+import '../../widgets/golden_button.dart';
 import '../../view_model/support_controller/support_controller.dart';
 
 class CreateTicketPage extends StatefulWidget {
@@ -171,7 +172,7 @@ class _CreateTicketPageState extends State<CreateTicketPage> {
             )),
             
             const SizedBox(height: 40),
-            Obx(() => ElevatedButton(
+            Obx(() => GoldenButton(
               onPressed: supportController.isLoading.value ? null : () async {
                 if (subjectController.text.trim().isEmpty || messageController.text.trim().isEmpty) {
                   Get.snackbar(
@@ -193,12 +194,6 @@ class _CreateTicketPageState extends State<CreateTicketPage> {
                   Get.back();
                 }
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.buttonColor,
-                minimumSize: const Size(double.infinity, 55),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                elevation: 5,
-              ),
               child: supportController.isLoading.value 
                   ? const SizedBox(
                       height: 22,

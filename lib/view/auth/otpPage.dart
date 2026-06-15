@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../../app/theme/app_colors.dart';
+import '../../widgets/golden_button.dart';
 import '../../utils/responsive.dart';
 import '../profile/create_profile_page.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
@@ -171,25 +172,17 @@ class _OtpPageState extends State<OtpPage> {
 
                   const SizedBox(height: 40),
 
-                  SizedBox(
-                    width: double.infinity,
-                    height: 55,
-                    child: Obx(() => ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.buttonColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onPressed: authController.isLoading.value ? null : verifyOtp,
-                      child: authController.isLoading.value
-                          ? const CircularProgressIndicator(color: AppColors.buttonTextColor)
-                          : const Text(
-                              "Verify",
-                              style: TextStyle(fontSize: 16, color: AppColors.buttonTextColor),
-                            ),
-                    )),
-                  ),
+                  Obx(() => GoldenButton(
+                        onPressed: authController.isLoading.value ? null : verifyOtp,
+                        child: authController.isLoading.value
+                            ? const CircularProgressIndicator(color: AppColors.buttonTextColor)
+                            : const FittedBox(
+                                child: Text(
+                                  "Verify",
+                                  style: TextStyle(fontSize: 16, color: AppColors.buttonTextColor),
+                                ),
+                              ),
+                      )),
 
                   const SizedBox(height: 20),
 

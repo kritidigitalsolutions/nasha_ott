@@ -6,6 +6,8 @@ import '../../utils/app_images.dart';
 import '../../utils/responsive.dart';
 import '../../view_model/content_controller/content_controller.dart';
 import '../../widgets/custom_network_image.dart';
+import '../../widgets/golden_button.dart';
+import '../../widgets/golden_text.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../navbar/bottomNavbar.dart';
 import '../dramaDetails/dramaDetailsPage.dart';
@@ -178,13 +180,11 @@ class MainHomePage extends StatelessWidget {
           ),
           _buildNotificationIcon(notificationService),
           const SizedBox(width: 20),
-          ElevatedButton(
+          GoldenButton(
             onPressed: () => Get.to(() => const GoPremiumPage()),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.buttonColor,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            ),
+            width: 140,
+            height: 45,
+            borderRadius: BorderRadius.circular(25),
             child: const Text("Go Premium", style: TextStyle(color: AppColors.buttonTextColor, fontWeight: FontWeight.bold)),
           ),
         ],
@@ -255,16 +255,13 @@ class MainHomePage extends StatelessWidget {
               ),
               _buildNotificationIcon(notificationService),
               const SizedBox(width: 4),
-              SizedBox(
+              GoldenButton(
+                onPressed: () => Get.to(() => const GoPremiumPage()),
                 width: 100,
                 height: 28,
-                child: ElevatedButton(
-                  onPressed: () => Get.to(() => const GoPremiumPage()),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.buttonColor,
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                  ),
-                  child: const Text(
+                borderRadius: BorderRadius.circular(20),
+                child: const FittedBox(
+                  child: Text(
                     "Go Premium",
                     style: TextStyle(color: AppColors.buttonTextColor, fontSize: 10),
                   ),
@@ -328,9 +325,9 @@ class MainHomePage extends StatelessWidget {
                       children: [
                         const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
+                          child: GoldenText(
                             "Web Series",
-                            style: TextStyle(color: AppColors.white, fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: 1.2),
+                            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: 1.2),
                           ),
                         ),
                         // const SizedBox(height: 20),
@@ -418,7 +415,14 @@ class MainHomePage extends StatelessWidget {
         children: [
           Image.asset(AppImages.logo1, height: 80),
           const SizedBox(height: 20),
-          const Text("NASHA OTT", style: TextStyle(color: AppColors.white, fontSize: 26, fontWeight: FontWeight.bold, letterSpacing: 2.0)),
+          const GoldenText(
+            "NASHA OTT",
+            style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 2.0,
+            ),
+          ),
           const SizedBox(height: 30),
           const Text("The ultimate destination for premium regional content. Watch the latest web series, movies, and originals anytime, anywhere.", textAlign: TextAlign.center, style: TextStyle(color: Colors.white70, fontSize: 16, height: 1.5)),
           const SizedBox(height: 20),

@@ -5,6 +5,8 @@ import 'package:nasha_ott/app/theme/app_colors.dart';
 import 'package:nasha_ott/utils/responsive.dart';
 import 'package:nasha_ott/view_model/download_controller/download_controller.dart';
 import 'package:nasha_ott/widgets/custom_network_image.dart';
+import '../../widgets/golden_button.dart';
+import '../../widgets/golden_text.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
 import '../../view_model/home_controller/home_controller.dart';
 import '../auth/signInPage.dart';
@@ -28,10 +30,9 @@ class DownloadsPage extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         leading: Responsive.backButton(context, onPressed: () => Get.back()),
-        title: const Text(
+        title: const GoldenText(
           "Downloads",
           style: TextStyle(
-            color: Colors.white,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
@@ -156,8 +157,9 @@ class DownloadsPage extends StatelessWidget {
                                 onPressed: () => Get.back(),
                                 child: const Text("Cancel", style: TextStyle(color: Colors.white)),
                               ),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+                              GoldenButton(
+                                width: 100,
+                                height: 40,
                                 onPressed: () {
                                   Get.back(); // Close dialog first
                                   downloadController.removeDownload(item.id);
@@ -213,18 +215,11 @@ class DownloadsPage extends StatelessWidget {
               style: TextStyle(color: Colors.grey, fontSize: 14),
             ),
             const SizedBox(height: 25),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.buttonColor,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 40,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
+            GoldenButton(
               onPressed: onTap,
+              width: 150,
+              height: 45,
+              borderRadius: BorderRadius.circular(8),
               child: Text(
                 buttonText,
                 style: const TextStyle(

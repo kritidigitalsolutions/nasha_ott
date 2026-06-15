@@ -79,9 +79,9 @@ class CustomBottomNavbar extends StatelessWidget {
         duration: const Duration(milliseconds: 250),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.buttonColor
-              : Colors.transparent,
+          gradient: isSelected
+              ? AppColors.buttonGradient
+              : null,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nasha_ott/utils/responsive.dart';
 import 'package:nasha_ott/widgets/custom_network_image.dart';
+import 'package:nasha_ott/widgets/golden_button.dart';
 import '../../app/theme/app_colors.dart';
 import '../../data/models/response_model/content_response_model/content_model.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
@@ -143,24 +144,15 @@ class WatchlistPage extends StatelessWidget {
               style: TextStyle(color: Colors.white70, fontSize: 14),
             ),
             const SizedBox(height: 30),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.buttonColor,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                onPressed: () {
-                  final homeController = Get.find<HomeController>();
-                  homeController.selectedIndex.value = 1;
-                  Get.offAll(() => const MainHomePage());
-                },
-                child: const Text(
-                  ""
-                      "Start Adding",
-                  style: TextStyle(color: AppColors.buttonTextColor, fontSize: 16, fontWeight: FontWeight.bold),
-                ),
+            GoldenButton(
+              onPressed: () {
+                final homeController = Get.find<HomeController>();
+                homeController.selectedIndex.value = 1;
+                Get.offAll(() => const MainHomePage());
+              },
+              child: const Text(
+                "Start Adding",
+                style: TextStyle(color: AppColors.buttonTextColor, fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
           ],

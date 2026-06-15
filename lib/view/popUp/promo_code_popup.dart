@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../app/theme/app_colors.dart';
+import '../../widgets/golden_button.dart';
 import '../../view_model/primium_controller/premium_controller.dart';
 
 class ApplyPromoPopup extends StatefulWidget {
@@ -127,23 +128,19 @@ class _ApplyPromoPopupState extends State<ApplyPromoPopup> {
                       ),
                     ),
                     const SizedBox(width: 10),
-                    SizedBox(
+                    GoldenButton(
                       height: 50,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.buttonColor,
-                        ),
-                        onPressed: controller.isApplyingPromo.value
-                            ? null
-                            : () => controller.applyPromoCode(promoController.text.trim()),
-                        child: controller.isApplyingPromo.value
-                            ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.buttonTextColor))
-                            : const Text("Apply",
-                          style: TextStyle(
-                              color: AppColors.buttonTextColor,
-                              fontWeight: FontWeight.bold
-                          ),),
-                      ),
+                      width: 100,
+                      onPressed: controller.isApplyingPromo.value
+                          ? null
+                          : () => controller.applyPromoCode(promoController.text.trim()),
+                      child: controller.isApplyingPromo.value
+                          ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.buttonTextColor))
+                          : const Text("Apply",
+                        style: TextStyle(
+                            color: AppColors.buttonTextColor,
+                            fontWeight: FontWeight.bold
+                        ),),
                     ),
                   ],
                 ),
@@ -167,24 +164,18 @@ class _ApplyPromoPopupState extends State<ApplyPromoPopup> {
 
                 const SizedBox(height: 20),
 
-                SizedBox(
-                  width: double.infinity,
+                GoldenButton(
                   height: 45,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.buttonColor,
-                    ),
-                    onPressed: controller.isSubscribing.value
-                        ? null
-                        : () => controller.subscribeToPlan(selectedPlan.id!),
-                    child: controller.isSubscribing.value
-                        ? const CircularProgressIndicator(color: AppColors.buttonTextColor)
-                        : const Text(
-                      "Proceed To Pay",
-                      style: TextStyle(
-                          color: AppColors.buttonTextColor,
-                          fontWeight: FontWeight.bold),
-                    ),
+                  onPressed: controller.isSubscribing.value
+                      ? null
+                      : () => controller.subscribeToPlan(selectedPlan.id!),
+                  child: controller.isSubscribing.value
+                      ? const CircularProgressIndicator(color: AppColors.buttonTextColor)
+                      : const Text(
+                    "Proceed To Pay",
+                    style: TextStyle(
+                        color: AppColors.buttonTextColor,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
               ],

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:nasha_ott/utils/responsive.dart';
 import '../../utils/notification_service.dart';
+import '../../widgets/golden_button.dart';
 import '../../app/theme/app_colors.dart';
 
 class NotificationPage extends StatelessWidget {
@@ -197,16 +198,9 @@ class NotificationPage extends StatelessWidget {
               style: const TextStyle(color: Colors.white70, fontSize: 16, height: 1.5),
             ),
             const SizedBox(height: 25),
-            Center(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.buttonColor,
-                  minimumSize: const Size(double.infinity, 45),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                ),
-                onPressed: () => Get.back(),
-                child: const Text("Close", style: TextStyle(color: Colors.white)),
-              ),
+            GoldenButton(
+              onPressed: () => Get.back(),
+              child: const Text("Close", style: TextStyle(color: Colors.white)),
             ),
             const SizedBox(height: 10),
           ],

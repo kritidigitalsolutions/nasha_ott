@@ -8,6 +8,7 @@ import 'package:nasha_ott/view_model/auth_controller/auth_controller.dart';
 import 'package:nasha_ott/view_model/download_controller/download_controller.dart';
 import 'package:nasha_ott/view_model/primium_controller/premium_controller.dart';
 import 'package:nasha_ott/widgets/custom_network_image.dart';
+import 'package:nasha_ott/widgets/golden_button.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../app/theme/app_colors.dart';
@@ -295,18 +296,23 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
       final bool isPurchased = sub != null && sub['status'] == 'active';
       final bool userLoggedIn = authController.isLoggedIn.value;
 
-      return ElevatedButton.icon(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.buttonColor,
-          padding: EdgeInsets.symmetric(vertical: isDesktop ? 22 : 15),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          elevation: 10,
-        ),
+      return GoldenButton(
+        height: isDesktop ? 60 : 55,
+        borderRadius: BorderRadius.circular(8),
         onPressed: widget.content.isComingSoon ? null : () => _handlePlay(widget.content, isPurchased, userLoggedIn),
-        icon: const Icon(Icons.play_arrow_rounded, size: 32, color: AppColors.buttonTextColor),
-        label: Text(
-          widget.content.isComingSoon ? "COMING SOON" : "WATCH NOW",
-          style: const TextStyle(color: AppColors.buttonTextColor, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.2),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.play_arrow_rounded, size: 32, color: AppColors.buttonTextColor),
+              const SizedBox(width: 8),
+              Text(
+                widget.content.isComingSoon ? "COMING SOON" : "WATCH NOW",
+                style: const TextStyle(color: AppColors.buttonTextColor, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.2),
+              ),
+            ],
+          ),
         ),
       );
     });
@@ -327,7 +333,10 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
   }
 
   Widget _buildTrailerButton({required bool isDesktop}) {
-    return ElevatedButton.icon(
+    return GoldenButton(
+      height: 40,
+      width: 130,
+      borderRadius: BorderRadius.circular(25),
       onPressed: () async {
         if (!authController.isLoggedIn.value) {
           Get.to(() => const SignInPage());
@@ -338,13 +347,13 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
           Get.to(() => AdvancedVideoPlayer(url: widget.content.trailerUrl!, title: '${widget.content.title} - Trailer'));
         }
       },
-      icon: const Icon(Icons.play_circle_outline, size: 18, color: AppColors.buttonTextColor),
-      label: const Text("TRAILER", style: TextStyle(color: AppColors.buttonTextColor, fontSize: 13, fontWeight: FontWeight.bold)),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primary,
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-        elevation: 5,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.play_circle_outline, size: 18, color: AppColors.buttonTextColor),
+          const SizedBox(width: 4),
+          const Text("TRAILER", style: TextStyle(color: AppColors.buttonTextColor, fontSize: 13, fontWeight: FontWeight.bold)),
+        ],
       ),
     );
   }
@@ -717,7 +726,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
                 children: [
                   Expanded(child: TextButton(onPressed: () => Get.back(), child: const Text("CANCEL", style: TextStyle(color: Colors.white54)))),
                   const SizedBox(width: 15),
-                  Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: AppColors.buttonColor), onPressed: () { Get.back(); Get.to(() => const GoPremiumPage()); }, child: const Text("EXPLORE PLANS", style: TextStyle(color: AppColors.buttonTextColor, fontWeight: FontWeight.bold)))),
+                  Expanded(child: GoldenButton(onPressed: () { Get.back(); Get.to(() => const GoPremiumPage()); }, child: const FittedBox(child: Text("EXPLORE PLANS", style: TextStyle(color: AppColors.buttonTextColor, fontWeight: FontWeight.bold))))),
                 ],
               ),
             ],

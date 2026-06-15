@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nasha_ott/utils/responsive.dart';
+import 'package:nasha_ott/widgets/golden_button.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/primium_controller/premium_controller.dart';
 import '../premium/goPremium.dart';
@@ -185,17 +186,9 @@ class PurchasedPlansPage extends StatelessWidget {
               style: TextStyle(color: Colors.grey, fontSize: 14),
             ),
             const SizedBox(height: 30),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                onPressed: () => Get.to(() => const GoPremiumPage()),
-                child: const Text("VIEW PLANS", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              ),
+            GoldenButton(
+              onPressed: () => Get.to(() => const GoPremiumPage()),
+              child: const Text("VIEW PLANS", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ],
         ),

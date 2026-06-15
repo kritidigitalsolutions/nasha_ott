@@ -5,6 +5,7 @@ import '../../utils/responsive.dart';
 import '../../data/models/response_model/content_response_model/content_model.dart';
 import '../../app/theme/app_colors.dart';
 import '../../widgets/catagory_widget.dart';
+import '../../widgets/golden_text.dart';
 import '../../widgets/custom_network_image.dart';
 import '../auth/signInPage.dart';
 import '../dramaDetails/dramaDetailsPage.dart';
@@ -31,10 +32,9 @@ class Top10List extends StatelessWidget {
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
+                const GoldenText(
                   "Trending on Nasha",
                   style: TextStyle(
-                    color: AppColors.white,
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
@@ -116,18 +116,15 @@ class _Top10HoverCardState extends State<_Top10HoverCard> {
               Positioned(
                 left: 0,
                 bottom: widget.isDesktop ? -30 : -10,
-                child: Text(
-                  '${widget.index + 1}',
-                  style: TextStyle(
-                    fontSize: widget.isDesktop ? 260 : 150,
-                    fontWeight: FontWeight.bold,
-                    foreground: Paint()
-                      ..style = PaintingStyle.stroke
-                      ..strokeWidth = 2
-                      ..color = isHovered ? AppColors.primary : Colors.white.withOpacity(0.4),
-                    shadows: isHovered ? [
-                      Shadow(color: AppColors.primary.withOpacity(0.5), blurRadius: 15)
-                    ] : [],
+                child: ShaderMask(
+                  shaderCallback: (bounds) => AppColors.goldenGradient.createShader(bounds),
+                  child: Text(
+                    '${widget.index + 1}',
+                    style: TextStyle(
+                      fontSize: widget.isDesktop ? 260 : 150,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),

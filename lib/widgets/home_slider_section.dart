@@ -7,6 +7,7 @@ import '../view/auth/signInPage.dart';
 import '../view/dramaDetails/dramaDetailsPage.dart';
 import 'custom_network_image.dart';
 import 'catagory_widget.dart';
+import 'golden_text.dart';
 
 class HomeSliderSection extends StatelessWidget {
   final String title;
@@ -42,10 +43,9 @@ class HomeSliderSection extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
+                GoldenText(
                   title,
                   style: const TextStyle(
-                    color: Colors.white,
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
@@ -116,7 +116,7 @@ class _HoverCardState extends State<_HoverCard> {
               borderRadius: BorderRadius.circular(15),
               boxShadow: isHovered ? [
                 BoxShadow(
-                  color: Colors.red.withOpacity(0.5),
+                  color: const Color(0xFFB88728).withOpacity(0.5),
                   blurRadius: 25,
                   spreadRadius: 3,
                   offset: const Offset(0, 10),

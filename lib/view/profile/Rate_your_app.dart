@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nasha_ott/utils/responsive.dart';
+import 'package:nasha_ott/widgets/golden_button.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/profile/review_controller.dart';
 import '../../view_model/review_controller/review_controller.dart';
@@ -102,37 +103,28 @@ class ReviewPage extends StatelessWidget {
                   const SizedBox(height: 40),
 
                   /// 🚀 Submit Button with Loader
-                  Obx(() => SizedBox(
-                        width: double.infinity,
+                  Obx(() => GoldenButton(
                         height: 50,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.buttonColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          onPressed: controller.isLoading.value
-                              ? null
-                              : controller.submitReview,
-                          child: controller.isLoading.value
-                              ? const SizedBox(
-                                  height: 22,
-                                  width: 22,
-                                  child: CircularProgressIndicator(
-                                    color: AppColors.buttonTextColor,
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : const Text(
-                                  "Submit Review",
-                                  style: TextStyle(
-                                    color: AppColors.buttonTextColor,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                        onPressed: controller.isLoading.value
+                            ? null
+                            : controller.submitReview,
+                        child: controller.isLoading.value
+                            ? const SizedBox(
+                                height: 22,
+                                width: 22,
+                                child: CircularProgressIndicator(
+                                  color: AppColors.buttonTextColor,
+                                  strokeWidth: 2,
                                 ),
-                        ),
+                              )
+                            : const Text(
+                                "Submit Review",
+                                style: TextStyle(
+                                  color: AppColors.buttonTextColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                       )),
 
                   const SizedBox(height: 20),

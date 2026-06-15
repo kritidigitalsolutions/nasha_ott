@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:nasha_ott/app/theme/app_colors.dart';
 import 'package:nasha_ott/data/models/response_model/content_response_model/content_model.dart';
 import 'package:nasha_ott/widgets/custom_network_image.dart';
+import 'package:nasha_ott/widgets/golden_button.dart';
 import '../dramaDetails/dramaDetailsPage.dart';
 import 'package:nasha_ott/view_model/content_controller/content_controller.dart';
 import 'package:get_storage/get_storage.dart';
@@ -223,21 +224,25 @@ class _ComingSoonSectionState extends State<ComingSoonSection> {
                     ],
                   ),
                 ),
-                ElevatedButton.icon(
+                GoldenButton(
                   onPressed: () => _toggleReminder(item),
-                  icon: Icon(
-                    reminded ? Icons.notifications_active : Icons.notifications_none,
-                    size: 20,
-                    color: AppColors.buttonTextColor,
-                  ),
-                  label: Text(
-                    reminded ? "Reminded" : "Remind Me",
-                    style: const TextStyle(color: AppColors.buttonTextColor, fontWeight: FontWeight.bold),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: reminded ? AppColors.secondary : AppColors.buttonColor,
-                    padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  height: 45,
+                  width: 150,
+                  borderRadius: BorderRadius.circular(10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        reminded ? Icons.notifications_active : Icons.notifications_none,
+                        size: 20,
+                        color: AppColors.buttonTextColor,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        reminded ? "Reminded" : "Remind Me",
+                        style: const TextStyle(color: AppColors.buttonTextColor, fontWeight: FontWeight.bold),
+                      ),
+                    ],
                   ),
                 ),
               ],
