@@ -2,12 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:mirchi_ott/utils/app_images.dart';
-import 'package:mirchi_ott/utils/responsive.dart';
-import 'package:mirchi_ott/view_model/auth_controller/auth_controller.dart';
-import 'package:mirchi_ott/view_model/download_controller/download_controller.dart';
-import 'package:mirchi_ott/view_model/primium_controller/premium_controller.dart';
-import 'package:mirchi_ott/widgets/custom_network_image.dart';
+import 'package:nasha_ott/utils/app_images.dart';
+import 'package:nasha_ott/utils/responsive.dart';
+import 'package:nasha_ott/view_model/auth_controller/auth_controller.dart';
+import 'package:nasha_ott/view_model/download_controller/download_controller.dart';
+import 'package:nasha_ott/view_model/primium_controller/premium_controller.dart';
+import 'package:nasha_ott/widgets/custom_network_image.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../app/theme/app_colors.dart';
@@ -303,10 +303,10 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
           elevation: 10,
         ),
         onPressed: widget.content.isComingSoon ? null : () => _handlePlay(widget.content, isPurchased, userLoggedIn),
-        icon: const Icon(Icons.play_arrow_rounded, size: 32, color: Colors.white),
+        icon: const Icon(Icons.play_arrow_rounded, size: 32, color: AppColors.buttonTextColor),
         label: Text(
           widget.content.isComingSoon ? "COMING SOON" : "WATCH NOW",
-          style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.2),
+          style: const TextStyle(color: AppColors.buttonTextColor, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.2),
         ),
       );
     });
@@ -338,10 +338,10 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
           Get.to(() => AdvancedVideoPlayer(url: widget.content.trailerUrl!, title: '${widget.content.title} - Trailer'));
         }
       },
-      icon: const Icon(Icons.play_circle_outline, size: 18, color: Colors.white),
-      label: const Text("TRAILER", style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
+      icon: const Icon(Icons.play_circle_outline, size: 18, color: AppColors.buttonTextColor),
+      label: const Text("TRAILER", style: TextStyle(color: AppColors.buttonTextColor, fontSize: 13, fontWeight: FontWeight.bold)),
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.primary,
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
         elevation: 5,
@@ -717,7 +717,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
                 children: [
                   Expanded(child: TextButton(onPressed: () => Get.back(), child: const Text("CANCEL", style: TextStyle(color: Colors.white54)))),
                   const SizedBox(width: 15),
-                  Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: AppColors.buttonColor), onPressed: () { Get.back(); Get.to(() => const GoPremiumPage()); }, child: const Text("EXPLORE PLANS", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
+                  Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: AppColors.buttonColor), onPressed: () { Get.back(); Get.to(() => const GoPremiumPage()); }, child: const Text("EXPLORE PLANS", style: TextStyle(color: AppColors.buttonTextColor, fontWeight: FontWeight.bold)))),
                 ],
               ),
             ],

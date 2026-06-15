@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirchi_ott/utils/responsive.dart';
+import 'package:nasha_ott/utils/responsive.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/profile/review_controller.dart';
 import '../../view_model/review_controller/review_controller.dart';
@@ -38,7 +38,7 @@ class ReviewPage extends StatelessWidget {
 
                   /// ⭐ Title
                   const Text(
-                    "Enjoying Mirchi OTT?",
+                    "Enjoying Nasha OTT?",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,
@@ -120,14 +120,14 @@ class ReviewPage extends StatelessWidget {
                                   height: 22,
                                   width: 22,
                                   child: CircularProgressIndicator(
-                                    color: Colors.white,
+                                    color: AppColors.buttonTextColor,
                                     strokeWidth: 2,
                                   ),
                                 )
                               : const Text(
                                   "Submit Review",
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: AppColors.buttonTextColor,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
                                   ),

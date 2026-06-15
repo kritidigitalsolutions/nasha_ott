@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirchi_ott/app/theme/app_colors.dart';
-import 'package:mirchi_ott/utils/responsive.dart';
-import 'package:mirchi_ott/view_model/download_controller/download_controller.dart';
-import 'package:mirchi_ott/widgets/custom_network_image.dart';
+import 'package:nasha_ott/app/theme/app_colors.dart';
+import 'package:nasha_ott/utils/responsive.dart';
+import 'package:nasha_ott/view_model/download_controller/download_controller.dart';
+import 'package:nasha_ott/widgets/custom_network_image.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
 import '../../view_model/home_controller/home_controller.dart';
 import '../auth/signInPage.dart';
@@ -162,7 +162,7 @@ class DownloadsPage extends StatelessWidget {
                                   Get.back(); // Close dialog first
                                   downloadController.removeDownload(item.id);
                                 },
-                                child: const Text("Delete", style: TextStyle(color: Colors.white)),
+                                child: const Text("Delete", style: TextStyle(color: AppColors.buttonTextColor)),
                               ),
                             ],
                           ),
@@ -228,7 +228,7 @@ class DownloadsPage extends StatelessWidget {
               child: Text(
                 buttonText,
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: AppColors.buttonTextColor,
                   fontSize: 16,
                 ),
               ),

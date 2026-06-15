@@ -18,8 +18,8 @@ class CustomSnackbar {
           ? Colors.red.withOpacity(0.8) 
           : isSuccess 
               ? Colors.green.withOpacity(0.8) 
-              : AppColors.buttonColor.withOpacity(0.8),
-      colorText: Colors.white,
+              : AppColors.buttonColor.withOpacity(0.9),
+      colorText: (isError || isSuccess) ? Colors.white : AppColors.buttonTextColor,
       borderRadius: 15,
       margin: const EdgeInsets.all(15),
       duration: duration,
@@ -29,7 +29,7 @@ class CustomSnackbar {
             : isSuccess 
                 ? Icons.check_circle_outline 
                 : Icons.info_outline,
-        color: Colors.white,
+        color: (isError || isSuccess) ? Colors.white : AppColors.buttonTextColor,
       ),
       shouldIconPulse: true,
       barBlur: 20,

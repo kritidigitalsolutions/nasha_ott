@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:mirchi_ott/utils/app_images.dart';
-import 'package:mirchi_ott/utils/responsive.dart';
-import 'package:mirchi_ott/widgets/custom_network_image.dart';
+import 'package:nasha_ott/utils/app_images.dart';
+import 'package:nasha_ott/utils/responsive.dart';
+import 'package:nasha_ott/widgets/custom_network_image.dart';
 import '../../app/routes/app_routes.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
@@ -179,7 +179,7 @@ class _SignInPageState extends State<SignInPage> {
                                             const Text(
                                               "Continue with Google",
                                               style: TextStyle(
-                                                color: Colors.white,
+                                                color: AppColors.buttonTextColor,
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w600,
                                               ),
@@ -298,8 +298,8 @@ class _SignInPageState extends State<SignInPage> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
             child: authController.isLoading.value
-                ? const CircularProgressIndicator(color: Colors.white)
-                : const Text("Get OTP", style: TextStyle(fontSize: 16, color: Colors.white)),
+                ? const CircularProgressIndicator(color: AppColors.buttonTextColor)
+                : const Text("Get OTP", style: TextStyle(fontSize: 16, color: AppColors.buttonTextColor)),
           )),
     );
   }

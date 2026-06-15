@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirchi_ott/view_model/primium_controller/premium_controller.dart';
+import 'package:nasha_ott/view_model/primium_controller/premium_controller.dart';
 import '../../app/theme/app_colors.dart';
 
 class PaymentBottomSheet extends StatelessWidget {

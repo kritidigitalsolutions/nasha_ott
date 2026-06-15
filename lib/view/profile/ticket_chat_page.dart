@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:mirchi_ott/utils/responsive.dart';
+import 'package:nasha_ott/utils/responsive.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/support_controller/support_controller.dart';
 

@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:mirchi_ott/app/theme/app_colors.dart';
+import 'package:nasha_ott/app/theme/app_colors.dart';
 
 class CustomBottomNavbar extends StatelessWidget {
   final int selectedIndex;
@@ -89,14 +89,14 @@ class CustomBottomNavbar extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: AppColors.white,
+              color: isSelected ? AppColors.buttonTextColor : AppColors.white,
               size: iconSize,
             ),
             const SizedBox(height: 3),
             Text(
               label,
               style: TextStyle(
-                color: AppColors.white,
+                color: isSelected ? AppColors.buttonTextColor : AppColors.white,
                 fontSize: fontSize,
                 fontWeight: FontWeight.w500,
               ),

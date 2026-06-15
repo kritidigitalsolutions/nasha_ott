@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:mirchi_ott/app/routes/app_routes.dart';
-import 'package:mirchi_ott/utils/responsive.dart';
-import 'package:mirchi_ott/view_model/support_controller/support_controller.dart';
+import 'package:nasha_ott/app/routes/app_routes.dart';
+import 'package:nasha_ott/utils/responsive.dart';
+import 'package:nasha_ott/view_model/support_controller/support_controller.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/profile/privacy_controller.dart';
@@ -97,9 +97,9 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
                         ),
                         const SizedBox(height: 12),
                         InkWell(
-                          onTap: () => launchUrl(Uri.parse("mailto:support@mirchiapp.in")),
+                          onTap: () => launchUrl(Uri.parse("mailto:support@nashaott.in")),
                           child: const Text(
-                            "Mail - support@mirchiapp.in ",
+                            "Mail - support@nashaott.in ",
                             style: TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w600),
                           ),
                         ),

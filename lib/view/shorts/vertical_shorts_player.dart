@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:mirchi_ott/data/models/shorts_model.dart';
-import 'package:mirchi_ott/view/auth/signInPage.dart';
-import 'package:mirchi_ott/view/premium/goPremium.dart';
-import 'package:mirchi_ott/view_model/auth_controller/auth_controller.dart';
-import 'package:mirchi_ott/view_model/primium_controller/premium_controller.dart';
+import 'package:nasha_ott/data/models/shorts_model.dart';
+import 'package:nasha_ott/view/auth/signInPage.dart';
+import 'package:nasha_ott/view/premium/goPremium.dart';
+import 'package:nasha_ott/view_model/auth_controller/auth_controller.dart';
+import 'package:nasha_ott/view_model/primium_controller/premium_controller.dart';
+import '../../app/theme/app_colors.dart';
 
 class VerticalShortsPlayer extends StatefulWidget {
   final List<ShortEpisode> episodes;
@@ -199,7 +200,7 @@ class _ShortVideoItemState extends State<ShortVideoItem> {
                     _controller!,
                     allowScrubbing: true,
                     colors: const VideoProgressColors(
-                      playedColor: Colors.red,
+                      playedColor: AppColors.primary,
                       bufferedColor: Colors.white24,
                       backgroundColor: Colors.white10,
                     ),
@@ -238,7 +239,7 @@ class _ShortVideoItemState extends State<ShortVideoItem> {
           const SizedBox(height: 30),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: AppColors.primary,
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
             ),
@@ -251,7 +252,7 @@ class _ShortVideoItemState extends State<ShortVideoItem> {
             },
             child: Text(
               loggedIn ? "GO PREMIUM" : "SIGN IN",
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: const TextStyle(color: AppColors.buttonTextColor, fontWeight: FontWeight.bold),
             ),
           ),
         ],

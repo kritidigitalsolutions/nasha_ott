@@ -1,4 +1,4 @@
-# mirchi_ott
+# nasha_ott
 
 A new Flutter project.
 

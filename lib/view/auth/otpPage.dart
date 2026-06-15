@@ -183,10 +183,10 @@ class _OtpPageState extends State<OtpPage> {
                       ),
                       onPressed: authController.isLoading.value ? null : verifyOtp,
                       child: authController.isLoading.value
-                          ? const CircularProgressIndicator(color: Colors.white)
+                          ? const CircularProgressIndicator(color: AppColors.buttonTextColor)
                           : const Text(
                               "Verify",
-                              style: TextStyle(fontSize: 16, color: AppColors.white),
+                              style: TextStyle(fontSize: 16, color: AppColors.buttonTextColor),
                             ),
                     )),
                   ),

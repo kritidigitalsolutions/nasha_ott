@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class AppColors {
 
-  // Primary Colors (Chilli Red)
-  static const Color primary = Color(0xFFFF0000);
-  static const Color secondary = Color(0xFFB71C1C);
+  // Primary Colors (Golden)
+  static const Color primary = Color(0xFFFFD700);
+  static const Color secondary = Color(0xFFB8860B);
 
   // Background Colors
   static const Color background = Colors.black;
@@ -16,8 +16,8 @@ class AppColors {
   static const Color grey = Colors.grey;
 
   // Button Colors
-  static const Color buttonColor = Color(0xFFFF0000);
-  static const Color buttonTextColor = Colors.white;
+  static const Color buttonColor = Color(0xFFFFD700);
+  static const Color buttonTextColor = Colors.black;
 
   // Border & Divider
   static const Color borderColor = Colors.white24;

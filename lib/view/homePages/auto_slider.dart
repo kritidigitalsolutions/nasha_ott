@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirchi_ott/utils/app_images.dart';
-import 'package:mirchi_ott/utils/responsive.dart';
-import 'package:mirchi_ott/view_model/primium_controller/premium_controller.dart';
-import 'package:mirchi_ott/widgets/custom_network_image.dart';
+import 'package:nasha_ott/utils/app_images.dart';
+import 'package:nasha_ott/utils/responsive.dart';
+import 'package:nasha_ott/view_model/primium_controller/premium_controller.dart';
+import 'package:nasha_ott/widgets/custom_network_image.dart';
 import '../../data/models/response_model/content_response_model/content_model.dart';
 import '../auth/signInPage.dart';
 import '../dramaDetails/dramaDetailsPage.dart';

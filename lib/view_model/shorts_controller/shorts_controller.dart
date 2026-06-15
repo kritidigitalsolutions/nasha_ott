@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
-import 'package:mirchi_ott/data/models/shorts_model.dart';
-import 'package:mirchi_ott/data/network/base_api_service.dart';
-import 'package:mirchi_ott/utils/constants.dart';
+import 'package:nasha_ott/data/models/shorts_model.dart';
+import 'package:nasha_ott/data/network/base_api_service.dart';
+import 'package:nasha_ott/utils/constants.dart';
 
 class ShortsController extends GetxController {
   final BaseApiService apiService = Get.find<BaseApiService>();

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mirchi_ott/utils/responsive.dart';
+import 'package:nasha_ott/utils/responsive.dart';
 import 'cast_crewPage.dart';
 
 class TopArtistsPage extends StatelessWidget {

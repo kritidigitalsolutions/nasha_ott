@@ -7,9 +7,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-import 'package:mirchi_ott/app/routes/app_pages.dart';
-import 'package:mirchi_ott/view_model/like_dislike_controller/like_dislike_controller.dart';
-import 'package:mirchi_ott/view_model/watchlist_controller/watchlist_controller.dart';
+import 'app/routes/app_pages.dart';
+import 'view_model/like_dislike_controller/like_dislike_controller.dart';
+import 'view_model/watchlist_controller/watchlist_controller.dart';
 
 import 'app/routes/app_routes.dart';
 import 'data/network/api_network_service.dart';
@@ -123,7 +123,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Mirchi OTT',
+      title: 'Nasha OTT',
       debugShowCheckedModeBanner: false,
       initialRoute: AppRoutes.splash,
       getPages: AppPages.pages,

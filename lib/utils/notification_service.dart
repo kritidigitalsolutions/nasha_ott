@@ -105,8 +105,8 @@ class NotificationService extends GetxController {
       tz.TZDateTime.from(scheduledDate, tz.local),
       const NotificationDetails(
         android: AndroidNotificationDetails(
-          'mirchi_reminders',
-          'Mirchi OTT Reminders',
+          'nasha_reminders',
+          'Nasha OTT Reminders',
           channelDescription: 'Reminders for upcoming movies and series',
           importance: Importance.max,
           priority: Priority.high,
@@ -272,9 +272,9 @@ class NotificationService extends GetxController {
 
     const AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
-      'mirchi_ott_channel', // Channel ID
-      'Mirchi OTT Notifications', // Channel Name
-      channelDescription: 'Important notifications from Mirchi OTT',
+      'nasha_ott_channel', // Channel ID
+      'Nasha OTT Notifications', // Channel Name
+      channelDescription: 'Important notifications from Nasha OTT',
       importance: Importance.max,
       priority: Priority.high,
       showWhen: true,

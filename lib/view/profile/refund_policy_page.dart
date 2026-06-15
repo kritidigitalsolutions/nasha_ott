@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirchi_ott/utils/responsive.dart';
+import 'package:nasha_ott/utils/responsive.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/profile/privacy_controller.dart';
 
@@ -60,7 +60,7 @@ class RefundPolicyPage extends StatelessWidget {
                   const SizedBox(height: 40),
                   const Center(
                     child: Text(
-                      "© 2026 Mirchi OTT",
+                      "© 2026 Nasha OTT",
                       style: TextStyle(color: Colors.white54),
                     ),
                   )

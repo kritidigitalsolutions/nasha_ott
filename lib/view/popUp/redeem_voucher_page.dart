@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirchi_ott/utils/app_images.dart';
-import 'package:mirchi_ott/utils/responsive.dart';
+import 'package:nasha_ott/utils/app_images.dart';
+import 'package:nasha_ott/utils/responsive.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/primium_controller/premium_controller.dart';
 
@@ -97,11 +97,11 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
                         ? null
                         : () => controller.redeemVoucher(voucherController.text.trim()),
                     child: controller.isRedeeming.value
-                        ? const CircularProgressIndicator(color: Colors.white)
+                        ? const CircularProgressIndicator(color: AppColors.buttonTextColor)
                         : const Text(
                       "Apply",
                       style: TextStyle(
-                          color: AppColors.white,
+                          color: AppColors.buttonTextColor,
                           fontWeight: FontWeight.bold),
                     ),
                   ),

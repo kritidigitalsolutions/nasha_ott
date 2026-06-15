@@ -20,12 +20,12 @@ class ShareService {
       // 4. Share the file with text
       await Share.shareXFiles(
         [XFile(path)],
-        text: "Check out $title on Mirchi OTT App 🎬🔥\n\nDownload now to watch the latest movies and series!",
+        text: "Check out $title on Nasha OTT App 🎬🔥\n\nDownload now to watch the latest movies and series!",
       );
     } catch (e) {
       print("❌ Error sharing content: $e");
       // Fallback to text sharing if image fails
-      await Share.share("Check out $title on Mirchi OTT App 🎬🔥");
+      await Share.share("Check out $title on Nasha OTT App 🎬🔥");
     }
   }
 }

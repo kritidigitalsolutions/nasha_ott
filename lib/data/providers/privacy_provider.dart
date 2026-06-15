@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:mirchi_ott/utils/constants.dart';
+import 'package:nasha_ott/utils/constants.dart';
 
 class PrivacyService {
   static Future<Map<String, dynamic>?> getPrivacyPolicy() async {

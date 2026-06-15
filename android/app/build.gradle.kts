@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.mirchi_ott.app"
+    namespace = "com.nasha_ott.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -22,7 +22,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.mirchi_ott.app"
+        applicationId = "com.nasha_ott.app"
         minSdk = flutter.minSdkVersion // Required for desugaring and Firebase
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

@@ -30,7 +30,7 @@
 //             /// Logo
 //             Center(
 //               child: Image.asset(
-//                 "assets/images/mirchi_logo.png",
+//                 "assets/images/nasha_ott_logo.png",
 //                 height: 80,
 //               ),
 //             ),

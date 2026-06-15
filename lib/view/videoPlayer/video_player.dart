@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirchi_ott/utils/responsive.dart';
+import 'package:nasha_ott/utils/responsive.dart';
 import 'package:video_player/video_player.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../app/theme/app_colors.dart';
 import '../../view_model/video_player_controller/video_controller.dart';
 
 class AdvancedVideoPlayer extends StatefulWidget {
@@ -80,7 +81,7 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer> {
                 ),
                 icon: Icon(
                   isLocked.value ? Icons.lock : Icons.lock_open,
-                  color: isLocked.value ? Colors.red : Colors.white,
+                  color: isLocked.value ? AppColors.primary : Colors.white,
                   size: 26,
                 ),
                 onPressed: () {
@@ -190,7 +191,7 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer> {
                       return Slider(
                         value: progress,
                         onChanged: controller.seekTo,
-                        activeColor: Colors.red,
+                        activeColor: AppColors.primary,
                         inactiveColor: Colors.white30,
                       );
                     }),

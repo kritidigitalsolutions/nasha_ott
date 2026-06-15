@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:399081225701:android:9376a991f4b7765dde430c",
         "android_client_info": {
-          "package_name": "com.mirchi_ott.app"
+          "package_name": "com.nasha_ott.app"
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "399081225701-d4a5767bm73ihbn0j42g4ieeo1vpoe5h.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.mirchi_ott.app",
+            "package_name": "com.nasha_ott.app",
             "certificate_hash": "6ba88512c9d7999113097ab310311ad632665492"
           }
         },

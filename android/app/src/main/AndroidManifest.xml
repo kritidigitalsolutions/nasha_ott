@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.mirchi_ott.app">
+    package="com.nasha_ott.app">
     <application
-        android:label="Mirchi OTT"
+        android:label="Nasha OTT"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

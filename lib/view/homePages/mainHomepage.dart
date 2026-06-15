@@ -185,7 +185,7 @@ class MainHomePage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
-            child: const Text("Go Premium", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            child: const Text("Go Premium", style: TextStyle(color: AppColors.buttonTextColor, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -266,7 +266,7 @@ class MainHomePage extends StatelessWidget {
                   ),
                   child: const Text(
                     "Go Premium",
-                    style: TextStyle(color: Colors.white, fontSize: 10),
+                    style: TextStyle(color: AppColors.buttonTextColor, fontSize: 10),
                   ),
                 ),
               ),
@@ -373,7 +373,7 @@ class MainHomePage extends StatelessWidget {
                     isDesktop: isDesktop,
                     delay: 600,
                     child: HomeSliderSection(
-                      title: "Mirchi Exclusives",
+                      title: "Nasha Exclusives",
                       content: contentController.allContent.where((c) => c.contentType == 'movie' && c.isComingSoon == false).toList(),
                       isSignedIn: authController.isLoggedIn.value,
                     ),
@@ -418,13 +418,13 @@ class MainHomePage extends StatelessWidget {
         children: [
           Image.asset(AppImages.logo1, height: 80),
           const SizedBox(height: 20),
-          const Text("MIRCHI OTT", style: TextStyle(color: AppColors.white, fontSize: 26, fontWeight: FontWeight.bold, letterSpacing: 2.0)),
+          const Text("NASHA OTT", style: TextStyle(color: AppColors.white, fontSize: 26, fontWeight: FontWeight.bold, letterSpacing: 2.0)),
           const SizedBox(height: 30),
           const Text("The ultimate destination for premium regional content. Watch the latest web series, movies, and originals anytime, anywhere.", textAlign: TextAlign.center, style: TextStyle(color: Colors.white70, fontSize: 16, height: 1.5)),
           const SizedBox(height: 20),
           InkWell(
-            onTap: () => launchUrl(Uri.parse("mailto:support@mirchiapp.in")),
-            child: const Text("Email: support@mirchiapp.in", style: TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.w600)),
+            onTap: () => launchUrl(Uri.parse("mailto:support@nashaott.in")),
+            child: const Text("Email: support@nashaott.in", style: TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.w600)),
           ),
           const SizedBox(height: 40),
           Wrap(
@@ -441,7 +441,7 @@ class MainHomePage extends StatelessWidget {
           const SizedBox(height: 50),
           const Divider(color: Colors.white12),
           const SizedBox(height: 30),
-          const Text("© 2024 Mirchi OTT All Rights Reserved", style: TextStyle(color: Colors.white38, fontSize: 13)),
+          const Text("© 2024 Nasha OTT All Rights Reserved", style: TextStyle(color: Colors.white38, fontSize: 13)),
         ],
       ),
     );

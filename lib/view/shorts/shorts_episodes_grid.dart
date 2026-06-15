@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirchi_ott/app/theme/app_colors.dart';
-import 'package:mirchi_ott/data/models/shorts_model.dart';
-import 'package:mirchi_ott/view/shorts/vertical_shorts_player.dart';
-import 'package:mirchi_ott/view_model/shorts_controller/shorts_controller.dart';
-import 'package:mirchi_ott/view_model/auth_controller/auth_controller.dart';
-import 'package:mirchi_ott/view_model/primium_controller/premium_controller.dart';
-import 'package:mirchi_ott/widgets/custom_network_image.dart';
+import 'package:nasha_ott/app/theme/app_colors.dart';
+import 'package:nasha_ott/data/models/shorts_model.dart';
+import 'package:nasha_ott/view/shorts/vertical_shorts_player.dart';
+import 'package:nasha_ott/view_model/shorts_controller/shorts_controller.dart';
+import 'package:nasha_ott/view_model/auth_controller/auth_controller.dart';
+import 'package:nasha_ott/view_model/primium_controller/premium_controller.dart';
+import 'package:nasha_ott/widgets/custom_network_image.dart';
 
 class ShortsEpisodesGrid extends StatelessWidget {
   final ShortDrama drama;

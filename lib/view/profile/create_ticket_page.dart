@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirchi_ott/utils/responsive.dart';
+import 'package:nasha_ott/utils/responsive.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/support_controller/support_controller.dart';
 
@@ -203,12 +203,12 @@ class _CreateTicketPageState extends State<CreateTicketPage> {
                   ? const SizedBox(
                       height: 22,
                       width: 22,
-                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      child: CircularProgressIndicator(color: AppColors.buttonTextColor, strokeWidth: 2),
                     )
                   : const Text(
                       "SUBMIT TICKET", 
                       style: TextStyle(
-                        color: Colors.white, 
+                        color: AppColors.buttonTextColor,
                         fontWeight: FontWeight.bold, 
                         fontSize: 16, 
                         letterSpacing: 1.2

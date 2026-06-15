@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mirchi_ott/app/theme/app_colors.dart';
+import 'package:nasha_ott/app/theme/app_colors.dart';
 
 class ExpandablePlanCard extends StatefulWidget {
   final String title;
@@ -131,7 +131,7 @@ class _ExpandablePlanCardState extends State<ExpandablePlanCard> {
                         onPressed: widget.onBuy,
                         child: const Text(
                           "SELECT PLAN",
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          style: TextStyle(color: AppColors.buttonTextColor, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),

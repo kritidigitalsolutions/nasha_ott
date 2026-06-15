@@ -1,5 +1,5 @@
 // import 'package:flutter/material.dart';
-// import 'package:mirchi_ott/data/models/profile_model.dart';
+// import 'package:nasha_ott/data/models/profile_model.dart';
 // import '../../app/theme/app_colors.dart';
 // import 'create_profile_page.dart';
 //

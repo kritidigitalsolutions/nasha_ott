@@ -137,10 +137,10 @@ class _ApplyPromoPopupState extends State<ApplyPromoPopup> {
                             ? null
                             : () => controller.applyPromoCode(promoController.text.trim()),
                         child: controller.isApplyingPromo.value
-                            ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                            ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.buttonTextColor))
                             : const Text("Apply",
                           style: TextStyle(
-                              color: AppColors.white,
+                              color: AppColors.buttonTextColor,
                               fontWeight: FontWeight.bold
                           ),),
                       ),
@@ -178,11 +178,11 @@ class _ApplyPromoPopupState extends State<ApplyPromoPopup> {
                         ? null
                         : () => controller.subscribeToPlan(selectedPlan.id!),
                     child: controller.isSubscribing.value
-                        ? const CircularProgressIndicator(color: Colors.white)
+                        ? const CircularProgressIndicator(color: AppColors.buttonTextColor)
                         : const Text(
                       "Proceed To Pay",
                       style: TextStyle(
-                          color: AppColors.white,
+                          color: AppColors.buttonTextColor,
                           fontWeight: FontWeight.bold),
                     ),
                   ),

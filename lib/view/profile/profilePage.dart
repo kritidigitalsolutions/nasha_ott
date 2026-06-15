@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirchi_ott/utils/responsive.dart';
-import 'package:mirchi_ott/view/profile/privacy_policy_page.dart';
-import 'package:mirchi_ott/view/profile/setting_page.dart';
-import 'package:mirchi_ott/view_model/primium_controller/premium_controller.dart';
-import 'package:mirchi_ott/utils/constants.dart';
-import 'package:mirchi_ott/view_model/home_controller/home_controller.dart';
-import 'package:mirchi_ott/widgets/custom_network_image.dart';
+import 'package:nasha_ott/utils/responsive.dart';
+import 'package:nasha_ott/view/profile/privacy_policy_page.dart';
+import 'package:nasha_ott/view/profile/setting_page.dart';
+import 'package:nasha_ott/view_model/primium_controller/premium_controller.dart';
+import 'package:nasha_ott/utils/constants.dart';
+import 'package:nasha_ott/view_model/home_controller/home_controller.dart';
+import 'package:nasha_ott/widgets/custom_network_image.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
 import '../auth/signInPage.dart';
@@ -109,7 +109,7 @@ class ProfilePage extends StatelessWidget {
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                     ),
-                                    child: const Text("SIGN IN", style: TextStyle(color: AppColors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                                    child: const Text("SIGN IN", style: TextStyle(color: AppColors.buttonTextColor, fontSize: 12, fontWeight: FontWeight.bold)),
                                   ),
                                 ],
                               );
@@ -208,7 +208,7 @@ class ProfilePage extends StatelessWidget {
                                         color: AppColors.buttonColor,
                                         borderRadius: BorderRadius.circular(8),
                                       ),
-                                      child: const Text("SUBSCRIBE", style: TextStyle(color: AppColors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                                      child: const Text("SUBSCRIBE", style: TextStyle(color: AppColors.buttonTextColor, fontSize: 12, fontWeight: FontWeight.bold)),
                                     )
                                   else
                                     const Icon(Icons.verified, color: Colors.green, size: 24),
@@ -248,7 +248,7 @@ class ProfilePage extends StatelessWidget {
                         : () => Get.to(() => const SignInPage()),
                     child: Text(
                         authController.isLoggedIn.value ? "SIGN OUT" : "SIGN IN", 
-                        style: const TextStyle(color: AppColors.white, fontWeight: FontWeight.bold)),
+                        style: const TextStyle(color: AppColors.buttonTextColor, fontWeight: FontWeight.bold)),
                   )),
                 ),
                 const SizedBox(height: 30),

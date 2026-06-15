@@ -44,7 +44,7 @@
 //
 //             /// TITLE
 //             const Text(
-//               "Activate Mirchi OTT on TV",
+//               "Activate Nasha OTT on TV",
 //               style: TextStyle(
 //                 color: Colors.white,
 //                 fontSize: 20,
