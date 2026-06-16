@@ -1,15 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nasha_ott/utils/responsive.dart';
-import 'package:nasha_ott/view/profile/privacy_policy_page.dart';
-import 'package:nasha_ott/view/profile/setting_page.dart';
-import 'package:nasha_ott/view_model/primium_controller/premium_controller.dart';
-import 'package:nasha_ott/utils/constants.dart';
-import 'package:nasha_ott/view_model/home_controller/home_controller.dart';
-import 'package:nasha_ott/widgets/custom_network_image.dart';
-import 'package:nasha_ott/widgets/golden_text.dart';
-import 'package:nasha_ott/widgets/golden_button.dart';
+import '../../utils/responsive.dart';
+import 'privacy_policy_page.dart';
+import 'setting_page.dart';
+import '../../view_model/primium_controller/premium_controller.dart';
+import '../../utils/constants.dart';
+import '../../view_model/home_controller/home_controller.dart';
+import '../../widgets/custom_network_image.dart';
+import '../../widgets/golden_text.dart';
+import '../../widgets/golden_button.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
 import '../auth/signInPage.dart';
@@ -107,7 +107,7 @@ class ProfilePage extends StatelessWidget {
                                   GoldenButton(
                                     width: 100,
                                     height: 35,
-                                    onPressed: () => Get.to(() => const SignInPage()),
+                                    onPressed: () => Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute}),
                                     borderRadius: BorderRadius.circular(8),
                                     child: const FittedBox(child: Text("SIGN IN", style: TextStyle(color: AppColors.buttonTextColor, fontSize: 12, fontWeight: FontWeight.bold))),
                                   ),
@@ -243,7 +243,7 @@ class ProfilePage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(25),
                     onPressed: authController.isLoggedIn.value 
                         ? onLogout 
-                        : () => Get.to(() => const SignInPage()),
+                        : () => Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute}),
                     child: Text(
                         authController.isLoggedIn.value ? "SIGN OUT" : "SIGN IN", 
                         style: const TextStyle(color: AppColors.buttonTextColor, fontWeight: FontWeight.bold)),

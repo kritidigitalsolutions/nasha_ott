@@ -24,7 +24,7 @@ class Top10List extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        /// 🔥 Trending on Nasha TITLE
+        /// 🔥 Trending on Nazar TITLE
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: InkWell(
@@ -33,7 +33,7 @@ class Top10List extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const GoldenText(
-                  "Trending on Nasha",
+                  "Trending on Nazar",
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,

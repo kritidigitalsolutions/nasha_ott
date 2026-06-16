@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:nasha_ott/app/routes/app_routes.dart';
-import 'package:nasha_ott/utils/responsive.dart';
-import 'package:nasha_ott/view_model/support_controller/support_controller.dart';
+import '../../app/routes/app_routes.dart';
+import '../../utils/responsive.dart';
+import '../../view_model/support_controller/support_controller.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/profile/privacy_controller.dart';
@@ -74,7 +74,7 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
                         child: _buildActionCard(
                           icon: Icons.phone_in_talk_outlined,
                           label: "Call Customer Care",
-                          onTap: () => _makePhoneCall("+91 8369720507"),
+                          onTap: () => _makePhoneCall("+91 1234567890"),
                           color: Colors.green,
                         ),
                       ),
@@ -97,15 +97,15 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
                         ),
                         const SizedBox(height: 12),
                         InkWell(
-                          onTap: () => launchUrl(Uri.parse("mailto:support@nashaott.in")),
+                          onTap: () => launchUrl(Uri.parse("mailto:support@nazarott.in")),
                           child: const Text(
-                            "Mail - support@nashaott.in ",
+                            "Mail - support@nazarott.in ",
                             style: TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w600),
                           ),
                         ),
                         const SizedBox(height: 8),
                         const Text(
-                          "Call - +91 8369720507",
+                          "Call - +91 1234567890",
                           style: TextStyle(color: Colors.green, fontSize: 14, fontWeight: FontWeight.w600),
                         ),
                         const Text(

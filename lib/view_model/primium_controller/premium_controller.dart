@@ -134,7 +134,7 @@ class PremiumController extends GetxController {
         var options = {
           'key': response['key'],
           'amount': response['order']['amount'],
-          'name': 'Nasha OTT',
+          'name': 'Nazar OTT',
           'order_id': response['order']['id'],
           'description': 'Subscription Plan',
           'prefill': {

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nasha_ott/utils/responsive.dart';
-import 'package:nasha_ott/view_model/auth_controller/auth_controller.dart';
-import 'package:nasha_ott/view_model/content_controller/content_controller.dart';
-import 'package:nasha_ott/view_model/search_controller/search_controller.dart';
-import 'package:nasha_ott/widgets/custom_network_image.dart';
+import '../../utils/responsive.dart';
+import '../../view_model/auth_controller/auth_controller.dart';
+import '../../view_model/content_controller/content_controller.dart';
+import '../../view_model/search_controller/search_controller.dart';
+import '../../widgets/custom_network_image.dart';
 
 import '../../app/theme/app_colors.dart';
 import '../../data/models/response_model/content_response_model/content_model.dart';
@@ -185,7 +185,7 @@ class SearchPage extends StatelessWidget {
           const SizedBox(height: 15),
 
           SizedBox(
-            height: 140,
+            height: 250,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: topSeries.length,
@@ -194,7 +194,7 @@ class SearchPage extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.only(left: 15),
                   child: InkWell(
-                    borderRadius: BorderRadius.circular(5),
+                    borderRadius: BorderRadius.circular(12),
                     onTap: () {
                       Get.to(() => DramaDetailsPage(
                             isSignedIn: authController.isLoggedIn.value,
@@ -204,8 +204,9 @@ class SearchPage extends StatelessWidget {
                     child: CustomNetworkImage(
                       imageUrl: item.poster,
                       width: 170,
-                      fit: BoxFit.cover,
-                      borderRadius: 5,
+                      height: 250,
+                      fit: BoxFit.fill,
+                      borderRadius: 12,
                     ),
                   ),
                 );
@@ -214,74 +215,74 @@ class SearchPage extends StatelessWidget {
           ),
         ],
 
-        const SizedBox(height: 25),
-
-        /// TOP ARTISTS
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: InkWell(
-            onTap: () {
-              Get.to(() =>  TopArtistsPage());
-            },
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: const [
-                Text(
-                  "Top Artists",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(width: 6),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16,
-                  color: Colors.white,
-                ),
-              ],
-            ),
-          ),
-        ),
-
-        const SizedBox(height: 15),
-
-        SizedBox(
-          height: 120,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: cast.length,
-            itemBuilder: (context, index) {
-              return GestureDetector(
-                onTap: () {
-                  Get.to(() => CastDetailsPage(
-                        castName: cast[index]['name']!,
-                        castImage: cast[index]['image']!,
-                      ));
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 16),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 80,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          image: DecorationImage(
-                            image: AssetImage(cast[index]['image']!),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
+        // const SizedBox(height: 25),
+        //
+        // /// TOP ARTISTS
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(horizontal: 15),
+        //   child: InkWell(
+        //     onTap: () {
+        //       Get.to(() =>  TopArtistsPage());
+        //     },
+        //     child: Row(
+        //       mainAxisSize: MainAxisSize.min,
+        //       children: const [
+        //         Text(
+        //           "Top Artists",
+        //           style: TextStyle(
+        //             color: Colors.white,
+        //             fontSize: 18,
+        //             fontWeight: FontWeight.bold,
+        //           ),
+        //         ),
+        //         SizedBox(width: 6),
+        //         Icon(
+        //           Icons.arrow_forward_ios,
+        //           size: 16,
+        //           color: Colors.white,
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // ),
+        //
+        // const SizedBox(height: 15),
+        //
+        // SizedBox(
+        //   height: 120,
+        //   child: ListView.builder(
+        //     scrollDirection: Axis.horizontal,
+        //     itemCount: cast.length,
+        //     itemBuilder: (context, index) {
+        //       return GestureDetector(
+        //         onTap: () {
+        //           Get.to(() => CastDetailsPage(
+        //                 castName: cast[index]['name']!,
+        //                 castImage: cast[index]['image']!,
+        //               ));
+        //         },
+        //         child: Padding(
+        //           padding: const EdgeInsets.only(left: 16),
+        //           child: Column(
+        //             children: [
+        //               Container(
+        //                 width: 80,
+        //                 height: 100,
+        //                 decoration: BoxDecoration(
+        //                   borderRadius: BorderRadius.circular(12),
+        //                   image: DecorationImage(
+        //                     image: AssetImage(cast[index]['image']!),
+        //                     fit: BoxFit.cover,
+        //                   ),
+        //                 ),
+        //               ),
+        //             ],
+        //           ),
+        //         ),
+        //       );
+        //     },
+        //   ),
+        // ),
         const SizedBox(height: 30),
       ],
     );

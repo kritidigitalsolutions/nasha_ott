@@ -58,6 +58,7 @@ class _OtpPageState extends State<OtpPage> {
       authController.setLoginStatus(true);
       
       bool isNew = response.isNewUser;
+      String? returnRoute = Get.arguments is Map ? Get.arguments['returnRoute'] : null;
 
       // ✅ Unfocus before navigating
       FocusManager.instance.primaryFocus?.unfocus();
@@ -68,16 +69,19 @@ class _OtpPageState extends State<OtpPage> {
         bool isEmail = widget.phoneNumber.contains('@');
         
         if (!isEmail && isNew) {
-          Get.offAll(() => CreateProfilePage(phone: widget.phoneNumber));
+          Get.offAll(() => CreateProfilePage(phone: widget.phoneNumber), arguments: Get.arguments);
         } else {
-          // Check if we came from a content page
-          if (Get.previousRoute == AppRoutes.navbar || Get.previousRoute == AppRoutes.home || Get.previousRoute == AppRoutes.splash) {
-            Get.offAllNamed(AppRoutes.navbar);
+          if (returnRoute != null && returnRoute.isNotEmpty) {
+            Get.offAllNamed(returnRoute);
           } else {
-            // Pop until we are back to the page that initiated the login flow
-            // This usually means popping OtpPage and SignInPage
-            Get.back();
-            Get.back();
+            // Check where we came from. If we have history, go back.
+            // For OtpPage, we usually want to pop twice (Otp -> SignIn -> Previous)
+            if (Get.previousRoute.isNotEmpty && Get.previousRoute != AppRoutes.splash) {
+              Get.back();
+              Get.back();
+            } else {
+              Get.offAllNamed(AppRoutes.navbar);
+            }
           }
         }
       });

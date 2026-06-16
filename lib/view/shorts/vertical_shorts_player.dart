@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:nasha_ott/data/models/shorts_model.dart';
-import 'package:nasha_ott/view/auth/signInPage.dart';
-import 'package:nasha_ott/view/premium/goPremium.dart';
-import 'package:nasha_ott/view_model/auth_controller/auth_controller.dart';
-import 'package:nasha_ott/view_model/primium_controller/premium_controller.dart';
-import 'package:nasha_ott/widgets/golden_button.dart';
+import '../../data/models/shorts_model.dart';
+import '../auth/signInPage.dart';
+import '../premium/goPremium.dart';
+import '../../view_model/auth_controller/auth_controller.dart';
+import '../../view_model/primium_controller/premium_controller.dart';
+import '../../widgets/golden_button.dart';
 import '../../app/theme/app_colors.dart';
 
 class VerticalShortsPlayer extends StatefulWidget {
@@ -246,7 +246,7 @@ class _ShortVideoItemState extends State<ShortVideoItem> {
               if (loggedIn) {
                 Get.to(() => const GoPremiumPage());
               } else {
-                Get.to(() => const SignInPage());
+                Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
               }
             },
             child: Text(

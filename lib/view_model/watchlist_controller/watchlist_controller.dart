@@ -66,7 +66,7 @@ class WatchlistController extends GetxController {
   Future<void> addToWatchlist(String contentId) async {
     final authController = Get.find<AuthController>();
     if (!authController.isLoggedIn.value) {
-      Get.to(() => const SignInPage());
+      Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
       return;
     }
 

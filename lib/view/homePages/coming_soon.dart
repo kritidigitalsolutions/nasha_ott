@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nasha_ott/app/theme/app_colors.dart';
-import 'package:nasha_ott/data/models/response_model/content_response_model/content_model.dart';
-import 'package:nasha_ott/widgets/custom_network_image.dart';
-import 'package:nasha_ott/widgets/golden_button.dart';
+import '../../app/theme/app_colors.dart';
+import '../../data/models/response_model/content_response_model/content_model.dart';
+import '../../widgets/custom_network_image.dart';
+import '../../widgets/golden_button.dart';
 import '../dramaDetails/dramaDetailsPage.dart';
-import 'package:nasha_ott/view_model/content_controller/content_controller.dart';
+import '../../view_model/content_controller/content_controller.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../utils/custom_snackbar.dart';
 import '../../utils/notification_service.dart';
@@ -34,7 +34,7 @@ class _ComingSoonSectionState extends State<ComingSoonSection> {
 
   void _toggleReminder(ContentModel item) {
     if (!widget.isSignedIn) {
-      Get.to(() => const SignInPage());
+      Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
       return;
     }
 

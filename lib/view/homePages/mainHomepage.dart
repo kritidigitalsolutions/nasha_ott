@@ -39,24 +39,38 @@ class MainHomePage extends StatelessWidget {
     final AuthController authController = Get.find<AuthController>();
     final notificationService = NotificationService.to;
 
-    return PopScope(
-      canPop: kIsWeb, 
-      onPopInvoked: (didPop) {
-        if (didPop) return;
-        if (controller.selectedIndex.value != 1) {
-          controller.selectedIndex.value = 1; 
-        } else {
-          Navigator.of(context).pop(); 
-        }
-      },
-      child: Scaffold(
-        backgroundColor: AppColors.black,
-        body: Responsive(
-          mobile: _buildMobileLayout(context, controller, authController, contentController, notificationService),
-          desktop: _buildDesktopLayout(context, controller, authController, contentController, notificationService),
+    return Obx(() {
+      if (controller.showSplash.value) {
+        return Scaffold(
+          backgroundColor: Colors.black,
+          body: Center(
+            child: Image.asset(
+              AppImages.logo,
+              width: 400,
+            ),
+          ),
+        );
+      }
+
+      return PopScope(
+        canPop: kIsWeb,
+        onPopInvoked: (didPop) {
+          if (didPop) return;
+          if (controller.selectedIndex.value != 1) {
+            controller.selectedIndex.value = 1;
+          } else {
+            Navigator.of(context).pop();
+          }
+        },
+        child: Scaffold(
+          backgroundColor: AppColors.black,
+          body: Responsive(
+            mobile: _buildMobileLayout(context, controller, authController, contentController, notificationService),
+            desktop: _buildDesktopLayout(context, controller, authController, contentController, notificationService),
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget _buildMobileLayout(
@@ -310,7 +324,7 @@ class MainHomePage extends StatelessWidget {
                   const SizedBox(height: 10),
                   AutoSlider(
                     content: contentController.allContent
-                        .where((c) => c.category.contains('trending') && c.isComingSoon == false)
+                        .where((c) => (c.category.contains('trending') || c.contentType == 'movie') && c.isComingSoon == false)
                         .toList(),
                     isSignedIn: authController.isLoggedIn.value,
                   ),
@@ -370,7 +384,7 @@ class MainHomePage extends StatelessWidget {
                     isDesktop: isDesktop,
                     delay: 600,
                     child: HomeSliderSection(
-                      title: "Nasha Exclusives",
+                      title: "Nazar Exclusives",
                       content: contentController.allContent.where((c) => c.contentType == 'movie' && c.isComingSoon == false).toList(),
                       isSignedIn: authController.isLoggedIn.value,
                     ),
@@ -416,7 +430,7 @@ class MainHomePage extends StatelessWidget {
           Image.asset(AppImages.logo1, height: 80),
           const SizedBox(height: 20),
           const GoldenText(
-            "NASHA OTT",
+            "NAZAR OTT",
             style: TextStyle(
               fontSize: 26,
               fontWeight: FontWeight.bold,
@@ -427,8 +441,8 @@ class MainHomePage extends StatelessWidget {
           const Text("The ultimate destination for premium regional content. Watch the latest web series, movies, and originals anytime, anywhere.", textAlign: TextAlign.center, style: TextStyle(color: Colors.white70, fontSize: 16, height: 1.5)),
           const SizedBox(height: 20),
           InkWell(
-            onTap: () => launchUrl(Uri.parse("mailto:support@nashaott.in")),
-            child: const Text("Email: support@nashaott.in", style: TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.w600)),
+            onTap: () => launchUrl(Uri.parse("mailto:support@nazarott.in")),
+            child: const Text("Email: support@nazarott.in", style: TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.w600)),
           ),
           const SizedBox(height: 40),
           Wrap(
@@ -445,7 +459,28 @@ class MainHomePage extends StatelessWidget {
           const SizedBox(height: 50),
           const Divider(color: Colors.white12),
           const SizedBox(height: 30),
-          const Text("© 2024 Nasha OTT All Rights Reserved", style: TextStyle(color: Colors.white38, fontSize: 13)),
+          const Text("© 2024 Nazar OTT All Rights Reserved", style: TextStyle(color: Colors.white38, fontSize: 13)),
+          const SizedBox(height: 15),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                "Powered by ",
+                style: TextStyle(color: Colors.white38, fontSize: 14),
+              ),
+              ShaderMask(
+                shaderCallback: (bounds) => AppColors.buttonGradient.createShader(bounds),
+                child: const Text(
+                  "K.P. Productions",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );

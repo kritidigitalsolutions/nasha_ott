@@ -1,4 +1,4 @@
-name: nasha_ott
+name: nazar_ott
 description: "A new Flutter project."
 publish_to: 'none'
 
@@ -56,9 +56,9 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/images/nasha_ott_logo.png"
+  image_path: "assets/images/nazar_logo.png"
   adaptive_icon_background: "#000000"
-  adaptive_icon_foreground: "assets/images/nasha_ott_logo.png"
+  adaptive_icon_foreground: "assets/images/nazar_logo.png"
   adaptive_icon_foreground_inset: 20
   min_sdk_android: 21
 

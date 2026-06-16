@@ -2,13 +2,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:nasha_ott/utils/app_images.dart';
-import 'package:nasha_ott/utils/responsive.dart';
-import 'package:nasha_ott/view_model/auth_controller/auth_controller.dart';
-import 'package:nasha_ott/view_model/download_controller/download_controller.dart';
-import 'package:nasha_ott/view_model/primium_controller/premium_controller.dart';
-import 'package:nasha_ott/widgets/custom_network_image.dart';
-import 'package:nasha_ott/widgets/golden_button.dart';
+import '../../utils/app_images.dart';
+import '../../utils/responsive.dart';
+import '../../view_model/auth_controller/auth_controller.dart';
+import '../../view_model/download_controller/download_controller.dart';
+import '../../view_model/primium_controller/premium_controller.dart';
+import '../../widgets/custom_network_image.dart';
+import '../../widgets/golden_button.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../app/theme/app_colors.dart';
@@ -272,7 +272,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
         ),
         onPressed: () {
           if (!userLoggedIn) {
-            Get.to(() => const SignInPage());
+            Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
           } else if (isAlreadyDownloaded) {
             CustomSnackbar.show(title: "Info", message: "Already downloaded");
           } else {
@@ -320,7 +320,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
 
   void _handlePlay(dynamic item, bool isPurchased, bool userLoggedIn) {
     if (!userLoggedIn) {
-      Get.to(() => const SignInPage());
+      Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
     } else if (isPurchased || !item.isPremium) {
       if (item.videoUrl != null && item.videoUrl!.isNotEmpty) {
         Get.to(() => AdvancedVideoPlayer(url: item.videoUrl!, title: item.title));
@@ -339,7 +339,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
       borderRadius: BorderRadius.circular(25),
       onPressed: () async {
         if (!authController.isLoggedIn.value) {
-          Get.to(() => const SignInPage());
+          Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
           return;
         }
         final bool? isOver18 = await Get.dialog<bool>(const AgeRestrictionPopup());
@@ -370,7 +370,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
             label: "Watchlist",
             onTap: () {
               if (!userLoggedIn) {
-                Get.to(() => const SignInPage());
+                Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
               } else {
                 watchlistController.toggleWatchlist(contentId);
               }
@@ -382,7 +382,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
             label: "Like",
             onTap: () {
               if (!userLoggedIn) {
-                Get.to(() => const SignInPage());
+                Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
               } else {
                 interactionController.toggleLike(contentId: contentId, contentType: widget.content.contentType);
               }
@@ -394,7 +394,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
             label: "Share",
             onTap: () {
               if (!userLoggedIn) {
-                Get.to(() => const SignInPage());
+                Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
               } else {
                 ShareService.shareContent(title: widget.content.title, imageUrl: widget.content.poster);
               }
@@ -690,7 +690,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
 
   void _downloadEpisode(ContentModel episode) {
      if (!authController.isLoggedIn.value) {
-      Get.to(() => const SignInPage());
+      Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
       return;
     }
     downloadController.downloadVideo(episode);

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:nasha_ott/utils/app_images.dart';
-import 'package:nasha_ott/utils/responsive.dart';
-import 'package:nasha_ott/widgets/custom_network_image.dart';
-import 'package:nasha_ott/widgets/golden_button.dart';
-import 'package:nasha_ott/widgets/golden_text.dart';
+import '../../utils/app_images.dart';
+import '../../utils/responsive.dart';
+import '../../widgets/custom_network_image.dart';
+import '../../widgets/golden_button.dart';
+import '../../widgets/golden_text.dart';
 import '../../app/routes/app_routes.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
@@ -28,6 +28,27 @@ class _SignInPageState extends State<SignInPage> {
 
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController codeController = TextEditingController();
+
+  String? returnRoute;
+
+  @override
+  void initState() {
+    super.initState();
+    // Capture return route from arguments if provided
+    returnRoute = Get.arguments is Map ? Get.arguments['returnRoute'] : null;
+  }
+
+  void _handleLoginSuccess() {
+    if (returnRoute != null && returnRoute!.isNotEmpty) {
+      Get.offAllNamed(returnRoute!);
+    } else if (Get.previousRoute.isNotEmpty && 
+               Get.previousRoute != AppRoutes.splash && 
+               Get.previousRoute != AppRoutes.signIn) {
+      Get.back();
+    } else {
+      Get.offAllNamed(AppRoutes.navbar);
+    }
+  }
 
   @override
   void dispose() {
@@ -142,11 +163,7 @@ class _SignInPageState extends State<SignInPage> {
                                           final response = await authController
                                               .signInWithGoogle();
                                           if (response != null) {
-                                            if (Get.previousRoute == AppRoutes.navbar || Get.previousRoute == AppRoutes.home) {
-                                              Get.offAllNamed(AppRoutes.navbar);
-                                            } else {
-                                              Get.back();
-                                            }
+                                            _handleLoginSuccess();
                                           }
                                         },
                                   child: authController.isGoogleLoading.value
@@ -237,7 +254,7 @@ class _SignInPageState extends State<SignInPage> {
                   await Future.delayed(const Duration(milliseconds: 250));
                   bool success = await authController.sendOtp(email);
                   if (success) {
-                    Get.to(() => OtpPage(phoneNumber: email));
+                    Get.to(() => OtpPage(phoneNumber: email), arguments: Get.arguments);
                   }
                 } else {
                   Get.snackbar("Error", "Please enter a valid email", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white);
@@ -275,7 +292,7 @@ class _SignInPageState extends State<SignInPage> {
                   if (_formKey.currentState!.validate()) {
                     String valueToSend = "+91${phoneController.text.trim()}";
                     bool success = await authController.sendOtp(valueToSend);
-                    if (success) Get.to(() => OtpPage(phoneNumber: valueToSend));
+                    if (success) Get.to(() => OtpPage(phoneNumber: valueToSend), arguments: Get.arguments);
                   }
                 }
               : null,

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nasha_ott/widgets/custom_network_image.dart';
+import '../../widgets/custom_network_image.dart';
 import 'package:video_player/video_player.dart';
-import 'package:nasha_ott/app/theme/app_colors.dart';
-import 'package:nasha_ott/data/models/shorts_model.dart';
-import 'package:nasha_ott/view/shorts/vertical_shorts_player.dart';
-import 'package:nasha_ott/view/shorts/shorts_episodes_grid.dart';
-import 'package:nasha_ott/view_model/shorts_controller/shorts_controller.dart';
-import 'package:nasha_ott/view_model/auth_controller/auth_controller.dart';
+import '../../app/theme/app_colors.dart';
+import '../../data/models/shorts_model.dart';
+import 'vertical_shorts_player.dart';
+import 'shorts_episodes_grid.dart';
+import '../../view_model/shorts_controller/shorts_controller.dart';
+import '../../view_model/auth_controller/auth_controller.dart';
 
 class ShortsPage extends StatelessWidget {
   const ShortsPage({super.key});

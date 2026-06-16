@@ -42,7 +42,7 @@ class InteractionController extends GetxController {
   }) async {
     final authController = Get.find<AuthController>();
     if (!authController.isLoggedIn.value) {
-      Get.to(() => const SignInPage());
+      Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
       return;
     }
 
@@ -83,7 +83,7 @@ class InteractionController extends GetxController {
   }) async {
     final authController = Get.find<AuthController>();
     if (!authController.isLoggedIn.value) {
-      Get.to(() => const SignInPage());
+      Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
       return;
     }
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nasha_ott/utils/responsive.dart';
-import 'package:nasha_ott/view_model/primium_controller/premium_controller.dart';
+import '../../utils/responsive.dart';
+import '../../view_model/primium_controller/premium_controller.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/home_controller/home_controller.dart';
 import '../../widgets/expendable_plan_card.dart';
@@ -90,7 +90,7 @@ class GoPremiumPage extends StatelessWidget {
                               onBuy: () {
                                 controller.selectPlan(index);
                                 if (!controller.isUserLoggedIn.value) {
-                                  Get.to(() => const SignInPage());
+                                  Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
                                 } else if (controller.hasActiveSubscription) {
                                   CustomSnackbar.show(title: "Info", message: "Already Purchased");
                                 } else {
@@ -209,7 +209,7 @@ class GoPremiumPage extends StatelessWidget {
             height: 40,
             onPressed: () {
               Get.back();
-              Get.to(() => const SignInPage());
+              Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
             },
             child: const Text("Sign In", style: TextStyle(color: AppColors.buttonTextColor)),
           ),

@@ -1,4 +1,4 @@
-package com.nasha_ott.app
+package com.nazar_ott.app
 
 import android.os.Bundle
 import android.view.WindowManager

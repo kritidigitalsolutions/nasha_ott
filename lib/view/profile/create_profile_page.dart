@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nasha_ott/utils/responsive.dart';
-import 'package:nasha_ott/widgets/golden_button.dart';
+import '../../app/routes/app_routes.dart';
+import '../../utils/responsive.dart';
+import '../../widgets/golden_button.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
 import '../../view_model/profile/create_profile_controller.dart';
@@ -128,7 +129,12 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                                   );
 
                                   if (success) {
-                                    Get.offAllNamed('/'); // Navigate to home
+                                    String? returnRoute = Get.arguments is Map ? Get.arguments['returnRoute'] : null;
+                                    if (returnRoute != null && returnRoute.isNotEmpty) {
+                                      Get.offAllNamed(returnRoute);
+                                    } else {
+                                      Get.offAllNamed(AppRoutes.home); // Navigate to home
+                                    }
                                   }
                                 },
                         child: authController.isLoading.value

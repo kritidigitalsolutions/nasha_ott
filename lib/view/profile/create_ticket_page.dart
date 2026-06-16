@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nasha_ott/utils/responsive.dart';
+import '../../utils/responsive.dart';
 import '../../app/theme/app_colors.dart';
 import '../../widgets/golden_button.dart';
 import '../../view_model/support_controller/support_controller.dart';

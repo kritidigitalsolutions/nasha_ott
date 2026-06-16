@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nasha_ott/app/theme/app_colors.dart';
+import '../app/theme/app_colors.dart';
 import 'golden_button.dart';
 
 class ExpandablePlanCard extends StatefulWidget {

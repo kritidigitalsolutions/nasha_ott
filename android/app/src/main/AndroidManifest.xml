@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.nasha_ott.app">
+    package="com.nazar_ott.app">
     <application
-        android:label="Nasha OTT"
+        android:label="Nazar OTT"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nasha_ott/utils/responsive.dart';
-import 'package:nasha_ott/widgets/golden_button.dart';
+import '../../utils/responsive.dart';
+import '../../widgets/golden_button.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/profile/review_controller.dart';
 import '../../view_model/review_controller/review_controller.dart';
@@ -39,7 +39,7 @@ class ReviewPage extends StatelessWidget {
 
                   /// ⭐ Title
                   const Text(
-                    "Enjoying Nasha OTT?",
+                    "Enjoying Nazar OTT?",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,

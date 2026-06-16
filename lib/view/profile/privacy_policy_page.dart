@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nasha_ott/utils/responsive.dart';
+import '../../utils/responsive.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/profile/privacy_controller.dart';
 
@@ -60,7 +60,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                   const SizedBox(height: 40),
                   const Center(
                     child: Text(
-                      "© 2026 Nasha OTT",
+                      "© 2026 Nazar OTT",
                       style: TextStyle(color: Colors.white54),
                     ),
                   )

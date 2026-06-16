@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nasha_ott/utils/app_images.dart';
-import 'package:nasha_ott/utils/responsive.dart';
-import 'package:nasha_ott/widgets/golden_button.dart';
+import '../../utils/app_images.dart';
+import '../../utils/responsive.dart';
+import '../../widgets/golden_button.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/primium_controller/premium_controller.dart';
 
