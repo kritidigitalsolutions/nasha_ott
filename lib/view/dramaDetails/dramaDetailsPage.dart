@@ -16,6 +16,7 @@ import '../../data/models/response_model/content_response_model/content_model.da
 import '../../view_model/content_controller/content_controller.dart';
 import '../../view_model/like_dislike_controller/like_dislike_controller.dart';
 import '../../view_model/watchlist_controller/watchlist_controller.dart';
+import '../../widgets/golden_text.dart';
 import '../auth/signInPage.dart';
 import '../popUp/age_popup.dart';
 import '../videoPlayer/video_player.dart';
@@ -597,7 +598,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
                         size: 30,
                       ),
                       const SizedBox(height: 2),
-                      const Text("SAVE", style: TextStyle(color: AppColors.primary, fontSize: 8, fontWeight: FontWeight.bold)),
+                      const GoldenText("SAVE", style: TextStyle(color: AppColors.primary, fontSize: 8, fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),

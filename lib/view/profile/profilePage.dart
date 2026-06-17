@@ -93,9 +93,9 @@ class ProfilePage extends StatelessWidget {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: const [
-                                        Text(
+                                        GoldenText(
                                           "Welcome Guest",
-                                          style: TextStyle(color: AppColors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                         ),
                                         Text(
                                           "Sign in to access all features",
@@ -149,9 +149,9 @@ class ProfilePage extends StatelessWidget {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(
+                                      GoldenText(
                                         user?['name'] ?? "User Name",
-                                        style: const TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
@@ -194,9 +194,9 @@ class ProfilePage extends StatelessWidget {
                                         style: TextStyle(color: AppColors.grey, fontSize: 12, fontWeight: FontWeight.w500),
                                       ),
                                       const SizedBox(height: 4),
-                                      Text(
+                                      GoldenText(
                                         hasActiveSub ? (sub['plan']?['name'] ?? "Active Plan") : "No Active Plans",
-                                        style: const TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                       ),
                                     ],
                                   ),
@@ -251,7 +251,7 @@ class ProfilePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 30),
                 const Text("App Version 1.0.0", style: TextStyle(color: Colors.grey, fontSize: 12)),
-                const SizedBox(height: 30),
+                const SizedBox(height: 120),
               ],
             ),
           ),
@@ -267,7 +267,7 @@ class ProfilePage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Row(
           children: [
-            Icon(icon, color: Colors.white, size: 22),
+            Icon(icon, color: AppColors.goldBase, size: 22),
             const SizedBox(width: 15),
             Text(title, style: const TextStyle(color: AppColors.white, fontSize: 16)),
             const Spacer(),

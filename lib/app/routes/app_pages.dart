@@ -10,12 +10,11 @@ import 'app_routes.dart';
 class AppPages {
   static final pages = [
     GetPage(name: AppRoutes.home, page: () => const MainHomePage()),
-    GetPage(name: AppRoutes.splash, page: () => SplashScreen()),
+    GetPage(name: AppRoutes.splash, page: () => const SplashScreen()),
     GetPage(name: AppRoutes.signIn, page: () => const SignInPage()),
     GetPage(name: AppRoutes.otpPage, page: () => const OtpPage(phoneNumber: '')),
     GetPage(name: AppRoutes.createTicket, page: () => const CreateTicketPage()),
     GetPage(name: AppRoutes.ticketChat, page: () => TicketChatPage(ticket: Get.arguments)),
-    // GetPage(name: AppRoutes.dramaDetails, page: () => SplashScreen()),
-    // ... other routes
+    GetPage(name: AppRoutes.navbar, page: () => const MainHomePage()),
   ];
 }

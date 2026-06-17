@@ -1,6 +1,6 @@
 abstract class AppRoutes {
-  static const home = '/';
-  static const splash = '/';
+  static const splash = '/splash';
+  static const home = '/home';
   static const dramaDetails = '/dramaDetails';
   static const goPremium = '/goPremium';
   static const castDetails = '/castDetails';
@@ -11,7 +11,7 @@ abstract class AppRoutes {
   static const videoPlayer = '/VideoPlayer';
   static const accountSetting = '/accountSetting';
   static const otpPage = '/otpPage';
-  static const navbar = '/navbar';
+  static const navbar = '/';
   static const signIn = '/signIn';
   static const createProfile = '/createProfile';
   static const manageProfile= '/manageProfile';

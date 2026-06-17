@@ -7,6 +7,7 @@ class GoldenText extends StatelessWidget {
   final TextAlign? textAlign;
   final int? maxLines;
   final TextOverflow? overflow;
+  final bool softWrap;
 
   const GoldenText(
     this.text, {
@@ -15,6 +16,7 @@ class GoldenText extends StatelessWidget {
     this.textAlign,
     this.maxLines,
     this.overflow,
+    this.softWrap = true,
   });
 
   @override
@@ -26,6 +28,7 @@ class GoldenText extends StatelessWidget {
         textAlign: textAlign,
         maxLines: maxLines,
         overflow: overflow,
+        softWrap: softWrap,
         style: (style ?? const TextStyle()).copyWith(color: Colors.white),
       ),
     );

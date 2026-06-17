@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../../app/routes/app_routes.dart';
 import '../../utils/app_images.dart';
-import '../homePages/mainHomepage.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,10 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // Navigate to home screen after 3 seconds
     Timer(const Duration(seconds: 3), () {
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const MainHomePage()),
-        );
+        Get.offAllNamed(AppRoutes.navbar);
       }
     });
   }

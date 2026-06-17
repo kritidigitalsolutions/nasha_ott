@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../utils/responsive.dart';
 import '../../app/theme/app_colors.dart';
 import '../../widgets/golden_button.dart';
+import '../../widgets/golden_text.dart';
 import '../../view_model/support_controller/support_controller.dart';
 
 class CreateTicketPage extends StatefulWidget {
@@ -41,9 +42,9 @@ class _CreateTicketPageState extends State<CreateTicketPage> {
         backgroundColor: AppColors.background,
         elevation: 0,
         leading: Responsive.backButton(context, onPressed: () => Get.back()),
-        title: const Text(
+        title: const GoldenText(
           "New Support Ticket",
-          style: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
       body: SingleChildScrollView(
@@ -158,11 +159,11 @@ class _CreateTicketPageState extends State<CreateTicketPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
-                        Icon(Icons.cloud_upload_outlined, color: AppColors.buttonColor, size: 20),
-                        SizedBox(width: 10),
-                        Text(
+                        const Icon(Icons.cloud_upload_outlined, color: AppColors.buttonColor, size: 20),
+                        const SizedBox(width: 10),
+                        const GoldenText(
                           "Upload Attachment",
-                          style: TextStyle(color: AppColors.buttonColor, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),

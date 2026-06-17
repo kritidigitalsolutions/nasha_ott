@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../utils/responsive.dart';
+import '../../widgets/golden_text.dart';
 import 'help_page.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/profile/settings_controller.dart';
@@ -17,9 +18,9 @@ class SettingsPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
-        title: const Text(
+        title: const GoldenText(
           "Settings",
-          style: TextStyle(color: AppColors.white),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         leading: Responsive.backButton(context, onPressed: () => Get.back()),
       ),
@@ -57,10 +58,9 @@ class SettingsPage extends StatelessWidget {
   Widget _buildSectionHeader(String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: Text(
+      child: GoldenText(
         title,
         style: const TextStyle(
-          color: AppColors.primary,
           fontSize: 14,
           fontWeight: FontWeight.bold,
         ),

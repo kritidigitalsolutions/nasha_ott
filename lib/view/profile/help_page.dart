@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import '../../widgets/golden_text.dart';
 import '../../app/routes/app_routes.dart';
 import '../../utils/responsive.dart';
 import '../../view_model/support_controller/support_controller.dart';
@@ -46,9 +47,9 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
         backgroundColor: AppColors.background,
         elevation: 0,
         leading: Responsive.backButton(context, onPressed: () => Get.back()),
-        title: const Text(
+        title: const GoldenText(
           "Help & Support",
-          style: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
       body: SingleChildScrollView(
@@ -87,20 +88,20 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.05),
                       borderRadius: BorderRadius.circular(15),
-                      border: Border.all(color: Colors.white10),
+                      border: Border.all(color: AppColors.primary.withOpacity(0.3)),
                     ),
                     child: Column(
                       children: [
-                        const Text(
+                        const GoldenText(
                           "Contact Us Directly",
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                         ),
                         const SizedBox(height: 12),
                         InkWell(
                           onTap: () => launchUrl(Uri.parse("mailto:support@nazarott.in")),
-                          child: const Text(
+                          child: const GoldenText(
                             "Mail - support@nazarott.in ",
-                            style: TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w600),
+                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -127,9 +128,9 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
                   children: [
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      child: Text(
+                      child: GoldenText(
                         "Recent Support Tickets",
-                        style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     ),
                     ListView.builder(
@@ -154,9 +155,9 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Text(
+                child: GoldenText(
                   "Frequently Asked Questions",
-                  style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -183,9 +184,9 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: ExpansionTile(
-                      title: Text(
+                      title: GoldenText(
                         help['question'] ?? "",
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                       iconColor: AppColors.buttonColor,
                       collapsedIconColor: Colors.white54,
@@ -225,11 +226,17 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
           children: [
             Icon(icon, color: color, size: 30),
             const SizedBox(height: 10),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 13),
-            ),
+            color == AppColors.buttonColor || color == AppColors.primary
+                ? GoldenText(
+                    label,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                  )
+                : Text(
+                    label,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 13),
+                  ),
           ],
         ),
       ),
@@ -282,9 +289,9 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
               style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
-            Text(
+            GoldenText(
               ticket['category'] ?? "",
-              style: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w500),
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 8),
             Text(

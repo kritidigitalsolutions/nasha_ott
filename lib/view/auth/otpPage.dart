@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../../app/theme/app_colors.dart';
+import '../../widgets/golden_text.dart';
 import '../../widgets/golden_button.dart';
 import '../../utils/responsive.dart';
 import '../profile/create_profile_page.dart';
@@ -108,21 +109,27 @@ class _OtpPageState extends State<OtpPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const SizedBox(height: 60),
-                  const Text(
+                  const GoldenText(
                     "Verify OTP",
                     style: TextStyle(
-                      color: AppColors.white,
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Text(
-                    "Enter the OTP sent to ${widget.phoneNumber}",
+                  const GoldenText(
+                    "Enter the OTP sent to",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14,
+                    ),
+                  ),
+                  GoldenText(
+                    widget.phoneNumber,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      color: AppColors.white,
                       fontSize: 14,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -200,7 +207,7 @@ class _OtpPageState extends State<OtpPage> {
                                 otpController.startTimer();
                               }
                             },
-                      child: Text(
+                      child: GoldenText(
                         otpController.isResendButtonDisabled.value
                             ? 'Resend OTP in ${otpController.countdown.value}\s'
                             : 'Resend OTP',

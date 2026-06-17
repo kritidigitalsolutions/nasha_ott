@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../app/routes/app_routes.dart';
 import '../../utils/responsive.dart';
 import '../../widgets/golden_button.dart';
+import '../../widgets/golden_text.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
 import '../../view_model/profile/create_profile_controller.dart';
@@ -74,7 +75,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
 
                   TextButton(
                     onPressed: createProfileController.pickImage,
-                    child: const Text(
+                    child: const GoldenText(
                       "Choose Profile Picture",
                       style: TextStyle(color: AppColors.buttonColor),
                     ),

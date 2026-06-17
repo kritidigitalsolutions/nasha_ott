@@ -4,6 +4,7 @@ import '../../utils/responsive.dart';
 import '../../widgets/custom_network_image.dart';
 import '../../widgets/golden_button.dart';
 import '../../app/theme/app_colors.dart';
+import '../../widgets/golden_text.dart';
 import '../../data/models/response_model/content_response_model/content_model.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
 import '../../view_model/home_controller/home_controller.dart';
@@ -24,9 +25,9 @@ class WatchlistPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.black,
         leading: Responsive.backButton(context, onPressed: () => Get.back()),
-        title: const Text(
+        title: const GoldenText(
           "Watchlist",
-          style: TextStyle(color: AppColors.white),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
       body: Obx(() {
@@ -42,7 +43,7 @@ class WatchlistPage extends StatelessWidget {
 
         /// ✅ LIST
         return ListView.builder(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 120),
           itemCount: controller.watchlist.length,
           itemBuilder: (context, index) {
             final item = controller.watchlist[index];
@@ -132,10 +133,10 @@ class WatchlistPage extends StatelessWidget {
               child: const Icon(Icons.bookmark_border, size: 50, color: AppColors.white),
             ),
             const SizedBox(height: 30),
-            const Text(
+            const GoldenText(
               "No Watchlist Added Yet",
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.white, fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 15),
             const Text(

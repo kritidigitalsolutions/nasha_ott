@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../app/theme/app_colors.dart';
 import 'golden_button.dart';
+import 'golden_text.dart';
 
 class ExpandablePlanCard extends StatefulWidget {
   final String title;
@@ -62,10 +63,9 @@ class _ExpandablePlanCardState extends State<ExpandablePlanCard> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        GoldenText(
                           widget.title,
                           style: const TextStyle(
-                            color: Colors.white,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
@@ -81,10 +81,9 @@ class _ExpandablePlanCardState extends State<ExpandablePlanCard> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(
+                      GoldenText(
                         widget.price,
                         style: const TextStyle(
-                          color: AppColors.primary,
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),

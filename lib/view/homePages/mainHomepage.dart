@@ -39,38 +39,24 @@ class MainHomePage extends StatelessWidget {
     final AuthController authController = Get.find<AuthController>();
     final notificationService = NotificationService.to;
 
-    return Obx(() {
-      if (controller.showSplash.value) {
-        return Scaffold(
-          backgroundColor: Colors.black,
-          body: Center(
-            child: Image.asset(
-              AppImages.logo,
-              width: 400,
-            ),
-          ),
-        );
-      }
-
-      return PopScope(
-        canPop: kIsWeb,
-        onPopInvoked: (didPop) {
-          if (didPop) return;
-          if (controller.selectedIndex.value != 1) {
-            controller.selectedIndex.value = 1;
-          } else {
-            Navigator.of(context).pop();
-          }
-        },
-        child: Scaffold(
-          backgroundColor: AppColors.black,
-          body: Responsive(
-            mobile: _buildMobileLayout(context, controller, authController, contentController, notificationService),
-            desktop: _buildDesktopLayout(context, controller, authController, contentController, notificationService),
-          ),
+    return PopScope(
+      canPop: kIsWeb,
+      onPopInvoked: (didPop) {
+        if (didPop) return;
+        if (controller.selectedIndex.value != 1) {
+          controller.selectedIndex.value = 1;
+        } else {
+          Navigator.of(context).pop();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.black,
+        body: Responsive(
+          mobile: _buildMobileLayout(context, controller, authController, contentController, notificationService),
+          desktop: _buildDesktopLayout(context, controller, authController, contentController, notificationService),
         ),
-      );
-    });
+      ),
+    );
   }
 
   Widget _buildMobileLayout(
@@ -211,14 +197,22 @@ class MainHomePage extends StatelessWidget {
       bool isSelected = controller.selectedIndex.value == index;
       return TextButton(
         onPressed: () => controller.onItemTapped(index),
-        child: Text(
-          title,
-          style: TextStyle(
-            color: isSelected ? AppColors.primary : Colors.white,
-            fontSize: 16,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
+        child: isSelected 
+          ? GoldenText(
+              title,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            )
+          : Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
       );
     });
   }
@@ -391,7 +385,7 @@ class MainHomePage extends StatelessWidget {
                   ),
                   
                   _buildFooter(),
-                  const SizedBox(height: 100),
+                  const SizedBox(height: 120),
                 ],
               ),
             );
@@ -442,7 +436,7 @@ class MainHomePage extends StatelessWidget {
           const SizedBox(height: 20),
           InkWell(
             onTap: () => launchUrl(Uri.parse("mailto:support@nazarott.in")),
-            child: const Text("Email: support@nazarott.in", style: TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.w600)),
+            child: const GoldenText("Email: support@nazarott.in", style: TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.w600)),
           ),
           const SizedBox(height: 40),
           Wrap(
@@ -489,7 +483,7 @@ class MainHomePage extends StatelessWidget {
   Widget _footerLink(String title, Widget page) {
     return InkWell(
       onTap: () => Get.to(() => page),
-      child: Text(
+      child: GoldenText(
         title,
         style: const TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.w600),
       ),

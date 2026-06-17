@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../utils/responsive.dart';
 import '../../app/theme/app_colors.dart';
+import '../../widgets/golden_text.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
 import '../../view_model/primium_controller/premium_controller.dart';
 
@@ -23,9 +24,9 @@ class AccountSettingsPage extends StatelessWidget {
         backgroundColor: Colors.black,
         elevation: 0,
         leading: Responsive.backButton(context, onPressed: () => Get.back()),
-        title: const Text(
+        title: const GoldenText(
           "Account Settings",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
       body: SingleChildScrollView(
@@ -93,9 +94,11 @@ class AccountSettingsPage extends StatelessWidget {
         const SizedBox(width: 10),
         Text("$label: ", style: const TextStyle(color: Colors.white70, fontSize: 14)),
         Expanded(
-          child: Text(
+          child: value == 'N/A' || value.isEmpty 
+          ? Text(value, style: const TextStyle(color: Colors.white24, fontSize: 14))
+          : GoldenText(
             value,
-            style: TextStyle(color: color, fontSize: 14, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             overflow: TextOverflow.ellipsis,
           ),
         ),
@@ -112,9 +115,9 @@ class AccountSettingsPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppColors.primary),
       ),
-      child: Text(
+      child: GoldenText(
         planName,
-        style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 12),
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
       ),
     );
   }
@@ -136,10 +139,9 @@ class AccountSettingsPage extends StatelessWidget {
       child: Column(
         children: [
           ListTile(
-            title: Text(
+            title: GoldenText(
               title,
               style: const TextStyle(
-                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),

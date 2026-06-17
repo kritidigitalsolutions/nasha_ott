@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../app/theme/app_colors.dart';
 import '../../data/models/response_model/content_response_model/content_model.dart';
+import '../../widgets/golden_text.dart';
 import '../../widgets/custom_network_image.dart';
 import '../../widgets/golden_button.dart';
 import '../dramaDetails/dramaDetailsPage.dart';
@@ -93,7 +94,7 @@ class _ComingSoonSectionState extends State<ComingSoonSection> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 1200),
             child: ListView.builder(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
               itemCount: displayContent.length,
               itemBuilder: (context, index) {
                 final item = displayContent[index];
@@ -217,7 +218,7 @@ class _ComingSoonSectionState extends State<ComingSoonSection> {
                         style: TextStyle(color: Colors.white, fontSize: isDesktop ? 24 : 18, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 5),
-                      Text(
+                      GoldenText(
                         "Releasing on: ${_formatDate(item.releaseDate)}",
                         style: const TextStyle(color: AppColors.primary, fontSize: 15, fontWeight: FontWeight.w600),
                       ),

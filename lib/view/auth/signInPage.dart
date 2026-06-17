@@ -139,12 +139,12 @@ class _SignInPageState extends State<SignInPage> {
                             ],
                           ),
                           const SizedBox(height: 25),
-                          const Row(
+                              const Row(
                             children: [
                               Expanded(child: Divider(color: Colors.white24)),
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 10),
-                                child: Text("OR",
+                                child: GoldenText("OR",
                                     style: TextStyle(color: Colors.white54)),
                               ),
                               Expanded(child: Divider(color: Colors.white24)),
@@ -279,7 +279,7 @@ class _SignInPageState extends State<SignInPage> {
               onChanged: (value) => isAgeConfirmed.value = value!,
             )),
         const Expanded(
-          child: Text("I confirm that I am 18+ years old", style: TextStyle(color: Colors.white70, fontSize: 13)),
+          child: GoldenText("I confirm that I am 18+ years old", style: TextStyle(color: Colors.white70, fontSize: 13)),
         ),
       ],
     );

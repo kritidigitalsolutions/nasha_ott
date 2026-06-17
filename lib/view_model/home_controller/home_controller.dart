@@ -5,7 +5,7 @@ import '../auth_controller/auth_controller.dart';
 class HomeController extends GetxController {
   var selectedIndex = 1.obs;
   var isLoggedIn = false.obs;
-  var showSplash = true.obs;
+  var showSplash = false.obs;
 
   final List<String> webSeriesImages = [
     "assets/images/taskaree.jpg",
@@ -21,13 +21,6 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     checkLoginStatus();
-    _startSplashTimer();
-  }
-
-  void _startSplashTimer() {
-    Future.delayed(const Duration(seconds: 3), () {
-      showSplash.value = false;
-    });
   }
 
   void checkLoginStatus() async {

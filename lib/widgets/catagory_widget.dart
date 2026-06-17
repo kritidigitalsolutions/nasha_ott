@@ -4,6 +4,7 @@ import '../data/models/response_model/content_response_model/content_model.dart'
 import '../utils/responsive.dart';
 import '../view/dramaDetails/dramaDetailsPage.dart';
 import 'custom_network_image.dart';
+import 'golden_text.dart';
 
 class CategoryGridPage extends StatelessWidget {
   final String title;
