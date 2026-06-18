@@ -158,7 +158,7 @@ class MainHomePage extends StatelessWidget {
 
   Widget _buildDesktopHeader(NotificationService notificationService, HomeController controller, AuthController authController) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 5),
       decoration: BoxDecoration(
         color: Colors.black, // Solid background
         border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.1))),
@@ -167,7 +167,7 @@ class MainHomePage extends StatelessWidget {
         children: [
           InkWell(
             onTap: () => controller.onItemTapped(1),
-            child: Image.asset(AppImages.logo1, height: 50),
+            child: Image.asset(AppImages.logo1, height: 100),
           ),
           const SizedBox(width: 40),
           _navItem("Upcoming", 0, controller),
