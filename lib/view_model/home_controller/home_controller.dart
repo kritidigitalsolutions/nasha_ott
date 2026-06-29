@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../../app/routes/app_routes.dart';
 import '../../utils/app_session.dart';
 import '../auth_controller/auth_controller.dart';
 
@@ -29,6 +30,19 @@ class HomeController extends GetxController {
 
   void onItemTapped(int index) {
     selectedIndex.value = index;
+    if (index == 2) {
+      if (Get.currentRoute != AppRoutes.profile) {
+        Get.toNamed(AppRoutes.profile);
+      }
+    } else if (index == 1) {
+      if (Get.currentRoute != AppRoutes.home && Get.currentRoute != AppRoutes.navbar) {
+        Get.toNamed(AppRoutes.home);
+      }
+    } else if (index == 0) {
+      if (Get.currentRoute != AppRoutes.upcoming) {
+        Get.toNamed(AppRoutes.upcoming);
+      }
+    }
   }
 
   void logout() async {

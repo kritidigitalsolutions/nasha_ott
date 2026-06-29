@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../app/routes/app_routes.dart';
 import '../../data/models/shorts_model.dart';
 import '../auth/signInPage.dart';
 import '../premium/goPremium.dart';
@@ -244,9 +245,9 @@ class _ShortVideoItemState extends State<ShortVideoItem> {
             borderRadius: BorderRadius.circular(25),
             onPressed: () {
               if (loggedIn) {
-                Get.to(() => const GoPremiumPage());
+                Get.toNamed(AppRoutes.goPremium);
               } else {
-                Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
+                Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute});
               }
             },
             child: Text(

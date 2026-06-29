@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../app/routes/app_routes.dart';
 import '../../utils/responsive.dart';
 import '../../view_model/primium_controller/premium_controller.dart';
 import '../../app/theme/app_colors.dart';
@@ -91,7 +92,7 @@ class GoPremiumPage extends StatelessWidget {
                                 onBuy: () {
                                   controller.selectPlan(index);
                                   if (!controller.isUserLoggedIn.value) {
-                                    Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
+                                    Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute});
                                   } else if (controller.hasActiveSubscription) {
                                     CustomSnackbar.show(title: "Info", message: "Already Purchased");
                                   } else {
@@ -178,7 +179,7 @@ class GoPremiumPage extends StatelessWidget {
             child: TextButton.icon(
               onPressed: () {
                 if (controller.isUserLoggedIn.value) {
-                  Get.to(() => RedeemVoucherPage());
+                  Get.toNamed(AppRoutes.redeemVoucher);
                 } else {
                   _showSignInPopup();
                 }
@@ -211,7 +212,7 @@ class GoPremiumPage extends StatelessWidget {
             height: 40,
             onPressed: () {
               Get.back();
-              Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
+              Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute});
             },
             child: const Text("Sign In", style: TextStyle(color: AppColors.buttonTextColor, fontWeight: FontWeight.bold)),
           ),

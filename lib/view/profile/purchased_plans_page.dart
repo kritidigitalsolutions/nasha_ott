@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../app/routes/app_routes.dart';
 import '../../utils/responsive.dart';
 import '../../widgets/golden_button.dart';
 import '../../app/theme/app_colors.dart';
@@ -56,7 +57,7 @@ class PurchasedPlansPage extends StatelessWidget {
               
               const SizedBox(height: 40),
               GoldenButton(
-                onPressed: () => Get.to(() => const GoPremiumPage()),
+                onPressed: () => Get.toNamed(AppRoutes.goPremium),
                 child: const Text(
                   "UPGRADE OR RENEW PLAN",
                   style: TextStyle(color: AppColors.buttonTextColor, fontWeight: FontWeight.bold),
@@ -176,7 +177,7 @@ class PurchasedPlansPage extends StatelessWidget {
             ),
             const SizedBox(height: 30),
             GoldenButton(
-              onPressed: () => Get.to(() => const GoPremiumPage()),
+              onPressed: () => Get.toNamed(AppRoutes.goPremium),
               child: const Text("VIEW PLANS", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ],

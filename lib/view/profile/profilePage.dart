@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../app/routes/app_routes.dart';
 import '../../utils/responsive.dart';
 import 'privacy_policy_page.dart';
 import 'setting_page.dart';
@@ -107,7 +108,7 @@ class ProfilePage extends StatelessWidget {
                                   GoldenButton(
                                     width: 100,
                                     height: 35,
-                                    onPressed: () => Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute}),
+                                    onPressed: () => Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute}),
                                     borderRadius: BorderRadius.circular(8),
                                     child: const FittedBox(child: Text("SIGN IN", style: TextStyle(color: AppColors.buttonTextColor, fontSize: 12, fontWeight: FontWeight.bold))),
                                   ),
@@ -177,9 +178,9 @@ class ProfilePage extends StatelessWidget {
                           return InkWell(
                             onTap: () {
                               if (hasActiveSub) {
-                                Get.to(() => const PurchasedPlansPage());
+                                Get.toNamed(AppRoutes.purchasedPlans);
                               } else {
-                                Get.to(() => const GoPremiumPage());
+                                Get.toNamed(AppRoutes.goPremium);
                               }
                             },
                             child: Padding(
@@ -226,14 +227,14 @@ class ProfilePage extends StatelessWidget {
 
                 const SizedBox(height: 10),
 
-                buildMenuItem(context, Icons.bookmark_border, "Watchlist", const WatchlistPage()),
-                if (!kIsWeb) buildMenuItem(context, Icons.download_for_offline_outlined, "Downloads", const DownloadsPage()),
-                buildMenuItem(context, Icons.settings_outlined, "Settings", const SettingsPage()),
-                buildMenuItem(context, Icons.rate_review, "Rate Our App", const ReviewPage()),
-                buildMenuItem(context, Icons.info_outline, "Terms & Conditions", const TermsAndConditionsPage()),
-                buildMenuItem(context, Icons.privacy_tip, "Privacy Policy", const PrivacyPolicyPage()),
-                buildMenuItem(context, Icons.currency_rupee, "Refund Policy", const RefundPolicyPage()),
-                // buildMenuItem(context, Icons.help_outline, "Help", const HelpSupportPage()),
+                buildMenuItem(context, Icons.bookmark_border, "Watchlist", AppRoutes.watchList),
+                if (!kIsWeb) buildMenuItem(context, Icons.download_for_offline_outlined, "Downloads", AppRoutes.downloads),
+                buildMenuItem(context, Icons.settings_outlined, "Settings", AppRoutes.setting),
+                buildMenuItem(context, Icons.rate_review, "Rate Our App", AppRoutes.rateApp),
+                buildMenuItem(context, Icons.info_outline, "Terms & Conditions", AppRoutes.termsAndConditions),
+                buildMenuItem(context, Icons.privacy_tip, "Privacy Policy", AppRoutes.privacyPolicy),
+                buildMenuItem(context, Icons.currency_rupee, "Refund Policy", AppRoutes.refundPolicy),
+                // buildMenuItem(context, Icons.help_outline, "Help", AppRoutes.helpSupport),
 
                 const SizedBox(height: 20),
                 Center(
@@ -243,7 +244,7 @@ class ProfilePage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(25),
                     onPressed: authController.isLoggedIn.value 
                         ? onLogout 
-                        : () => Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute}),
+                        : () => Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute}),
                     child: Text(
                         authController.isLoggedIn.value ? "SIGN OUT" : "SIGN IN", 
                         style: const TextStyle(color: AppColors.buttonTextColor, fontWeight: FontWeight.bold)),
@@ -260,9 +261,9 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget buildMenuItem(BuildContext context, IconData icon, String title, Widget page) {
+  Widget buildMenuItem(BuildContext context, IconData icon, String title, String route) {
     return InkWell(
-      onTap: () => Get.to(() => page),
+      onTap: () => Get.toNamed(route),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Row(

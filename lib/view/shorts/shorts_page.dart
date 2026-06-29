@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../app/routes/app_routes.dart';
 import '../../widgets/custom_network_image.dart';
 import 'package:video_player/video_player.dart';
 import '../../app/theme/app_colors.dart';
@@ -113,11 +114,11 @@ class _ShortDramaListItemState extends State<ShortDramaListItem> {
                    _episodes = await shortsController.fetchEpisodes(widget.drama.id);
                 }
                 if (_episodes != null && _episodes!.isNotEmpty) {
-                  Get.to(() => VerticalShortsPlayer(
-                    episodes: _episodes!,
-                    initialIndex: 0,
-                    dramaName: widget.drama.title,
-                  ));
+                  Get.toNamed(AppRoutes.shortsPlayer, arguments: {
+                    'episodes': _episodes!,
+                    'initialIndex': 0,
+                    'dramaName': widget.drama.title,
+                  });
                 }
               },
               child: Container(
@@ -205,7 +206,7 @@ class _ShortDramaListItemState extends State<ShortDramaListItem> {
                           /// View Episodes Button
                           GestureDetector(
                             onTap: () {
-                              Get.to(() => ShortsEpisodesGrid(drama: widget.drama));
+                              Get.toNamed(AppRoutes.shortsEpisodes, arguments: {'drama': widget.drama});
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),

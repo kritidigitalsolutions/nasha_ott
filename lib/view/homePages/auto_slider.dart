@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../app/routes/app_routes.dart';
 import '../../utils/app_images.dart';
 import '../../utils/responsive.dart';
 import '../../view_model/primium_controller/premium_controller.dart';
@@ -107,7 +108,10 @@ class _AutoSliderState extends State<AutoSlider> {
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: GestureDetector(
                     onTap: () {
-                      Get.to(() => DramaDetailsPage(isSignedIn: widget.isSignedIn, content: item));
+                      Get.toNamed(AppRoutes.dramaDetails, arguments: {
+                        'isSignedIn': widget.isSignedIn,
+                        'content': item,
+                      });
                     },
                     child: Container(
                       decoration: BoxDecoration(

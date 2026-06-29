@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../app/routes/app_routes.dart';
 import '../../app/theme/app_colors.dart';
 import '../../data/models/response_model/content_response_model/content_model.dart';
 import '../../widgets/golden_text.dart';
@@ -35,7 +36,7 @@ class _ComingSoonSectionState extends State<ComingSoonSection> {
 
   void _toggleReminder(ContentModel item) {
     if (!widget.isSignedIn) {
-      Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
+      Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute});
       return;
     }
 
@@ -137,7 +138,10 @@ class _ComingSoonSectionState extends State<ComingSoonSection> {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(15),
                     onTap: () {
-                      Get.to(() => DramaDetailsPage(isSignedIn: widget.isSignedIn, content: item));
+                      Get.toNamed(AppRoutes.dramaDetails, arguments: {
+                        'isSignedIn': widget.isSignedIn,
+                        'content': item,
+                      });
                     },
                     child: Stack(
                       children: [
@@ -194,7 +198,10 @@ class _ComingSoonSectionState extends State<ComingSoonSection> {
         children: [
           GestureDetector(
             onTap: () {
-              Get.to(() => DramaDetailsPage(isSignedIn: widget.isSignedIn, content: item));
+              Get.toNamed(AppRoutes.dramaDetails, arguments: {
+                'isSignedIn': widget.isSignedIn,
+                'content': item,
+              });
             },
             child: CustomNetworkImage(
               imageUrl: item.banner,

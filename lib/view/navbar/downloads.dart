@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../app/routes/app_routes.dart';
 import '../../app/theme/app_colors.dart';
 import '../../utils/responsive.dart';
 import '../../view_model/download_controller/download_controller.dart';
@@ -45,7 +46,7 @@ class DownloadsPage extends StatelessWidget {
           return _baseEmptyView(
             title: "Please sign in to view your downloads",
             buttonText: "Sign In",
-            onTap: () => Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute}),
+            onTap: () => Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute}),
           );
         }
 
@@ -80,10 +81,10 @@ class DownloadsPage extends StatelessWidget {
 
                 /// 🎬 OPEN DETAILS PAGE
                 onTap: () {
-                  Get.to(() => DramaDetailsPage(
-                    isSignedIn: authController.isLoggedIn.value,
-                    content: item,
-                  ));
+                  Get.toNamed(AppRoutes.dramaDetails, arguments: {
+                    'isSignedIn': authController.isLoggedIn.value,
+                    'content': item,
+                  });
                 },
 
                 /// 🎞 POSTER
@@ -126,10 +127,10 @@ class DownloadsPage extends StatelessWidget {
                       ),
                       onPressed: () {
                         if (localPath != null && File(localPath).existsSync()) {
-                          Get.to(() => AdvancedVideoPlayer(
-                            url: localPath,
-                            title: item.title,
-                          ));
+                          Get.toNamed(AppRoutes.videoPlayer, arguments: {
+                            'url': localPath,
+                            'title': item.title,
+                          });
                         } else {
                           CustomSnackbar.show(
                             title: "Error",

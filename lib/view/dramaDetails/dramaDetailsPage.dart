@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import '../../app/routes/app_routes.dart';
 import '../../utils/app_images.dart';
 import '../../utils/responsive.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
@@ -273,7 +274,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
         ),
         onPressed: () {
           if (!userLoggedIn) {
-            Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
+            Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute});
           } else if (isAlreadyDownloaded) {
             CustomSnackbar.show(title: "Info", message: "Already downloaded");
           } else {
@@ -321,15 +322,15 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
 
   void _handlePlay(dynamic item, bool isPurchased, bool userLoggedIn) {
     if (!userLoggedIn) {
-      Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
+      Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute});
     } else if (isPurchased || !item.isPremium) {
       if (item.videoUrl != null && item.videoUrl!.isNotEmpty) {
-        Get.to(() => AdvancedVideoPlayer(url: item.videoUrl!, title: item.title));
+        Get.toNamed(AppRoutes.videoPlayer, arguments: {'url': item.videoUrl!, 'title': item.title});
       } else {
         CustomSnackbar.show(title: "Error", message: "Video URL not found", isError: true);
       }
     } else {
-      Get.to(() => const GoPremiumPage());
+      Get.toNamed(AppRoutes.goPremium);
     }
   }
 
@@ -340,12 +341,12 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
       borderRadius: BorderRadius.circular(25),
       onPressed: () async {
         if (!authController.isLoggedIn.value) {
-          Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
+          Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute});
           return;
         }
         final bool? isOver18 = await Get.dialog<bool>(const AgeRestrictionPopup());
         if (isOver18 == true) {
-          Get.to(() => AdvancedVideoPlayer(url: widget.content.trailerUrl!, title: '${widget.content.title} - Trailer'));
+          Get.toNamed(AppRoutes.videoPlayer, arguments: {'url': widget.content.trailerUrl!, 'title': '${widget.content.title} - Trailer'});
         }
       },
       child: Row(
@@ -371,7 +372,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
             label: "Watchlist",
             onTap: () {
               if (!userLoggedIn) {
-                Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
+                Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute});
               } else {
                 watchlistController.toggleWatchlist(contentId);
               }
@@ -383,7 +384,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
             label: "Like",
             onTap: () {
               if (!userLoggedIn) {
-                Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
+                Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute});
               } else {
                 interactionController.toggleLike(contentId: contentId, contentType: widget.content.contentType);
               }
@@ -395,7 +396,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
             label: "Share",
             onTap: () {
               if (!userLoggedIn) {
-                Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
+                Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute});
               } else {
                 ShareService.shareContent(title: widget.content.title, imageUrl: widget.content.poster);
               }
@@ -624,7 +625,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
             itemBuilder: (context, index) {
               final actor = widget.content.cast![index];
               return GestureDetector(
-                onTap: () => Get.to(() => CastDetailsPage(castName: actor.name, castImage: actor.image)),
+                onTap: () => Get.toNamed(AppRoutes.castDetails, arguments: {'castName': actor.name, 'castImage': actor.image}),
                 child: Padding(
                   padding: const EdgeInsets.only(right: 35),
                   child: Column(
@@ -664,7 +665,10 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
             itemBuilder: (context, index) {
               final item = related[index];
               return GestureDetector(
-                onTap: () => Get.to(() => DramaDetailsPage(isSignedIn: authController.isLoggedIn.value, content: item), preventDuplicates: false),
+                onTap: () => Get.toNamed(AppRoutes.dramaDetails, arguments: {
+                  'isSignedIn': authController.isLoggedIn.value,
+                  'content': item,
+                }, preventDuplicates: false),
                 child: Container(
                   width: isDesktop ? 200 : 135,
                   margin: const EdgeInsets.only(right: 20),
@@ -691,7 +695,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
 
   void _downloadEpisode(ContentModel episode) {
      if (!authController.isLoggedIn.value) {
-      Get.to(() => const SignInPage(), arguments: {"returnRoute": Get.currentRoute});
+      Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute});
       return;
     }
     downloadController.downloadVideo(episode);
@@ -727,7 +731,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
                 children: [
                   Expanded(child: TextButton(onPressed: () => Get.back(), child: const Text("CANCEL", style: TextStyle(color: Colors.white54)))),
                   const SizedBox(width: 15),
-                  Expanded(child: GoldenButton(onPressed: () { Get.back(); Get.to(() => const GoPremiumPage()); }, child: const FittedBox(child: Text("EXPLORE PLANS", style: TextStyle(color: AppColors.buttonTextColor, fontWeight: FontWeight.bold))))),
+                  Expanded(child: GoldenButton(onPressed: () { Get.back(); Get.toNamed(AppRoutes.goPremium); }, child: const FittedBox(child: Text("EXPLORE PLANS", style: TextStyle(color: AppColors.buttonTextColor, fontWeight: FontWeight.bold))))),
                 ],
               ),
             ],

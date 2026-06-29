@@ -24,10 +24,8 @@ class AuthRepository {
   Future<VerifyOtpResponse?> verifyOtp(String phoneNumber, String otp) async {
     try {
       final response = await apiProvider.postApi(AppConstants.verifyOtp, {
-        'identifier': phoneNumber,
-        'phone': phoneNumber,   // 🔥 ADD THIS
+        'phone': phoneNumber,
         'otp': otp,
-        'type': 'phone',
       });
       return VerifyOtpResponse.fromJson(response);
     } catch (e) {

@@ -10,9 +10,9 @@ import '../../view_model/profile/create_profile_controller.dart';
 import '../../utils/custom_snackbar.dart';
 
 class CreateProfilePage extends StatefulWidget {
-  final String phone;
+  final String? phone;
 
-  const CreateProfilePage({super.key, required this.phone});
+  const CreateProfilePage({super.key, this.phone});
 
   @override
   State<CreateProfilePage> createState() => _CreateProfilePageState();
@@ -22,6 +22,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
   late final TextEditingController nameController;
   late final AuthController authController;
   late final CreateProfileController createProfileController;
+  late final String displayPhone;
 
   @override
   void initState() {
@@ -29,6 +30,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
     nameController = TextEditingController();
     authController = Get.find<AuthController>();
     createProfileController = Get.put(CreateProfileController());
+    displayPhone = widget.phone ?? Get.arguments?['phone'] ?? '';
   }
 
   @override
@@ -85,7 +87,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
 
                   /// Show Email or Phone
                   Text(
-                    widget.phone,
+                    displayPhone,
                     style: const TextStyle(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.w500),
                   ),
 
@@ -120,12 +122,12 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                                     return;
                                   }
 
-                                  bool isEmail = widget.phone.contains('@');
+                                  bool isEmail = displayPhone.contains('@');
 
                                   bool success = await authController.updateAndSaveProfile(
                                     name: nameController.text.trim(),
-                                    email: isEmail ? widget.phone : "",
-                                    phone: isEmail ? "" : widget.phone,
+                                    email: isEmail ? displayPhone : "",
+                                    phone: isEmail ? "" : displayPhone,
                                     imagePath: createProfileController.selectedImage.value?.path,
                                   );
 

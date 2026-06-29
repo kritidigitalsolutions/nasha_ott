@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../app/routes/app_routes.dart';
 import '../../utils/responsive.dart';
 import '../../widgets/golden_text.dart';
 import 'help_page.dart';
@@ -48,7 +49,7 @@ class SettingsPage extends StatelessWidget {
           const SizedBox(height: 20),
           _buildSectionHeader("Account"),
           _buildActionTile("Language", "English", () {}),
-          _buildActionTile("Help & Support", "", () => Get.to(() => const HelpSupportPage())),
+          _buildActionTile("Help & Support", "", () => Get.toNamed(AppRoutes.helpSupport)),
           _buildActionTile("App Version", "1.0.0", null),
         ],
       ),

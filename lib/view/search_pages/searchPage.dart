@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../app/routes/app_routes.dart';
 import '../../utils/responsive.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
 import '../../view_model/content_controller/content_controller.dart';
@@ -67,7 +68,7 @@ class SearchPage extends StatelessWidget {
                               IconButton(
                                 icon: const Icon(Icons.mic, color: Colors.white),
                                 onPressed: () async {
-                                  final result = await Get.to(() => const VoiceListeningPage());
+                                  final result = await Get.toNamed(AppRoutes.searchWithMic);
                                   if (result != null && result is String) {
                                     controller.searchController.text = result;
                                     controller.updateSearchQuery(result);
@@ -125,10 +126,10 @@ class SearchPage extends StatelessWidget {
         final item = controller.searchResults[index];
         return ListTile(
           onTap: () {
-            Get.to(() => DramaDetailsPage(
-                  isSignedIn: authController.isLoggedIn.value,
-                  content: item,
-                ));
+            Get.toNamed(AppRoutes.dramaDetails, arguments: {
+              'isSignedIn': authController.isLoggedIn.value,
+              'content': item,
+            });
           },
           leading: CustomNetworkImage(
             imageUrl: item.poster,
@@ -196,10 +197,10 @@ class SearchPage extends StatelessWidget {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(12),
                     onTap: () {
-                      Get.to(() => DramaDetailsPage(
-                            isSignedIn: authController.isLoggedIn.value,
-                            content: item,
-                          ));
+                      Get.toNamed(AppRoutes.dramaDetails, arguments: {
+                        'isSignedIn': authController.isLoggedIn.value,
+                        'content': item,
+                      });
                     },
                     child: CustomNetworkImage(
                       imageUrl: item.poster,

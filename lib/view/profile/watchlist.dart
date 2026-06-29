@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../app/routes/app_routes.dart';
 import '../../utils/responsive.dart';
 import '../../widgets/custom_network_image.dart';
 import '../../widgets/golden_button.dart';
@@ -78,10 +79,10 @@ class WatchlistPage extends StatelessWidget {
               child: ListTile(
                 onTap: () {
                   if (contentItem != null) {
-                    Get.to(() => DramaDetailsPage(
-                          isSignedIn: authController.isLoggedIn.value,
-                          content: contentItem!,
-                        ));
+                    Get.toNamed(AppRoutes.dramaDetails, arguments: {
+                      'isSignedIn': authController.isLoggedIn.value,
+                      'content': contentItem!,
+                    });
                   }
                 },
                 leading: poster.isNotEmpty
@@ -149,7 +150,7 @@ class WatchlistPage extends StatelessWidget {
               onPressed: () {
                 final homeController = Get.find<HomeController>();
                 homeController.selectedIndex.value = 1;
-                Get.offAll(() => const MainHomePage());
+                Get.offAllNamed(AppRoutes.home);
               },
               child: const Text(
                 "Start Adding",

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../app/routes/app_routes.dart';
 import '../utils/app_images.dart';
 import '../utils/responsive.dart';
 import '../data/models/response_model/content_response_model/content_model.dart';
@@ -34,11 +35,11 @@ class HomeSliderSection extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: InkWell(
             onTap: () {
-              Get.to(() => CategoryGridPage(
-                    title: title,
-                    content: content,
-                    isSignedIn: isSignedIn,
-                  ));
+              Get.toNamed(AppRoutes.categoryGrid, arguments: {
+                'title': title,
+                'content': content,
+                'isSignedIn': isSignedIn,
+              });
             },
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -106,10 +107,10 @@ class _HoverCardState extends State<_HoverCard> {
         child: InkWell(
           borderRadius: BorderRadius.circular(15),
           onTap: () {
-            Get.to(() => DramaDetailsPage(
-                  isSignedIn: widget.isSignedIn,
-                  content: widget.item,
-                ));
+            Get.toNamed(AppRoutes.dramaDetails, arguments: {
+              'isSignedIn': widget.isSignedIn,
+              'content': widget.item,
+            });
           },
           child: Container(
             decoration: BoxDecoration(

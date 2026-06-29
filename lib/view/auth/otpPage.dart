@@ -12,9 +12,9 @@ import '../../app/routes/app_routes.dart';
 import '../../utils/custom_snackbar.dart';
 
 class OtpPage extends StatefulWidget {
-  final String phoneNumber;
+  final String? phoneNumber;
 
-  const OtpPage({super.key, required this.phoneNumber});
+  const OtpPage({super.key, this.phoneNumber});
 
   @override
   State<OtpPage> createState() => _OtpPageState();
@@ -23,6 +23,7 @@ class OtpPage extends StatefulWidget {
 class _OtpPageState extends State<OtpPage> {
   late final AuthController authController;
   late final OtpController otpController;
+  late final String displayPhone;
   
   final List<TextEditingController> controllers = List.generate(6, (index) => TextEditingController());
   final List<FocusNode> focusNodes = List.generate(6, (index) => FocusNode());
@@ -32,6 +33,19 @@ class _OtpPageState extends State<OtpPage> {
     super.initState();
     authController = Get.find<AuthController>();
     otpController = Get.put(OtpController());
+    
+    // ✅ Robustly get phone number from widget or arguments
+    if (widget.phoneNumber != null && widget.phoneNumber!.isNotEmpty) {
+      displayPhone = widget.phoneNumber!;
+    } else if (Get.arguments is Map && Get.arguments['phoneNumber'] != null) {
+      displayPhone = Get.arguments['phoneNumber'];
+    } else if (Get.arguments is String) {
+      displayPhone = Get.arguments;
+    } else {
+      displayPhone = '';
+    }
+
+    debugPrint("📱 OTP Page initialized for: $displayPhone");
   }
 
   @override
@@ -53,7 +67,7 @@ class _OtpPageState extends State<OtpPage> {
       return;
     }
 
-    final response = await authController.verifyOtp(widget.phoneNumber, otp);
+    final response = await authController.verifyOtp(displayPhone, otp);
 
     if (response != null && response.success) {
       authController.setLoginStatus(true);
@@ -67,10 +81,10 @@ class _OtpPageState extends State<OtpPage> {
       Future.delayed(const Duration(milliseconds: 100), () {
         if (!mounted) return;
         
-        bool isEmail = widget.phoneNumber.contains('@');
+        bool isEmail = displayPhone.contains('@');
         
         if (!isEmail && isNew) {
-          Get.offAll(() => CreateProfilePage(phone: widget.phoneNumber), arguments: Get.arguments);
+          Get.offAllNamed(AppRoutes.createProfile, arguments: {'phone': displayPhone, ...?Get.arguments});
         } else {
           if (returnRoute != null && returnRoute.isNotEmpty) {
             Get.offAllNamed(returnRoute);
@@ -125,7 +139,7 @@ class _OtpPageState extends State<OtpPage> {
                     ),
                   ),
                   GoldenText(
-                    widget.phoneNumber,
+                    displayPhone,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 14,
@@ -173,7 +187,9 @@ class _OtpPageState extends State<OtpPage> {
                             }
                             if (value.length == 1 && index == 5) {
                                FocusManager.instance.primaryFocus?.unfocus();
-                               verifyOtp();
+                               if (!authController.isLoading.value) {
+                                 verifyOtp();
+                               }
                             }
                           },
                         ),
@@ -202,7 +218,7 @@ class _OtpPageState extends State<OtpPage> {
                       onPressed: (otpController.isResendButtonDisabled.value || authController.isLoading.value)
                           ? null
                           : () async {
-                              bool success = await authController.sendOtp(widget.phoneNumber);
+                              bool success = await authController.sendOtp(displayPhone);
                               if (success) {
                                 otpController.startTimer();
                               }

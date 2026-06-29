@@ -254,7 +254,7 @@ class _SignInPageState extends State<SignInPage> {
                   await Future.delayed(const Duration(milliseconds: 250));
                   bool success = await authController.sendOtp(email);
                   if (success) {
-                    Get.to(() => OtpPage(phoneNumber: email), arguments: Get.arguments);
+                    Get.toNamed(AppRoutes.otpPage, arguments: {'phoneNumber': email, ...?Get.arguments});
                   }
                 } else {
                   Get.snackbar("Error", "Please enter a valid email", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white);
@@ -292,7 +292,7 @@ class _SignInPageState extends State<SignInPage> {
                   if (_formKey.currentState!.validate()) {
                     String valueToSend = "+91${phoneController.text.trim()}";
                     bool success = await authController.sendOtp(valueToSend);
-                    if (success) Get.to(() => OtpPage(phoneNumber: valueToSend), arguments: Get.arguments);
+                    if (success) Get.toNamed(AppRoutes.otpPage, arguments: {'phoneNumber': valueToSend, ...?Get.arguments});
                   }
                 }
               : null,

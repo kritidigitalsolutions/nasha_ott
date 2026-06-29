@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../app/routes/app_routes.dart';
 import '../../app/theme/app_colors.dart';
 import '../../utils/app_images.dart';
 import '../../utils/responsive.dart';
@@ -38,6 +39,17 @@ class MainHomePage extends StatelessWidget {
     final HomeController controller = Get.put(HomeController());
     final AuthController authController = Get.find<AuthController>();
     final notificationService = NotificationService.to;
+
+    // Update selectedIndex based on route for Web Deep Linking
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (Get.currentRoute == AppRoutes.profile) {
+        controller.selectedIndex.value = 2;
+      } else if (Get.currentRoute == AppRoutes.home || Get.currentRoute == AppRoutes.navbar) {
+        controller.selectedIndex.value = 1;
+      } else if (Get.currentRoute == AppRoutes.upcoming) {
+        controller.selectedIndex.value = 0;
+      }
+    });
 
     return PopScope(
       canPop: kIsWeb,
@@ -175,13 +187,13 @@ class MainHomePage extends StatelessWidget {
           _navItem("Profile", 2, controller),
           const Spacer(),
           IconButton(
-            onPressed: () => Get.to(() => const SearchPage()),
+            onPressed: () => Get.toNamed(AppRoutes.search),
             icon: const Icon(Icons.search, color: Colors.white, size: 28),
           ),
           _buildNotificationIcon(notificationService),
           const SizedBox(width: 20),
           GoldenButton(
-            onPressed: () => Get.to(() => const GoPremiumPage()),
+            onPressed: () => Get.toNamed(AppRoutes.goPremium),
             width: 140,
             height: 45,
             borderRadius: BorderRadius.circular(25),
@@ -225,7 +237,7 @@ class MainHomePage extends StatelessWidget {
       return Stack(
         children: [
           IconButton(
-            onPressed: () => Get.to(() => const NotificationPage()),
+            onPressed: () => Get.toNamed(AppRoutes.notification),
             icon: const Icon(Icons.notifications_outlined, color: Colors.white, size: 28),
           ),
           if (unreadCount > 0)
@@ -258,13 +270,13 @@ class MainHomePage extends StatelessWidget {
           Row(
             children: [
               IconButton(
-                onPressed: () => Get.to(() => const SearchPage()),
+                onPressed: () => Get.toNamed(AppRoutes.search),
                 icon: const Icon(Icons.search, color: Colors.white, size: 28),
               ),
               _buildNotificationIcon(notificationService),
               const SizedBox(width: 4),
               GoldenButton(
-                onPressed: () => Get.to(() => const GoPremiumPage()),
+                onPressed: () => Get.toNamed(AppRoutes.goPremium),
                 width: 100,
                 height: 28,
                 borderRadius: BorderRadius.circular(20),
@@ -444,10 +456,10 @@ class MainHomePage extends StatelessWidget {
             spacing: 30,
             runSpacing: 20,
             children: [
-              _footerLink("Privacy Policy", const PrivacyPolicyPage()),
-              _footerLink("Terms & Conditions", const TermsAndConditionsPage()),
-              _footerLink("Refund Policy", const RefundPolicyPage()),
-              _footerLink("Help & Support", const HelpSupportPage()),
+              _footerLink("Privacy Policy", AppRoutes.privacyPolicy),
+              _footerLink("Terms & Conditions", AppRoutes.termsAndConditions),
+              _footerLink("Refund Policy", AppRoutes.refundPolicy),
+              _footerLink("Help & Support", AppRoutes.helpSupport),
             ],
           ),
           const SizedBox(height: 50),
@@ -480,9 +492,9 @@ class MainHomePage extends StatelessWidget {
     );
   }
 
-  Widget _footerLink(String title, Widget page) {
+  Widget _footerLink(String title, String route) {
     return InkWell(
-      onTap: () => Get.to(() => page),
+      onTap: () => Get.toNamed(route),
       child: GoldenText(
         title,
         style: const TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.w600),
@@ -519,7 +531,10 @@ class _WebSeriesHoverCardState extends State<_WebSeriesHoverCard> {
           : Matrix4.identity(),
         child: GestureDetector(
           onTap: () {
-            Get.to(() => DramaDetailsPage(isSignedIn: widget.isSignedIn, content: widget.item));
+            Get.toNamed(AppRoutes.dramaDetails, arguments: {
+              'content': widget.item,
+              'isSignedIn': widget.isSignedIn,
+            });
           },
           child: Container(
             decoration: BoxDecoration(
