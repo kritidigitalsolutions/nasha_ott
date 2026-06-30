@@ -487,6 +487,21 @@ class MainHomePage extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: 30),
+          const Column(
+            children: [
+              // Text(
+              //   "Address:",
+              //   style: TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.bold),
+              // ),
+              // SizedBox(height: 8),
+              Text(
+                "LOKHANDWALA ROAD, REL S/S, NEAR HDFC BANK OPP SHASTRI NAGAR,\nAndheri West, Mumbai, Maharashtra - 400053",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white70, fontSize: 14, height: 1.4),
+              ),
+            ],
+          ),
         ],
       ),
     );
