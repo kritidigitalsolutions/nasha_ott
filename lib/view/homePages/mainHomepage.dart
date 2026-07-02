@@ -496,7 +496,7 @@ class MainHomePage extends StatelessWidget {
               // ),
               // SizedBox(height: 8),
               Text(
-                "LOKHANDWALA ROAD, REL S/S, NEAR HDFC BANK OPP SHASTRI NAGAR,\nAndheri West, Mumbai, Maharashtra - 400053",
+                "PLOT B-D-82 RSC 25, B-23, MANGAL CO-OP HSC, VARSOVA,\nANDHERI WEST, Mumbai, Mumbai Suburban, Maharashtra - 400058",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.white70, fontSize: 14, height: 1.4),
               ),
