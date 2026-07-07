@@ -26,9 +26,9 @@ class CustomBottomNavbar extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.only(
-        left: width * 0.15,
-        right: width * 0.15,
-        bottom: height * 0.025,
+        left: width * 0.05,
+        right: width * 0.05,
+        bottom: MediaQuery.of(context).viewPadding.bottom > 0 ? 10 : height * 0.025,
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(width * 0.07),

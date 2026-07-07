@@ -24,16 +24,23 @@ class VideoController extends GetxController {
   Future<void> initializeVideo(String url) async {
     isInitialized.value = false;
 
-    videoPlayerController =
-        VideoPlayerController.networkUrl(Uri.parse(url));
+    videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(url));
 
     await videoPlayerController!.initialize();
 
     isInitialized.value = true;
-    totalDuration.value =
-        videoPlayerController!.value.duration;
+    totalDuration.value = videoPlayerController!.value.duration;
 
     videoPlayerController!.play();
+
+    /// 🔥 Enable Auto-Rotation when playing
+    if (!kIsWeb) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+        DeviceOrientation.portraitUp,
+      ]);
+    }
 
     /// 🔥 LISTENER (REAL-TIME UPDATE)
     videoPlayerController!.addListener(() {

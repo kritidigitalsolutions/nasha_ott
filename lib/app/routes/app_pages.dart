@@ -4,6 +4,7 @@ import '../../view/auth/signInPage.dart';
 import '../../view/homePages/mainHomepage.dart';
 import '../../view/profile/create_ticket_page.dart';
 import '../../view/profile/ticket_chat_page.dart';
+import '../../view/profile/delete_account_page.dart';
 import '../../view/splash/splashScreen.dart';
 import '../../view/profile/privacy_policy_page.dart';
 import '../../view/profile/terms_condition_page.dart';
@@ -200,6 +201,11 @@ class AppPages {
         isSignedIn: Get.arguments?['isSignedIn'] ?? false,
       ),
       title: 'Category | Nazar OTT',
+    ),
+    GetPage(
+      name: AppRoutes.deleteAccount,
+      page: () => const DeleteAccountPage(),
+      title: 'Delete Account | Nazar OTT',
     ),
   ];
 }

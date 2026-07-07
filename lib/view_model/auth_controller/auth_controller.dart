@@ -138,7 +138,7 @@ class AuthController extends GetxController {
     isGoogleLoading.value = true;
     try {
       final GoogleSignIn googleSignIn = GoogleSignIn(
-        serverClientId: '399081225701-gir0j3n161vkhk0dlrlkf9qccgv7e0gj.apps.googleusercontent.com',
+        serverClientId: '717480494085-f4m3ttcfcb3eflf79gkncjf9je0rirf7.apps.googleusercontent.com',
       );
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
       

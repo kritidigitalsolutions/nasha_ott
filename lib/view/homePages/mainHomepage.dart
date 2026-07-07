@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../../app/routes/app_routes.dart';
 import '../../app/theme/app_colors.dart';
@@ -52,13 +53,14 @@ class MainHomePage extends StatelessWidget {
     });
 
     return PopScope(
-      canPop: kIsWeb,
+      canPop: false,
       onPopInvoked: (didPop) {
         if (didPop) return;
+        
         if (controller.selectedIndex.value != 1) {
           controller.selectedIndex.value = 1;
         } else {
-          Navigator.of(context).pop();
+          _showExitDialog(context);
         }
       },
       child: Scaffold(
@@ -513,6 +515,29 @@ class MainHomePage extends StatelessWidget {
       child: GoldenText(
         title,
         style: const TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.w600),
+      ),
+    );
+  }
+
+  void _showExitDialog(BuildContext context) {
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: Colors.grey[900],
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        title: const GoldenText("Exit App", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        content: const Text("Do you want to exit the app?", style: TextStyle(color: Colors.white70)),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text("No", style: TextStyle(color: Colors.white)),
+          ),
+          GoldenButton(
+            width: 80,
+            height: 35,
+            onPressed: () => SystemNavigator.pop(),
+            child: const Text("Yes", style: TextStyle(color: AppColors.buttonTextColor)),
+          ),
+        ],
       ),
     );
   }

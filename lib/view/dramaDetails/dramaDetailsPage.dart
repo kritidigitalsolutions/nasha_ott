@@ -265,6 +265,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
       final bool userLoggedIn = authController.isLoggedIn.value;
       final bool isAlreadyDownloaded = downloadController.isDownloaded(widget.content.id);
       final bool downloading = downloadController.isDownloading[widget.content.id] ?? false;
+      final double progress = downloadController.downloadProgress[widget.content.id] ?? 0;
 
       return OutlinedButton.icon(
         style: OutlinedButton.styleFrom(
@@ -282,10 +283,20 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
           }
         },
         icon: downloading 
-          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+          ? SizedBox(
+              width: 20, 
+              height: 20, 
+              child: CircularProgressIndicator(
+                strokeWidth: 2, 
+                color: Colors.white,
+                value: progress > 0 ? progress : null,
+              ),
+            )
           : Icon(isAlreadyDownloaded ? Icons.check_circle : Icons.download_for_offline, color: Colors.white),
         label: Text(
-          downloading ? "DOWNLOADING..." : (isAlreadyDownloaded ? "DOWNLOADED" : "DOWNLOAD"),
+          downloading 
+            ? "${(progress * 100).toInt()}%" 
+            : (isAlreadyDownloaded ? "DOWNLOADED" : "DOWNLOAD"),
           style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
         ),
       );
@@ -579,32 +590,62 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
             ),
 
             /// DOWNLOAD BUTTON (More integrated & attractive)
-            Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () => _downloadEpisode(ep),
-                borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.white10),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.download_for_offline_outlined,
-                        color: AppColors.primary,
-                        size: 30,
-                      ),
-                      const SizedBox(height: 2),
-                      const GoldenText("SAVE", style: TextStyle(color: AppColors.primary, fontSize: 8, fontWeight: FontWeight.bold)),
-                    ],
+            Obx(() {
+              final bool downloading = downloadController.isDownloading[ep.id] ?? false;
+              final double progress = downloadController.downloadProgress[ep.id] ?? 0;
+              final bool isAlreadyDownloaded = downloadController.isDownloaded(ep.id);
+
+              return Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () => _downloadEpisode(ep),
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.white10),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (downloading)
+                          SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                CircularProgressIndicator(
+                                  value: progress > 0 ? progress : null,
+                                  strokeWidth: 2,
+                                  color: AppColors.primary,
+                                ),
+                                if (progress > 0)
+                                  Text(
+                                    "${(progress * 100).toInt()}%",
+                                    style: const TextStyle(color: Colors.white, fontSize: 6, fontWeight: FontWeight.bold),
+                                  ),
+                              ],
+                            ),
+                          )
+                        else
+                          Icon(
+                            isAlreadyDownloaded ? Icons.check_circle : Icons.download_for_offline_outlined,
+                            color: isAlreadyDownloaded ? Colors.green : AppColors.primary,
+                            size: 30,
+                          ),
+                        const SizedBox(height: 2),
+                        GoldenText(
+                          downloading ? "WAIT" : (isAlreadyDownloaded ? "SAVED" : "SAVE"),
+                          style: const TextStyle(color: AppColors.primary, fontSize: 8, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ),
+              );
+            }),
           ],
         ),
       ),

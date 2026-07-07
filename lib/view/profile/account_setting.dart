@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../app/routes/app_routes.dart';
 import '../../utils/responsive.dart';
 import '../../app/theme/app_colors.dart';
 import '../../widgets/golden_text.dart';
@@ -80,6 +81,33 @@ class AccountSettingsPage extends StatelessWidget {
                 ),
               );
             }),
+
+            const SizedBox(height: 30),
+
+            /// DELETE ACCOUNT ACTION
+            InkWell(
+              onTap: () => Get.toNamed(AppRoutes.deleteAccount),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.red.withOpacity(0.3)),
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.delete_forever_outlined, color: Colors.redAccent, size: 22),
+                    SizedBox(width: 8),
+                    Text(
+                      "Delete My Account",
+                      style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),

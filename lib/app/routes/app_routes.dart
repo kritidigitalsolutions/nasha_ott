@@ -37,4 +37,5 @@ abstract class AppRoutes {
   static const shortsPlayer = '/shortsPlayer';
   static const shortsEpisodes = '/shortsEpisodes';
   static const categoryGrid = '/categoryGrid';
+  static const deleteAccount = '/deleteAccount';
 }

@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.nazar_ott.app"
+    namespace = "com.company.nazarott"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -22,7 +22,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.nazar_ott.app"
+        applicationId = "com.company.nazarott"
         minSdk = flutter.minSdkVersion // Required for desugaring and Firebase
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
