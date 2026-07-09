@@ -75,7 +75,7 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
                         child: _buildActionCard(
                           icon: Icons.phone_in_talk_outlined,
                           label: "Call Customer Care",
-                          onTap: () => _makePhoneCall("+91 1234567890"),
+                          onTap: () => _makePhoneCall("+919967016566"),
                           color: Colors.green,
                         ),
                       ),
@@ -106,7 +106,7 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
                         ),
                         const SizedBox(height: 8),
                         const Text(
-                          "Call - +91 1234567890",
+                          "Call - +91 99670 16566",
                           style: TextStyle(color: Colors.green, fontSize: 14, fontWeight: FontWeight.w600),
                         ),
                         const Text(
