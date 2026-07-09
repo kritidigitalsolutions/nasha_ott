@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import '../../utils/app_images.dart';
 import '../../utils/responsive.dart';
 import '../../widgets/custom_network_image.dart';
 import '../../widgets/golden_button.dart';
 import '../../widgets/golden_text.dart';
+import '../../widgets/google_web_sign_in_button.dart';
 import '../../app/routes/app_routes.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
@@ -153,10 +155,22 @@ class _SignInPageState extends State<SignInPage> {
                           const SizedBox(height: 25),
 
                           /// LOGIN WITH GOOGLE
-                          SizedBox(
-                            width: double.infinity,
-                            height: 55,
-                            child: Obx(() => GoldenButton(
+                          if (kIsWeb)
+                            GoogleWebSignInButton(
+                              googleSignIn: authController.googleSignIn,
+                              onSignedIn: (googleUser) async {
+                                final response = await authController
+                                    .signInWithGoogle(googleUser);
+                                if (response != null) {
+                                  _handleLoginSuccess();
+                                }
+                              },
+                            )
+                          else
+                            SizedBox(
+                              width: double.infinity,
+                              height: 55,
+                              child: Obx(() => GoldenButton(
                                   onPressed: authController.isGoogleLoading.value
                                       ? null
                                       : () async {
@@ -197,8 +211,8 @@ class _SignInPageState extends State<SignInPage> {
                                             ),
                                           ],
                                         ),
-                                )),
-                          ),
+                                  )),
+                            ),
                         ],
                       ),
                       const SizedBox(height: 40),

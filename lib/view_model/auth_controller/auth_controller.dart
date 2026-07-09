@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -11,6 +11,13 @@ import '../../utils/notification_service.dart';
 import '../../utils/custom_snackbar.dart';
 
 class AuthController extends GetxController {
+  static const String _googleWebClientId =
+      '717480494085-f4m3ttcfcb3eflf79gkncjf9je0rirf7.apps.googleusercontent.com';
+
+  late final GoogleSignIn googleSignIn = kIsWeb
+      ? GoogleSignIn(clientId: _googleWebClientId)
+      : GoogleSignIn(serverClientId: _googleWebClientId);
+
   // ✅ FIX: Use late and initialize in onInit to ensure we get the global instance
   late AuthRepository repository;
 
@@ -23,11 +30,11 @@ class AuthController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    
+
     // ✅ Always use the global instance registered in main.dart
     final globalApiService = Get.find<BaseApiService>();
     repository = AuthRepository(globalApiService);
-    
+
     isLoggedIn.value = AppSession.getLogin();
     var saved = storage.read('user_data');
     if (saved != null) {
@@ -65,7 +72,7 @@ class AuthController extends GetxController {
   void setLoginStatus(bool status) async {
     isLoggedIn.value = status;
     await AppSession.setLogin(status);
-    
+
     if (status) {
       // ✅ Fetch all notifications from API when user logs in
       _syncNotificationsAfterLogin();
@@ -88,11 +95,7 @@ class AuthController extends GetxController {
       print(response);
       return true;
     } catch (e) {
-      CustomSnackbar.show(
-        title: 'Error',
-        message: e.toString(),
-        isError: true,
-      );
+      CustomSnackbar.show(title: 'Error', message: e.toString(), isError: true);
       return false;
     } finally {
       isLoading.value = false;
@@ -108,7 +111,7 @@ class AuthController extends GetxController {
           await AppSession.setToken(response.token!);
           _updateGlobalToken(response.token!); // ✅ Sync token to global service
         }
-        
+
         if (response.user != null) {
           userData.value = response.user;
           await storage.write('user_data', response.user);
@@ -118,36 +121,35 @@ class AuthController extends GetxController {
         if (!response.isNewUser) {
           setLoginStatus(true);
         }
-        
+
         return response;
       }
       return null;
     } catch (e) {
-      CustomSnackbar.show(
-        title: 'Error',
-        message: e.toString(),
-        isError: true,
-      );
+      CustomSnackbar.show(title: 'Error', message: e.toString(), isError: true);
       return null;
     } finally {
       isLoading.value = false;
     }
   }
 
-  Future<VerifyOtpResponse?> signInWithGoogle() async {
+  Future<VerifyOtpResponse?> signInWithGoogle([
+    GoogleSignInAccount? authenticatedUser,
+  ]) async {
     isGoogleLoading.value = true;
     try {
-      final GoogleSignIn googleSignIn = GoogleSignIn(
-        serverClientId: '717480494085-f4m3ttcfcb3eflf79gkncjf9je0rirf7.apps.googleusercontent.com',
-      );
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-      
+      // The web GIS button supplies an authenticated account containing an ID
+      // token. Calling signIn() directly on web only returns an access token.
+      final GoogleSignInAccount? googleUser =
+          authenticatedUser ?? await googleSignIn.signIn();
+
       if (googleUser == null) {
         isGoogleLoading.value = false;
         return null;
       }
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
       final String? idToken = googleAuth.idToken;
 
       if (idToken == null) {
@@ -167,7 +169,7 @@ class AuthController extends GetxController {
         } else {
           print("⚠️ Google Login Success but NO TOKEN returned");
         }
-        
+
         if (response.user != null) {
           userData.value = response.user;
           await storage.write('user_data', response.user);
@@ -175,16 +177,24 @@ class AuthController extends GetxController {
 
         // ✅ Direct login for Google users (even if new)
         setLoginStatus(true);
-        
+
         return response;
       } else {
         print("❌ Google Login Failed: ${response?.message}");
       }
       return null;
     } catch (e) {
+      final String errorMessage = e.toString();
+      final bool isPeopleApiDisabled =
+          errorMessage.contains('people.googleapis.com') ||
+          errorMessage.contains('People API has not been used');
+
       CustomSnackbar.show(
         title: 'Error',
-        message: e.toString(),
+        message: isPeopleApiDisabled
+            ? 'Google People API is disabled for this project. Enable it in '
+                  'Google Cloud Console, wait a few minutes, then try again.'
+            : 'Google sign-in failed. Please try again.',
         isError: true,
       );
       return null;
@@ -214,9 +224,10 @@ class AuthController extends GetxController {
           _updateGlobalToken(token); // ✅ Sync token to global service
         }
 
-        userData.value = response['user'] ?? {"name": name, "email": email, "phone": phone};
+        userData.value =
+            response['user'] ?? {"name": name, "email": email, "phone": phone};
         await storage.write('user_data', userData.value);
-        
+
         // ✅ User is fully registered and logged in now
         setLoginStatus(true);
         return true;
@@ -251,7 +262,7 @@ class AuthController extends GetxController {
     userData.value = null;
     isLoggedIn.value = false;
     _updateGlobalToken(""); // Clear token in network service
-    
+
     // Clear notifications locally on logout
     if (Get.isRegistered<NotificationService>()) {
       NotificationService.to.clearNotifications();
