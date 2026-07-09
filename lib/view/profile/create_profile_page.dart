@@ -1,0 +1,158 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../../app/routes/app_routes.dart';
+import '../../utils/responsive.dart';
+import '../../widgets/golden_button.dart';
+import '../../widgets/golden_text.dart';
+import '../../app/theme/app_colors.dart';
+import '../../view_model/auth_controller/auth_controller.dart';
+import '../../view_model/profile/create_profile_controller.dart';
+import '../../utils/custom_snackbar.dart';
+
+class CreateProfilePage extends StatefulWidget {
+  final String? phone;
+
+  const CreateProfilePage({super.key, this.phone});
+
+  @override
+  State<CreateProfilePage> createState() => _CreateProfilePageState();
+}
+
+class _CreateProfilePageState extends State<CreateProfilePage> {
+  late final TextEditingController nameController;
+  late final AuthController authController;
+  late final CreateProfileController createProfileController;
+  late final String displayPhone;
+
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController();
+    authController = Get.find<AuthController>();
+    createProfileController = Get.put(CreateProfileController());
+    displayPhone = widget.phone ?? Get.arguments?['phone'] ?? '';
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        elevation: 0,
+        leading: Responsive.backButton(context, onPressed: () => Get.back()),
+        title: const Text("Create Profile", style: TextStyle(color: AppColors.white)),
+        centerTitle: true,
+      ),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 500),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(height: 30),
+
+                  /// Profile Image (Optional)
+                  GestureDetector(
+                    onTap: createProfileController.pickImage,
+                    child: Obx(() => CircleAvatar(
+                          radius: 50,
+                          backgroundColor: Colors.grey[900],
+                          backgroundImage: createProfileController.selectedImage.value != null
+                              ? FileImage(createProfileController.selectedImage.value!)
+                              : null,
+                          child: createProfileController.selectedImage.value == null
+                              ? const Icon(Icons.camera_alt, size: 40, color: Colors.white54)
+                              : null,
+                        )),
+                  ),
+
+                  TextButton(
+                    onPressed: createProfileController.pickImage,
+                    child: const GoldenText(
+                      "Choose Profile Picture",
+                      style: TextStyle(color: AppColors.buttonColor),
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  /// Show Email or Phone
+                  Text(
+                    displayPhone,
+                    style: const TextStyle(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  /// Name Field
+                  TextField(
+                    controller: nameController,
+                    style: const TextStyle(color: AppColors.white),
+                    decoration: InputDecoration(
+                      hintText: "Full Name",
+                      hintStyle: const TextStyle(color: Colors.grey),
+                      filled: true,
+                      fillColor: Colors.grey[900],
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 30),
+
+                  /// Save Button
+                  Obx(() => GoldenButton(
+                        height: 50,
+                        onPressed: authController.isLoading.value
+                            ? null
+                            : () async {
+                                  if (nameController.text.trim().isEmpty) {
+                                    CustomSnackbar.show(title: "Error", message: "Name is required", isError: true);
+                                    return;
+                                  }
+
+                                  bool isEmail = displayPhone.contains('@');
+
+                                  bool success = await authController.updateAndSaveProfile(
+                                    name: nameController.text.trim(),
+                                    email: isEmail ? displayPhone : "",
+                                    phone: isEmail ? "" : displayPhone,
+                                    imagePath: createProfileController.selectedImage.value?.path,
+                                  );
+
+                                  if (success) {
+                                    String? returnRoute = Get.arguments is Map ? Get.arguments['returnRoute'] : null;
+                                    if (returnRoute != null && returnRoute.isNotEmpty) {
+                                      Get.offAllNamed(returnRoute);
+                                    } else {
+                                      Get.offAllNamed(AppRoutes.home); // Navigate to home
+                                    }
+                                  }
+                                },
+                        child: authController.isLoading.value
+                            ? const CircularProgressIndicator(color: Colors.white)
+                            : const Text(
+                                "Save",
+                                style: TextStyle(color: AppColors.white, fontSize: 16),
+                              ),
+                      ))
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
