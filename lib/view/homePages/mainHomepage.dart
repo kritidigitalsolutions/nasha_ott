@@ -45,7 +45,8 @@ class MainHomePage extends StatelessWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (Get.currentRoute == AppRoutes.profile) {
         controller.selectedIndex.value = 2;
-      } else if (Get.currentRoute == AppRoutes.home || Get.currentRoute == AppRoutes.navbar) {
+      } else if (Get.currentRoute == AppRoutes.home ||
+          Get.currentRoute == AppRoutes.navbar) {
         controller.selectedIndex.value = 1;
       } else if (Get.currentRoute == AppRoutes.upcoming) {
         controller.selectedIndex.value = 0;
@@ -56,7 +57,7 @@ class MainHomePage extends StatelessWidget {
       canPop: false,
       onPopInvoked: (didPop) {
         if (didPop) return;
-        
+
         if (controller.selectedIndex.value != 1) {
           controller.selectedIndex.value = 1;
         } else {
@@ -66,8 +67,20 @@ class MainHomePage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: AppColors.black,
         body: Responsive(
-          mobile: _buildMobileLayout(context, controller, authController, contentController, notificationService),
-          desktop: _buildDesktopLayout(context, controller, authController, contentController, notificationService),
+          mobile: _buildMobileLayout(
+            context,
+            controller,
+            authController,
+            contentController,
+            notificationService,
+          ),
+          desktop: _buildDesktopLayout(
+            context,
+            controller,
+            authController,
+            contentController,
+            notificationService,
+          ),
         ),
       ),
     );
@@ -140,14 +153,18 @@ class MainHomePage extends StatelessWidget {
       children: [
         /// HEADER AT TOP
         _buildDesktopHeader(notificationService, controller, authController),
-        
+
         /// CONTENT BELOW HEADER
         Expanded(
           child: Obx(
             () => IndexedStack(
               index: controller.selectedIndex.value,
               children: [
-                _buildUpcomingContent(notificationService, authController, isDesktop: true),
+                _buildUpcomingContent(
+                  notificationService,
+                  authController,
+                  isDesktop: true,
+                ),
                 _buildHomeContent(
                   context,
                   controller,
@@ -170,12 +187,18 @@ class MainHomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildDesktopHeader(NotificationService notificationService, HomeController controller, AuthController authController) {
+  Widget _buildDesktopHeader(
+    NotificationService notificationService,
+    HomeController controller,
+    AuthController authController,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 5),
       decoration: BoxDecoration(
         color: Colors.black, // Solid background
-        border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.1))),
+        border: Border(
+          bottom: BorderSide(color: Colors.white.withOpacity(0.1)),
+        ),
       ),
       child: Row(
         children: [
@@ -199,7 +222,13 @@ class MainHomePage extends StatelessWidget {
             width: 140,
             height: 45,
             borderRadius: BorderRadius.circular(25),
-            child: const Text("Go Premium", style: TextStyle(color: AppColors.buttonTextColor, fontWeight: FontWeight.bold)),
+            child: const Text(
+              "Go Premium",
+              style: TextStyle(
+                color: AppColors.buttonTextColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
@@ -211,22 +240,22 @@ class MainHomePage extends StatelessWidget {
       bool isSelected = controller.selectedIndex.value == index;
       return TextButton(
         onPressed: () => controller.onItemTapped(index),
-        child: isSelected 
-          ? GoldenText(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+        child: isSelected
+            ? GoldenText(
+                title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+            : Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.normal,
+                ),
               ),
-            )
-          : Text(
-              title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.normal,
-              ),
-            ),
       );
     });
   }
@@ -240,7 +269,11 @@ class MainHomePage extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () => Get.toNamed(AppRoutes.notification),
-            icon: const Icon(Icons.notifications_outlined, color: Colors.white, size: 28),
+            icon: const Icon(
+              Icons.notifications_outlined,
+              color: Colors.white,
+              size: 28,
+            ),
           ),
           if (unreadCount > 0)
             Positioned(
@@ -248,11 +281,18 @@ class MainHomePage extends StatelessWidget {
               top: 8,
               child: Container(
                 padding: const EdgeInsets.all(4),
-                decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
+                decoration: const BoxDecoration(
+                  color: Colors.red,
+                  shape: BoxShape.circle,
+                ),
                 constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
                 child: Text(
                   unreadCount > 9 ? '9+' : '$unreadCount',
-                  style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -285,7 +325,10 @@ class MainHomePage extends StatelessWidget {
                 child: const FittedBox(
                   child: Text(
                     "Go Premium",
-                    style: TextStyle(color: AppColors.buttonTextColor, fontSize: 10),
+                    style: TextStyle(
+                      color: AppColors.buttonTextColor,
+                      fontSize: 10,
+                    ),
                   ),
                 ),
               ),
@@ -296,11 +339,21 @@ class MainHomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildUpcomingContent(NotificationService notificationService, AuthController authController, {bool isDesktop = false}) {
+  Widget _buildUpcomingContent(
+    NotificationService notificationService,
+    AuthController authController, {
+    bool isDesktop = false,
+  }) {
     return Column(
       children: [
         if (!isDesktop) _buildHeader(notificationService),
-        Expanded(child: ComingSoonSection(content: [], isSignedIn: authController.isLoggedIn.value, isFullPage: true)),
+        Expanded(
+          child: ComingSoonSection(
+            content: [],
+            isSignedIn: authController.isLoggedIn.value,
+            isFullPage: true,
+          ),
+        ),
       ],
     );
   }
@@ -332,11 +385,16 @@ class MainHomePage extends StatelessWidget {
                   const SizedBox(height: 10),
                   AutoSlider(
                     content: contentController.allContent
-                        .where((c) => (c.category.contains('trending') || c.contentType == 'movie') && c.isComingSoon == false)
+                        .where(
+                          (c) =>
+                              (c.category.contains('trending') ||
+                                  c.contentType == 'movie') &&
+                              c.isComingSoon == false,
+                        )
                         .toList(),
                     isSignedIn: authController.isLoggedIn.value,
                   ),
-                  
+
                   SizedBox(height: isDesktop ? 30 : 0),
 
                   _buildAnimatedSection(
@@ -349,24 +407,39 @@ class MainHomePage extends StatelessWidget {
                           padding: EdgeInsets.symmetric(horizontal: 16),
                           child: GoldenText(
                             "Web Series",
-                            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: 1.2),
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1.2,
+                            ),
                           ),
                         ),
                         // const SizedBox(height: 20),
                         Obx(() {
                           final seriesContent = contentController.allContent
-                              .where((c) => c.contentType == 'series' && c.isComingSoon == false)
+                              .where(
+                                (c) =>
+                                    c.contentType == 'series' &&
+                                    c.isComingSoon == false,
+                              )
                               .toList();
 
                           return SizedBox(
                             height: isDesktop ? 340 : 170,
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 10,
+                              ),
                               itemCount: seriesContent.length,
                               itemBuilder: (context, index) {
                                 final item = seriesContent[index];
-                                return _WebSeriesHoverCard(item: item, isSignedIn: authController.isLoggedIn.value, isDesktop: isDesktop);
+                                return _WebSeriesHoverCard(
+                                  item: item,
+                                  isSignedIn: authController.isLoggedIn.value,
+                                  isDesktop: isDesktop,
+                                );
                               },
                             ),
                           );
@@ -381,7 +454,13 @@ class MainHomePage extends StatelessWidget {
                     isDesktop: isDesktop,
                     delay: 400,
                     child: Top10List(
-                      content: contentController.allContent.where((c) => c.category.contains('top10') && c.isComingSoon == false).toList(),
+                      content: contentController.allContent
+                          .where(
+                            (c) =>
+                                c.category.contains('top10') &&
+                                c.isComingSoon == false,
+                          )
+                          .toList(),
                       isSignedIn: authController.isLoggedIn.value,
                     ),
                   ),
@@ -393,11 +472,17 @@ class MainHomePage extends StatelessWidget {
                     delay: 600,
                     child: HomeSliderSection(
                       title: "Nazar Exclusives",
-                      content: contentController.allContent.where((c) => c.contentType == 'movie' && c.isComingSoon == false).toList(),
+                      content: contentController.allContent
+                          .where(
+                            (c) =>
+                                c.contentType == 'movie' &&
+                                c.isComingSoon == false,
+                          )
+                          .toList(),
                       isSignedIn: authController.isLoggedIn.value,
                     ),
                   ),
-                  
+
                   _buildFooter(),
                   const SizedBox(height: 120),
                 ],
@@ -409,7 +494,11 @@ class MainHomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildAnimatedSection({required bool isDesktop, required int delay, required Widget child}) {
+  Widget _buildAnimatedSection({
+    required bool isDesktop,
+    required int delay,
+    required Widget child,
+  }) {
     if (!isDesktop) return child;
     return TweenAnimationBuilder(
       tween: Tween<double>(begin: 0, end: 1),
@@ -446,11 +535,22 @@ class MainHomePage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 30),
-          const Text("The ultimate destination for premium regional content. Watch the latest web series, movies, and originals anytime, anywhere.", textAlign: TextAlign.center, style: TextStyle(color: Colors.white70, fontSize: 16, height: 1.5)),
+          const Text(
+            "The ultimate destination for premium regional content. Watch the latest web series, movies, and originals anytime, anywhere.",
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white70, fontSize: 16, height: 1.5),
+          ),
           const SizedBox(height: 20),
           InkWell(
             onTap: () => launchUrl(Uri.parse("mailto:support@nazarott.in")),
-            child: const GoldenText("Email: support@nazarott.in", style: TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.w600)),
+            child: const GoldenText(
+              "Email: support@nazarott.in",
+              style: TextStyle(
+                color: AppColors.primary,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
           const SizedBox(height: 40),
           Wrap(
@@ -467,7 +567,10 @@ class MainHomePage extends StatelessWidget {
           const SizedBox(height: 50),
           const Divider(color: Colors.white12),
           const SizedBox(height: 30),
-          const Text("© 2024 Nazar OTT All Rights Reserved", style: TextStyle(color: Colors.white38, fontSize: 13)),
+          const Text(
+            "© 2024 Nazar OTT All Rights Reserved",
+            style: TextStyle(color: Colors.white38, fontSize: 13),
+          ),
           const SizedBox(height: 15),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -477,7 +580,8 @@ class MainHomePage extends StatelessWidget {
                 style: TextStyle(color: Colors.white38, fontSize: 14),
               ),
               ShaderMask(
-                shaderCallback: (bounds) => AppColors.buttonGradient.createShader(bounds),
+                shaderCallback: (bounds) =>
+                    AppColors.buttonGradient.createShader(bounds),
                 child: const Text(
                   "K.P. Productions",
                   style: TextStyle(
@@ -500,7 +604,11 @@ class MainHomePage extends StatelessWidget {
               Text(
                 "PLOT B-D-82 RSC 25, B-23, MANGAL CO-OP HSC, VARSOVA,\nANDHERI WEST, Mumbai, Mumbai Suburban, Maharashtra - 400058",
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white70, fontSize: 14, height: 1.4),
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 14,
+                  height: 1.4,
+                ),
               ),
             ],
           ),
@@ -514,7 +622,11 @@ class MainHomePage extends StatelessWidget {
       onTap: () => Get.toNamed(route),
       child: GoldenText(
         title,
-        style: const TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.w600),
+        style: const TextStyle(
+          color: AppColors.primary,
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
@@ -524,8 +636,14 @@ class MainHomePage extends StatelessWidget {
       AlertDialog(
         backgroundColor: Colors.grey[900],
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        title: const GoldenText("Exit App", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        content: const Text("Do you want to exit the app?", style: TextStyle(color: Colors.white70)),
+        title: const GoldenText(
+          "Exit App",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        content: const Text(
+          "Do you want to exit the app?",
+          style: TextStyle(color: Colors.white70),
+        ),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
@@ -535,7 +653,10 @@ class MainHomePage extends StatelessWidget {
             width: 80,
             height: 35,
             onPressed: () => SystemNavigator.pop(),
-            child: const Text("Yes", style: TextStyle(color: AppColors.buttonTextColor)),
+            child: const Text(
+              "Yes",
+              style: TextStyle(color: AppColors.buttonTextColor),
+            ),
           ),
         ],
       ),
@@ -548,7 +669,11 @@ class _WebSeriesHoverCard extends StatefulWidget {
   final bool isSignedIn;
   final bool isDesktop;
 
-  const _WebSeriesHoverCard({required this.item, required this.isSignedIn, required this.isDesktop});
+  const _WebSeriesHoverCard({
+    required this.item,
+    required this.isSignedIn,
+    required this.isDesktop,
+  });
 
   @override
   State<_WebSeriesHoverCard> createState() => _WebSeriesHoverCardState();
@@ -566,33 +691,40 @@ class _WebSeriesHoverCardState extends State<_WebSeriesHoverCard> {
         duration: const Duration(milliseconds: 250),
         width: widget.isDesktop ? (isHovered ? 230 : 200) : 130,
         margin: const EdgeInsets.only(right: 32),
-        transform: isHovered 
-          ? (Matrix4.identity()..translate(0, -15, 0)..scale(1.05)) 
-          : Matrix4.identity(),
+        transform: isHovered
+            ? (Matrix4.identity()
+                ..translate(0, -15, 0)
+                ..scale(1.05))
+            : Matrix4.identity(),
         child: GestureDetector(
           onTap: () {
-            Get.toNamed(AppRoutes.dramaDetails, arguments: {
-              'content': widget.item,
-              'isSignedIn': widget.isSignedIn,
-            });
+            Get.toNamed(
+              AppRoutes.dramaDetails,
+              arguments: {
+                'content': widget.item,
+                'isSignedIn': widget.isSignedIn,
+              },
+            );
           },
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
-              boxShadow: isHovered ? [
-                BoxShadow(
-                  color: AppColors.primary.withOpacity(0.5),
-                  blurRadius: 25,
-                  spreadRadius: 3,
-                  offset: const Offset(0, 10),
-                )
-              ] : [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
-                  blurRadius: 10,
-                  offset: const Offset(0, 5),
-                )
-              ],
+              boxShadow: isHovered
+                  ? [
+                      BoxShadow(
+                        color: AppColors.primary.withOpacity(0.5),
+                        blurRadius: 25,
+                        spreadRadius: 3,
+                        offset: const Offset(0, 10),
+                      ),
+                    ]
+                  : [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
             ),
             child: CustomNetworkImage(
               imageUrl: widget.item.poster,

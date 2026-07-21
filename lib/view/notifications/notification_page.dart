@@ -24,14 +24,16 @@ class NotificationPage extends StatelessWidget {
         ),
         leading: Responsive.backButton(context, onPressed: () => Get.back()),
         actions: [
-          Obx(() => notificationService.notifications.isNotEmpty
-              ? IconButton(
-                  icon: const Icon(Icons.delete_sweep, color: Colors.white),
-                  onPressed: () {
-                    _showClearAllDialog(context, notificationService);
-                  },
-                )
-              : const SizedBox.shrink()),
+          Obx(
+            () => notificationService.notifications.isNotEmpty
+                ? IconButton(
+                    icon: const Icon(Icons.delete_sweep, color: Colors.white),
+                    onPressed: () {
+                      _showClearAllDialog(context, notificationService);
+                    },
+                  )
+                : const SizedBox.shrink(),
+          ),
         ],
       ),
       body: RefreshIndicator(
@@ -41,7 +43,8 @@ class NotificationPage extends StatelessWidget {
           if (notificationService.isLoading.value &&
               notificationService.notifications.isEmpty) {
             return const Center(
-                child: CircularProgressIndicator(color: AppColors.buttonColor));
+              child: CircularProgressIndicator(color: AppColors.buttonColor),
+            );
           }
 
           if (notificationService.notifications.isEmpty) {
@@ -53,7 +56,12 @@ class NotificationPage extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 10),
             itemBuilder: (context, index) {
               final notification = notificationService.notifications[index];
-              return _buildNotificationItem(context, notification, index, notificationService);
+              return _buildNotificationItem(
+                context,
+                notification,
+                index,
+                notificationService,
+              );
             },
           );
         }),
@@ -66,23 +74,31 @@ class NotificationPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.notifications_none_outlined,
-              size: 100, color: Colors.white.withOpacity(0.2)),
+          Icon(
+            Icons.notifications_none_outlined,
+            size: 100,
+            color: Colors.white.withOpacity(0.2),
+          ),
           const SizedBox(height: 20),
           Text(
             "No notifications yet",
             style: TextStyle(
-                color: Colors.white.withOpacity(0.5),
-                fontSize: 18,
-                fontWeight: FontWeight.w500),
+              color: Colors.white.withOpacity(0.5),
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildNotificationItem(BuildContext context, Map<String, dynamic> notification,
-      int index, NotificationService service) {
+  Widget _buildNotificationItem(
+    BuildContext context,
+    Map<String, dynamic> notification,
+    int index,
+    NotificationService service,
+  ) {
     final DateTime time = DateTime.parse(notification['time']);
     final String formattedTime = DateFormat('dd MMM, hh:mm a').format(time);
     final bool isRead = notification['isRead'] ?? false;
@@ -96,18 +112,29 @@ class NotificationPage extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isRead ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.1),
+          color: isRead
+              ? Colors.white.withOpacity(0.05)
+              : Colors.white.withOpacity(0.1),
           borderRadius: BorderRadius.circular(15),
           border: isRead
               ? null
-              : Border.all(color: AppColors.buttonColor.withOpacity(0.3), width: 1),
+              : Border.all(
+                  color: AppColors.buttonColor.withOpacity(0.3),
+                  width: 1,
+                ),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CircleAvatar(
-              backgroundColor: isRead ? Colors.grey.withOpacity(0.2) : AppColors.buttonColor,
-              child: const Icon(Icons.notifications, color: Colors.white, size: 20),
+              backgroundColor: isRead
+                  ? Colors.grey.withOpacity(0.2)
+                  : AppColors.buttonColor,
+              child: const Icon(
+                Icons.notifications,
+                color: Colors.white,
+                size: 20,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -122,7 +149,9 @@ class NotificationPage extends StatelessWidget {
                           notification['title'] ?? 'Notification',
                           style: TextStyle(
                             color: Colors.white,
-                            fontWeight: isRead ? FontWeight.normal : FontWeight.bold,
+                            fontWeight: isRead
+                                ? FontWeight.normal
+                                : FontWeight.bold,
                             fontSize: 16,
                           ),
                           maxLines: 1,
@@ -133,7 +162,11 @@ class NotificationPage extends StatelessWidget {
                         onTap: () {
                           _showDeleteDialog(context, index, service);
                         },
-                        child: Icon(Icons.close, size: 18, color: Colors.white.withOpacity(0.4)),
+                        child: Icon(
+                          Icons.close,
+                          size: 18,
+                          color: Colors.white.withOpacity(0.4),
+                        ),
                       ),
                     ],
                   ),
@@ -147,7 +180,10 @@ class NotificationPage extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     formattedTime,
-                    style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 11),
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.3),
+                      fontSize: 11,
+                    ),
                   ),
                 ],
               ),
@@ -158,8 +194,12 @@ class NotificationPage extends StatelessWidget {
     );
   }
 
-  void _showNotificationDetail(BuildContext context, Map<String, dynamic> notification,
-      int index, NotificationService service) {
+  void _showNotificationDetail(
+    BuildContext context,
+    Map<String, dynamic> notification,
+    int index,
+    NotificationService service,
+  ) {
     Get.bottomSheet(
       Container(
         padding: const EdgeInsets.all(20),
@@ -179,7 +219,10 @@ class NotificationPage extends StatelessWidget {
               children: [
                 const Text(
                   "Notification Detail",
-                  style: TextStyle(color: AppColors.buttonColor, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: AppColors.buttonColor,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.close, color: Colors.white),
@@ -190,12 +233,20 @@ class NotificationPage extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               notification['title'] ?? '',
-              style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 15),
             Text(
               notification['body'] ?? '',
-              style: const TextStyle(color: Colors.white70, fontSize: 16, height: 1.5),
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 16,
+                height: 1.5,
+              ),
             ),
             const SizedBox(height: 25),
             GoldenButton(
@@ -226,7 +277,12 @@ class NotificationPage extends StatelessWidget {
       },
     );
   }
-  void _showDeleteDialog(BuildContext context, int index, NotificationService service) {
+
+  void _showDeleteDialog(
+    BuildContext context,
+    int index,
+    NotificationService service,
+  ) {
     Get.defaultDialog(
       title: "Delete Notification",
       middleText: "Are you sure you want to delete this notification?",

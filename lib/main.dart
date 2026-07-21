@@ -43,12 +43,14 @@ Future<void> main() async {
     ]);
   }
 
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.light,
-    systemNavigationBarColor: Colors.black,
-    systemNavigationBarIconBrightness: Brightness.light,
-  ));
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+      systemNavigationBarColor: Colors.black,
+      systemNavigationBarIconBrightness: Brightness.light,
+    ),
+  );
 
   /// 🔥 Firebase Init
   try {
@@ -70,7 +72,9 @@ Future<void> main() async {
     print("✅ Firebase Initialized");
   } catch (e) {
     print("⚠️ Firebase Initialization Failed: $e");
-    print("💡 Tip: For Web, make sure you have configured Firebase correctly (flutterfire configure)");
+    print(
+      "💡 Tip: For Web, make sure you have configured Firebase correctly (flutterfire configure)",
+    );
   }
 
   /// 🌙 Background Listener (Mobile only typically, for web it uses service workers)

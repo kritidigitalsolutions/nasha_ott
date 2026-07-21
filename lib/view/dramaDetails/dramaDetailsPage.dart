@@ -1,16 +1,16 @@
+// ignore_for_file: unused_element
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../app/routes/app_routes.dart';
-import '../../utils/app_images.dart';
 import '../../utils/responsive.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
 import '../../view_model/download_controller/download_controller.dart';
 import '../../view_model/primium_controller/premium_controller.dart';
 import '../../widgets/custom_network_image.dart';
 import '../../widgets/golden_button.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../app/theme/app_colors.dart';
 import '../../data/models/response_model/content_response_model/content_model.dart';
@@ -18,11 +18,7 @@ import '../../view_model/content_controller/content_controller.dart';
 import '../../view_model/like_dislike_controller/like_dislike_controller.dart';
 import '../../view_model/watchlist_controller/watchlist_controller.dart';
 import '../../widgets/golden_text.dart';
-import '../auth/signInPage.dart';
 import '../popUp/age_popup.dart';
-import '../videoPlayer/video_player.dart';
-import 'cast_crewPage.dart';
-import '../premium/goPremium.dart';
 import '../../utils/share_service.dart';
 import '../../view_model/drama_detail_controller/drama_details_controller.dart';
 import '../../utils/custom_snackbar.dart';
@@ -31,7 +27,11 @@ class DramaDetailsPage extends StatefulWidget {
   final bool isSignedIn;
   final ContentModel content;
 
-  const DramaDetailsPage({super.key, required this.isSignedIn, required this.content});
+  const DramaDetailsPage({
+    super.key,
+    required this.isSignedIn,
+    required this.content,
+  });
 
   @override
   State<DramaDetailsPage> createState() => _DramaDetailsPageState();
@@ -40,17 +40,22 @@ class DramaDetailsPage extends StatefulWidget {
 class _DramaDetailsPageState extends State<DramaDetailsPage> {
   final DramaDetailsController controller = Get.put(DramaDetailsController());
   final AuthController authController = Get.find<AuthController>();
-  final WatchlistController watchlistController = Get.put(WatchlistController());
-  final ContentController contentController = Get.find<ContentController>();
+  final WatchlistController watchlistController = Get.put(
+    WatchlistController(),
+  );
+  final ContentController contentController = Get.put(ContentController());
   final PremiumController premiumController = Get.put(PremiumController());
-  final InteractionController interactionController = Get.put(InteractionController());
+  final InteractionController interactionController = Get.put(
+    InteractionController(),
+  );
   final DownloadController downloadController = Get.put(DownloadController());
 
   @override
   void initState() {
     super.initState();
     interactionController.fetchStatus(widget.content.id);
-    if (authController.isLoggedIn.value && watchlistController.watchlist.isEmpty) {
+    if (authController.isLoggedIn.value &&
+        watchlistController.watchlist.isEmpty) {
       watchlistController.getWatchlist();
     }
     if (widget.content.contentType == 'series') {
@@ -61,11 +66,13 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
   @override
   Widget build(BuildContext context) {
     bool isDesktop = Responsive.isDesktop(context);
-    final List<ContentModel> relatedContent = contentController.allContent.where((item) {
-      return item.id != widget.content.id &&
-             item.contentType == widget.content.contentType &&
-             item.category.any((cat) => widget.content.category.contains(cat));
-    }).toList();
+    final List<ContentModel> relatedContent = contentController.allContent
+        .where((item) {
+          return item.id != widget.content.id &&
+              item.contentType == widget.content.contentType &&
+              item.category.any((cat) => widget.content.category.contains(cat));
+        })
+        .toList();
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -73,7 +80,10 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: Responsive.backButton(context, onPressed: () => Navigator.maybePop(context)),
+        leading: Responsive.backButton(
+          context,
+          onPressed: () => Navigator.maybePop(context),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -86,7 +96,9 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 1200),
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: isDesktop ? 60 : 16),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isDesktop ? 60 : 16,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -96,10 +108,16 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
                       if (widget.content.contentType != 'series') ...[
                         Row(
                           children: [
-                            Expanded(child: _buildWatchButton(isDesktop: isDesktop)),
+                            Expanded(
+                              child: _buildWatchButton(isDesktop: isDesktop),
+                            ),
                             if (!kIsWeb) ...[
                               const SizedBox(width: 15),
-                              Expanded(child: _buildMainDownloadButton(isDesktop: isDesktop)),
+                              Expanded(
+                                child: _buildMainDownloadButton(
+                                  isDesktop: isDesktop,
+                                ),
+                              ),
                             ],
                           ],
                         ),
@@ -108,7 +126,14 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
 
                       /// DESCRIPTION & INFO (Mobile Only or additional)
                       if (!isDesktop) ...[
-                        Text(widget.content.description, style: const TextStyle(color: Colors.white70, fontSize: 16, height: 1.5)),
+                        Text(
+                          widget.content.description,
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 16,
+                            height: 1.5,
+                          ),
+                        ),
                         const SizedBox(height: 20),
                         _buildSmallActionsRow(),
                         const SizedBox(height: 20),
@@ -121,7 +146,8 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
                       const SizedBox(height: 30),
 
                       /// 🎭 CAST & CREW
-                      if (widget.content.cast != null && widget.content.cast!.isNotEmpty)
+                      if (widget.content.cast != null &&
+                          widget.content.cast!.isNotEmpty)
                         _buildCastSection(isDesktop),
 
                       const SizedBox(height: 30),
@@ -154,8 +180,10 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
             imageUrl: widget.content.banner,
             width: double.infinity,
             height: isDesktop ? 750 : 350,
-            fit: BoxFit.fill, // Shows full banner without cropping or black bars
+            fit:
+                BoxFit.fill, // Shows full banner without cropping or black bars
           ),
+
           /// SUBTLE GRADIENT OVERLAY
           Container(
             decoration: BoxDecoration(
@@ -174,8 +202,10 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
 
           /// INFO OVERLAY
           Padding(
-            padding:
-                EdgeInsets.symmetric(horizontal: isDesktop ? 60 : 20, vertical: 30),
+            padding: EdgeInsets.symmetric(
+              horizontal: isDesktop ? 60 : 20,
+              vertical: 30,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -188,9 +218,10 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
                     fontWeight: FontWeight.w900,
                     shadows: [
                       Shadow(
-                          color: Colors.black.withOpacity(0.8),
-                          blurRadius: 10,
-                          offset: const Offset(2, 2))
+                        color: Colors.black.withOpacity(0.8),
+                        blurRadius: 10,
+                        offset: const Offset(2, 2),
+                      ),
                     ],
                   ),
                 ),
@@ -200,23 +231,30 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
                     Text(
                       "${widget.content.releaseYear} • ${widget.content.language}",
                       style: TextStyle(
-                          color: Colors.white,
-                          fontSize: isDesktop ? 16 : 13,
-                          fontWeight: FontWeight.bold),
+                        color: Colors.white,
+                        fontSize: isDesktop ? 16 : 13,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     if (widget.content.duration != null) ...[
                       const SizedBox(width: 15),
                       Container(
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(4)),
-                        child: Text(widget.content.duration!,
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold)),
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          widget.content.duration!,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ],
                   ],
@@ -228,9 +266,10 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
                     child: Text(
                       widget.content.description,
                       style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 16,
-                          height: 1.5),
+                        color: Colors.white70,
+                        fontSize: 16,
+                        height: 1.5,
+                      ),
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -238,18 +277,14 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
                 const SizedBox(height: 5),
 
                 /// TRAILER & SMALL ACTIONS (Watch Now removed from here)
-                Row(
-                  children: [
-                    if (isDesktop) 
-                      _buildSmallActionsRow(),
-                  ],
-                ),
+                Row(children: [if (isDesktop) _buildSmallActionsRow()]),
               ],
             ),
           ),
 
           /// TRAILER BUTTON AT BOTTOM RIGHT
-          if (widget.content.trailerUrl != null && widget.content.trailerUrl!.isNotEmpty)
+          if (widget.content.trailerUrl != null &&
+              widget.content.trailerUrl!.isNotEmpty)
             Positioned(
               bottom: 10,
               right: 10,
@@ -263,9 +298,13 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
   Widget _buildMainDownloadButton({required bool isDesktop}) {
     return Obx(() {
       final bool userLoggedIn = authController.isLoggedIn.value;
-      final bool isAlreadyDownloaded = downloadController.isDownloaded(widget.content.id);
-      final bool downloading = downloadController.isDownloading[widget.content.id] ?? false;
-      final double progress = downloadController.downloadProgress[widget.content.id] ?? 0;
+      final bool isAlreadyDownloaded = downloadController.isDownloaded(
+        widget.content.id,
+      );
+      final bool downloading =
+          downloadController.isDownloading[widget.content.id] ?? false;
+      final double progress =
+          downloadController.downloadProgress[widget.content.id] ?? 0;
 
       return OutlinedButton.icon(
         style: OutlinedButton.styleFrom(
@@ -275,29 +314,41 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
         ),
         onPressed: () {
           if (!userLoggedIn) {
-            Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute});
+            Get.toNamed(
+              AppRoutes.signIn,
+              arguments: {"returnRoute": Get.currentRoute},
+            );
           } else if (isAlreadyDownloaded) {
             CustomSnackbar.show(title: "Info", message: "Already downloaded");
           } else {
             downloadController.downloadVideo(widget.content);
           }
         },
-        icon: downloading 
-          ? SizedBox(
-              width: 20, 
-              height: 20, 
-              child: CircularProgressIndicator(
-                strokeWidth: 2, 
+        icon: downloading
+            ? SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                  value: progress > 0 ? progress : null,
+                ),
+              )
+            : Icon(
+                isAlreadyDownloaded
+                    ? Icons.check_circle
+                    : Icons.download_for_offline,
                 color: Colors.white,
-                value: progress > 0 ? progress : null,
               ),
-            )
-          : Icon(isAlreadyDownloaded ? Icons.check_circle : Icons.download_for_offline, color: Colors.white),
         label: Text(
-          downloading 
-            ? "${(progress * 100).toInt()}%" 
-            : (isAlreadyDownloaded ? "DOWNLOADED" : "DOWNLOAD"),
-          style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+          downloading
+              ? "${(progress * 100).toInt()}%"
+              : (isAlreadyDownloaded ? "DOWNLOADED" : "DOWNLOAD"),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       );
     });
@@ -312,17 +363,28 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
       return GoldenButton(
         height: isDesktop ? 60 : 55,
         borderRadius: BorderRadius.circular(8),
-        onPressed: widget.content.isComingSoon ? null : () => _handlePlay(widget.content, isPurchased, userLoggedIn),
+        onPressed: widget.content.isComingSoon
+            ? null
+            : () => _handlePlay(widget.content, isPurchased, userLoggedIn),
         child: FittedBox(
           fit: BoxFit.scaleDown,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.play_arrow_rounded, size: 32, color: AppColors.buttonTextColor),
+              const Icon(
+                Icons.play_arrow_rounded,
+                size: 32,
+                color: AppColors.buttonTextColor,
+              ),
               const SizedBox(width: 8),
               Text(
                 widget.content.isComingSoon ? "COMING SOON" : "WATCH NOW",
-                style: const TextStyle(color: AppColors.buttonTextColor, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.2),
+                style: const TextStyle(
+                  color: AppColors.buttonTextColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.2,
+                ),
               ),
             ],
           ),
@@ -333,12 +395,22 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
 
   void _handlePlay(dynamic item, bool isPurchased, bool userLoggedIn) {
     if (!userLoggedIn) {
-      Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute});
+      Get.toNamed(
+        AppRoutes.signIn,
+        arguments: {"returnRoute": Get.currentRoute},
+      );
     } else if (isPurchased || !item.isPremium) {
       if (item.videoUrl != null && item.videoUrl!.isNotEmpty) {
-        Get.toNamed(AppRoutes.videoPlayer, arguments: {'url': item.videoUrl!, 'title': item.title});
+        Get.toNamed(
+          AppRoutes.videoPlayer,
+          arguments: {'url': item.videoUrl!, 'title': item.title},
+        );
       } else {
-        CustomSnackbar.show(title: "Error", message: "Video URL not found", isError: true);
+        CustomSnackbar.show(
+          title: "Error",
+          message: "Video URL not found",
+          isError: true,
+        );
       }
     } else {
       Get.toNamed(AppRoutes.goPremium);
@@ -352,20 +424,59 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
       borderRadius: BorderRadius.circular(25),
       onPressed: () async {
         if (!authController.isLoggedIn.value) {
-          Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute});
+          Get.toNamed(
+            AppRoutes.signIn,
+            arguments: {"returnRoute": Get.currentRoute},
+          );
           return;
         }
-        final bool? isOver18 = await Get.dialog<bool>(const AgeRestrictionPopup());
-        if (isOver18 == true) {
-          Get.toNamed(AppRoutes.videoPlayer, arguments: {'url': widget.content.trailerUrl!, 'title': '${widget.content.title} - Trailer'});
+
+        // 🔞 Agar content 18+ nahi hai to age dialog bilkul skip karo
+        if (widget.content.is18Plus != true) {
+          Get.toNamed(
+            AppRoutes.videoPlayer,
+            arguments: {
+              'url': widget.content.trailerUrl!,
+              'title': '${widget.content.title} - Trailer',
+            },
+          );
+          return;
         }
+
+        // 18+ content hai to age verification dialog dikhao
+        final bool? isOver18 = await Get.dialog<bool>(
+          const AgeRestrictionPopup(),
+        );
+
+        if (isOver18 == true) {
+          Get.toNamed(
+            AppRoutes.videoPlayer,
+            arguments: {
+              'url': widget.content.trailerUrl!,
+              'title': '${widget.content.title} - Trailer',
+            },
+          );
+        }
+        // isOver18 == false/null ho to kahin navigate nahi karna —
+        // user ne confirm nahi kiya ki wo 18+ hai
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.play_circle_outline, size: 18, color: AppColors.buttonTextColor),
+          const Icon(
+            Icons.play_circle_outline,
+            size: 18,
+            color: AppColors.buttonTextColor,
+          ),
           const SizedBox(width: 4),
-          const Text("TRAILER", style: TextStyle(color: AppColors.buttonTextColor, fontSize: 13, fontWeight: FontWeight.bold)),
+          const Text(
+            "TRAILER",
+            style: TextStyle(
+              color: AppColors.buttonTextColor,
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ),
     );
@@ -379,11 +490,16 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           _circleActionBtn(
-            icon: watchlistController.isInWatchlist(contentId) ? Icons.check : Icons.add,
+            icon: watchlistController.isInWatchlist(contentId)
+                ? Icons.check
+                : Icons.add,
             label: "Watchlist",
             onTap: () {
               if (!userLoggedIn) {
-                Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute});
+                Get.toNamed(
+                  AppRoutes.signIn,
+                  arguments: {"returnRoute": Get.currentRoute},
+                );
               } else {
                 watchlistController.toggleWatchlist(contentId);
               }
@@ -391,13 +507,21 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
           ),
           const SizedBox(width: 25),
           _circleActionBtn(
-            icon: interactionController.isLiked(contentId) ? Icons.thumb_up : Icons.thumb_up_outlined,
+            icon: interactionController.isLiked(contentId)
+                ? Icons.thumb_up
+                : Icons.thumb_up_outlined,
             label: "Like",
             onTap: () {
               if (!userLoggedIn) {
-                Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute});
+                Get.toNamed(
+                  AppRoutes.signIn,
+                  arguments: {"returnRoute": Get.currentRoute},
+                );
               } else {
-                interactionController.toggleLike(contentId: contentId, contentType: widget.content.contentType);
+                interactionController.toggleLike(
+                  contentId: contentId,
+                  contentType: widget.content.contentType,
+                );
               }
             },
           ),
@@ -407,9 +531,15 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
             label: "Share",
             onTap: () {
               if (!userLoggedIn) {
-                Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute});
+                Get.toNamed(
+                  AppRoutes.signIn,
+                  arguments: {"returnRoute": Get.currentRoute},
+                );
               } else {
-                ShareService.shareContent(title: widget.content.title, imageUrl: widget.content.poster);
+                ShareService.shareContent(
+                  title: widget.content.title,
+                  imageUrl: widget.content.poster,
+                );
               }
             },
           ),
@@ -418,18 +548,28 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
     });
   }
 
-  Widget _circleActionBtn({required IconData icon, required String label, required VoidCallback onTap}) {
+  Widget _circleActionBtn({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
     return InkWell(
       onTap: onTap,
       child: Column(
         children: [
           Container(
             padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.white38)),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white38),
+            ),
             child: Icon(icon, color: Colors.white, size: 22),
           ),
           const SizedBox(height: 8),
-          Text(label, style: const TextStyle(color: Colors.white70, fontSize: 11)),
+          Text(
+            label,
+            style: const TextStyle(color: Colors.white70, fontSize: 11),
+          ),
         ],
       ),
     );
@@ -439,11 +579,14 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Episodes",
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.bold)),
+        const Text(
+          "Episodes",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: 15),
 
         /// SEASON SELECTOR (Modern Underline style)
@@ -458,17 +601,23 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
                   margin: const EdgeInsets.only(right: 30),
                   padding: const EdgeInsets.only(bottom: 5),
                   decoration: BoxDecoration(
-                      border: Border(
-                          bottom: BorderSide(
-                              color: isSelected
-                                  ? AppColors.primary
-                                  : Colors.transparent,
-                              width: 3))),
-                  child: Text("SEASON $seasonNum",
-                      style: TextStyle(
-                          color: isSelected ? Colors.white : Colors.white38,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14)),
+                    border: Border(
+                      bottom: BorderSide(
+                        color: isSelected
+                            ? AppColors.primary
+                            : Colors.transparent,
+                        width: 3,
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    "SEASON $seasonNum",
+                    style: TextStyle(
+                      color: isSelected ? Colors.white : Colors.white38,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
                 ),
               );
             });
@@ -481,16 +630,22 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
         Obx(() {
           if (contentController.isEpisodesLoading.value) {
             return const Center(
-                child: Padding(
-                    padding: EdgeInsets.all(40),
-                    child: CircularProgressIndicator(color: AppColors.primary)));
+              child: Padding(
+                padding: EdgeInsets.all(40),
+                child: CircularProgressIndicator(color: AppColors.primary),
+              ),
+            );
           }
           final episodes = contentController.seriesEpisodes
-              .where((item) => item.seasonNumber == controller.selectedSeason.value)
+              .where(
+                (item) => item.seasonNumber == controller.selectedSeason.value,
+              )
               .toList();
           if (episodes.isEmpty) {
-            return const Text("Episodes are coming soon.",
-                style: TextStyle(color: Colors.white38, fontSize: 14));
+            return const Text(
+              "Episodes are coming soon.",
+              style: TextStyle(color: Colors.white38, fontSize: 14),
+            );
           }
 
           return ListView.separated(
@@ -524,11 +679,14 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
             /// NUMBER
             SizedBox(
               width: 30,
-              child: Text("${ep.episodeNumber}",
-                  style: const TextStyle(
-                      color: Colors.white24,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold)),
+              child: Text(
+                "${ep.episodeNumber}",
+                style: const TextStyle(
+                  color: Colors.white24,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
 
             /// THUMBNAIL
@@ -548,7 +706,11 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
                     color: Colors.black.withOpacity(0.4),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 24),
+                  child: const Icon(
+                    Icons.play_arrow_rounded,
+                    color: Colors.white,
+                    size: 24,
+                  ),
                 ),
               ],
             ),
@@ -561,25 +723,34 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(ep.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold)),
+                  Text(
+                    ep.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Text(ep.duration ?? " ",
-                          style: const TextStyle(
-                              color: Colors.white38,
-                              fontSize: 12)),
+                      Text(
+                        ep.duration ?? " ",
+                        style: const TextStyle(
+                          color: Colors.white38,
+                          fontSize: 12,
+                        ),
+                      ),
                       const SizedBox(width: 8),
                       Container(
                         width: 3,
                         height: 3,
-                        decoration: const BoxDecoration(color: Colors.white24, shape: BoxShape.circle),
+                        decoration: const BoxDecoration(
+                          color: Colors.white24,
+                          shape: BoxShape.circle,
+                        ),
                       ),
                       // const SizedBox(width: 8),
                       // const Text("FREE", style: TextStyle(color: Colors.green, fontSize: 10, fontWeight: FontWeight.bold)),
@@ -591,9 +762,13 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
 
             /// DOWNLOAD BUTTON (More integrated & attractive)
             Obx(() {
-              final bool downloading = downloadController.isDownloading[ep.id] ?? false;
-              final double progress = downloadController.downloadProgress[ep.id] ?? 0;
-              final bool isAlreadyDownloaded = downloadController.isDownloaded(ep.id);
+              final bool downloading =
+                  downloadController.isDownloading[ep.id] ?? false;
+              final double progress =
+                  downloadController.downloadProgress[ep.id] ?? 0;
+              final bool isAlreadyDownloaded = downloadController.isDownloaded(
+                ep.id,
+              );
 
               return Material(
                 color: Colors.transparent,
@@ -601,7 +776,10 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
                   onTap: () => _downloadEpisode(ep),
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: Colors.white10),
@@ -624,21 +802,35 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
                                 if (progress > 0)
                                   Text(
                                     "${(progress * 100).toInt()}%",
-                                    style: const TextStyle(color: Colors.white, fontSize: 6, fontWeight: FontWeight.bold),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 6,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                               ],
                             ),
                           )
                         else
                           Icon(
-                            isAlreadyDownloaded ? Icons.check_circle : Icons.download_for_offline_outlined,
-                            color: isAlreadyDownloaded ? Colors.green : AppColors.primary,
+                            isAlreadyDownloaded
+                                ? Icons.check_circle
+                                : Icons.download_for_offline_outlined,
+                            color: isAlreadyDownloaded
+                                ? Colors.green
+                                : AppColors.primary,
                             size: 30,
                           ),
                         const SizedBox(height: 2),
                         GoldenText(
-                          downloading ? "WAIT" : (isAlreadyDownloaded ? "SAVED" : "SAVE"),
-                          style: const TextStyle(color: AppColors.primary, fontSize: 8, fontWeight: FontWeight.bold),
+                          downloading
+                              ? "WAIT"
+                              : (isAlreadyDownloaded ? "SAVED" : "SAVE"),
+                          style: const TextStyle(
+                            color: AppColors.primary,
+                            fontSize: 8,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),
@@ -656,7 +848,14 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Cast & Crew", style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+        const Text(
+          "Cast & Crew",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: 30),
         SizedBox(
           height: 160,
@@ -666,7 +865,10 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
             itemBuilder: (context, index) {
               final actor = widget.content.cast![index];
               return GestureDetector(
-                onTap: () => Get.toNamed(AppRoutes.castDetails, arguments: {'castName': actor.name, 'castImage': actor.image}),
+                onTap: () => Get.toNamed(
+                  AppRoutes.castDetails,
+                  arguments: {'castName': actor.name, 'castImage': actor.image},
+                ),
                 child: Padding(
                   padding: const EdgeInsets.only(right: 35),
                   child: Column(
@@ -680,7 +882,14 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      Text(actor.name, style: const TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w500)),
+                      Text(
+                        actor.name,
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -696,7 +905,14 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("More Like This", style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+        const Text(
+          "More Like This",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: 30),
         SizedBox(
           height: isDesktop ? 300 : 200,
@@ -706,10 +922,14 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
             itemBuilder: (context, index) {
               final item = related[index];
               return GestureDetector(
-                onTap: () => Get.toNamed(AppRoutes.dramaDetails, arguments: {
-                  'isSignedIn': authController.isLoggedIn.value,
-                  'content': item,
-                }, preventDuplicates: false),
+                onTap: () => Get.toNamed(
+                  AppRoutes.dramaDetails,
+                  arguments: {
+                    'isSignedIn': authController.isLoggedIn.value,
+                    'content': item,
+                  },
+                  preventDuplicates: false,
+                ),
                 child: Container(
                   width: isDesktop ? 200 : 135,
                   margin: const EdgeInsets.only(right: 20),
@@ -735,8 +955,11 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
   }
 
   void _downloadEpisode(ContentModel episode) {
-     if (!authController.isLoggedIn.value) {
-      Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute});
+    if (!authController.isLoggedIn.value) {
+      Get.toNamed(
+        AppRoutes.signIn,
+        arguments: {"returnRoute": Get.currentRoute},
+      );
       return;
     }
     downloadController.downloadVideo(episode);
@@ -764,15 +987,50 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
             children: [
               const Icon(Icons.stars_rounded, color: Colors.amber, size: 60),
               const SizedBox(height: 20),
-              const Text("Subscription Required", style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+              const Text(
+                "Subscription Required",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 15),
-              const Text("Unlock premium content and offline downloads with our subscription plans.", textAlign: TextAlign.center, style: TextStyle(color: Colors.white70, fontSize: 16)),
+              const Text(
+                "Unlock premium content and offline downloads with our subscription plans.",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white70, fontSize: 16),
+              ),
               const SizedBox(height: 35),
               Row(
                 children: [
-                  Expanded(child: TextButton(onPressed: () => Get.back(), child: const Text("CANCEL", style: TextStyle(color: Colors.white54)))),
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () => Get.back(),
+                      child: const Text(
+                        "CANCEL",
+                        style: TextStyle(color: Colors.white54),
+                      ),
+                    ),
+                  ),
                   const SizedBox(width: 15),
-                  Expanded(child: GoldenButton(onPressed: () { Get.back(); Get.toNamed(AppRoutes.goPremium); }, child: const FittedBox(child: Text("EXPLORE PLANS", style: TextStyle(color: AppColors.buttonTextColor, fontWeight: FontWeight.bold))))),
+                  Expanded(
+                    child: GoldenButton(
+                      onPressed: () {
+                        Get.back();
+                        Get.toNamed(AppRoutes.goPremium);
+                      },
+                      child: const FittedBox(
+                        child: Text(
+                          "EXPLORE PLANS",
+                          style: TextStyle(
+                            color: AppColors.buttonTextColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ],

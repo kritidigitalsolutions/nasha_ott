@@ -1,15 +1,14 @@
+// ignore_for_file: unused_local_variable
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../app/routes/app_routes.dart';
-import '../../utils/app_images.dart';
 import '../../utils/responsive.dart';
-import '../../view_model/primium_controller/premium_controller.dart';
+
 import '../../widgets/custom_network_image.dart';
 import '../../data/models/response_model/content_response_model/content_model.dart';
-import '../auth/signInPage.dart';
-import '../dramaDetails/dramaDetailsPage.dart';
-import '../premium/goPremium.dart';
+
 import '../../app/theme/app_colors.dart';
 
 class AutoSlider extends StatefulWidget {

@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../app/routes/app_routes.dart';
-import '../../utils/app_images.dart';
 import '../../utils/responsive.dart';
 import '../../data/models/response_model/content_response_model/content_model.dart';
 import '../../app/theme/app_colors.dart';
-import '../../widgets/catagory_widget.dart';
 import '../../widgets/golden_text.dart';
 import '../../widgets/custom_network_image.dart';
-import '../auth/signInPage.dart';
-import '../dramaDetails/dramaDetailsPage.dart';
 
 class Top10List extends StatelessWidget {
   final List<ContentModel> content;

@@ -6,13 +6,11 @@ import '../../data/models/response_model/content_response_model/content_model.da
 import '../../widgets/golden_text.dart';
 import '../../widgets/custom_network_image.dart';
 import '../../widgets/golden_button.dart';
-import '../dramaDetails/dramaDetailsPage.dart';
 import '../../view_model/content_controller/content_controller.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../utils/custom_snackbar.dart';
 import '../../utils/notification_service.dart';
 import '../../utils/responsive.dart';
-import '../auth/signInPage.dart';
 
 class ComingSoonSection extends StatefulWidget {
   final List<ContentModel> content;
