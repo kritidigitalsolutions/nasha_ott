@@ -49,7 +49,7 @@ class SettingsPage extends StatelessWidget {
           const SizedBox(height: 20),
           _buildSectionHeader("Account"),
           _buildActionTile("Language", "English", () {}),
-          _buildActionTile("Help & Support", "", () => Get.toNamed(AppRoutes.helpSupport)),
+          // _buildActionTile("Help & Support", "", () => Get.toNamed(AppRoutes.helpSupport)),
           _buildActionTile("Delete Account", "", () => Get.toNamed(AppRoutes.deleteAccount)),
           _buildActionTile("App Version", "1.0.0", null),
         ],
