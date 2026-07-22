@@ -74,4 +74,10 @@ class AppConstants {
 
   //CATEGORY
   static const String categoryUrl = "$baseUrl/categories";
+
+  //Company INFO
+  static const String companyUrl = "$baseUrl/companyInfo";
+
+  //HELP
+  static String helpApi = "$baseUrl/help";
 }

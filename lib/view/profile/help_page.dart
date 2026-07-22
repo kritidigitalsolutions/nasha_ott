@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:nazar_ott/view_model/company_info_controller/company_info_controller.dart';
 import '../../widgets/golden_text.dart';
 import '../../app/routes/app_routes.dart';
 import '../../utils/responsive.dart';
@@ -19,18 +20,21 @@ class HelpSupportPage extends StatefulWidget {
 class _HelpSupportPageState extends State<HelpSupportPage> {
   final PrivacyController privacyController = Get.put(PrivacyController());
   final SupportController supportController = Get.put(SupportController());
+  final CompanyController companyController = Get.put(CompanyController());
 
   @override
   void initState() {
     super.initState();
     privacyController.fetchHelpData();
     supportController.fetchTickets();
+    companyController.fetchCompanyInfo(); // 👈 added
+    companyController.getAllHelp();
   }
 
-  void _makePhoneCall(String phoneNumber) async {
+  void _makePhoneCall(CompanyController companyController) async {
     final Uri launchUri = Uri(
       scheme: 'tel',
-      path: phoneNumber,
+      path: companyController.helpList.single.supportNumber,
     );
     if (await canLaunchUrl(launchUri)) {
       await launchUrl(launchUri);
@@ -75,7 +79,7 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
                         child: _buildActionCard(
                           icon: Icons.phone_in_talk_outlined,
                           label: "Call Customer Care",
-                          onTap: () => _makePhoneCall("+919967016566"),
+                          onTap: () => _makePhoneCall(companyController),
                           color: Colors.green,
                         ),
                       ),
@@ -88,27 +92,54 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.05),
                       borderRadius: BorderRadius.circular(15),
-                      border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+                      border: Border.all(
+                        color: AppColors.primary.withOpacity(0.3),
+                      ),
                     ),
                     child: Column(
                       children: [
                         const GoldenText(
                           "Contact Us Directly",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                        ),
-                        const SizedBox(height: 12),
-                        InkWell(
-                          onTap: () => launchUrl(Uri.parse("mailto:support@nazarott.in")),
-                          child: const GoldenText(
-                            "Mail - support@nazarott.in ",
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
                           ),
                         ),
+                        const SizedBox(height: 12),
+                        Obx(() {
+                          final hasHelp = companyController.helpList.isNotEmpty;
+                          final supportEmail = hasHelp
+                              ? companyController.helpList[0].supportEmail
+                              : 'support@nazarott.in';
+
+                          return InkWell(
+                            onTap: () =>
+                                launchUrl(Uri.parse("mailto:$supportEmail")),
+                            child: GoldenText(
+                              "Mail - $supportEmail",
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          );
+                        }),
                         const SizedBox(height: 8),
-                        const Text(
-                          "Call - +91 99670 16566",
-                          style: TextStyle(color: Colors.green, fontSize: 14, fontWeight: FontWeight.w600),
-                        ),
+                        Obx(() {
+                          final hasHelp = companyController.helpList.isNotEmpty;
+                          final supportNumber = hasHelp
+                              ? companyController.helpList[0].supportNumber
+                              : '+91 99670 16566';
+
+                          return Text(
+                            "Call - $supportNumber",
+                            style: const TextStyle(
+                              color: Colors.green,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          );
+                        }),
                         const Text(
                           "(Mon - Sat 12pm - 8pm)",
                           style: TextStyle(color: Colors.white38, fontSize: 12),
@@ -116,18 +147,37 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
                         const SizedBox(height: 16),
                         const Divider(color: Colors.white24),
                         const SizedBox(height: 12),
-                        const Icon(Icons.location_on_outlined, color: AppColors.primary, size: 24),
+                        const Icon(
+                          Icons.location_on_outlined,
+                          color: AppColors.primary,
+                          size: 24,
+                        ),
                         const SizedBox(height: 8),
                         const GoldenText(
                           "Our Address",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
                         ),
                         const SizedBox(height: 8),
-                        const Text(
-                          "PLOT B-D-82 RSC 25, B-23,\nMANGAL CO-OP HSC, VARSOVA,\nANDHERI WEST, Mumbai,\nMumbai Suburban, Maharashtra - 400058",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.5),
-                        ),
+                        Obx(() {
+                          final data =
+                              companyController.companyInfo.value?.data;
+                          final address = data == null
+                              ? ''
+                              : '${data.addressLine1}\n${data.city}, ${data.state} - ${data.postalCode}\n${data.country}';
+
+                          return Text(
+                            address,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 13,
+                              height: 1.5,
+                            ),
+                          );
+                        }),
                       ],
                     ),
                   ),
@@ -142,10 +192,16 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       child: GoldenText(
                         "Recent Support Tickets",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     ListView.builder(
@@ -163,7 +219,12 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
               return const SizedBox.shrink();
             }),
 
-            const Divider(color: Colors.white12, thickness: 1, indent: 16, endIndent: 16),
+            const Divider(
+              color: Colors.white12,
+              thickness: 1,
+              indent: 16,
+              endIndent: 16,
+            ),
 
             /// 🔹 FAQ Section
             const Padding(
@@ -182,7 +243,10 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
               }
               if (privacyController.helpData.isEmpty) {
                 return const Center(
-                  child: Text("No FAQ Found", style: TextStyle(color: Colors.white54)),
+                  child: Text(
+                    "No FAQ Found",
+                    style: TextStyle(color: Colors.white54),
+                  ),
                 );
               }
               return ListView.builder(
@@ -210,7 +274,10 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
                           padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                           child: Text(
                             help['answer'] ?? "",
-                            style: const TextStyle(color: Colors.white70, height: 1.4),
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              height: 1.4,
+                            ),
                           ),
                         ),
                       ],
@@ -226,7 +293,12 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
     );
   }
 
-  Widget _buildActionCard({required IconData icon, required String label, required VoidCallback onTap, required Color color}) {
+  Widget _buildActionCard({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    required Color color,
+  }) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(15),
@@ -245,12 +317,19 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
                 ? GoldenText(
                     label,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                    ),
                   )
                 : Text(
                     label,
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 13),
+                    style: TextStyle(
+                      color: color,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                    ),
                   ),
           ],
         ),
@@ -260,13 +339,15 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
 
   Widget _buildTicketItem(dynamic ticket) {
     String status = ticket['status'] ?? 'OPEN';
-    Color statusColor = status == 'OPEN' ? Colors.green : (status == 'PENDING' ? Colors.orange : Colors.grey);
-    
+    Color statusColor = status == 'OPEN'
+        ? Colors.green
+        : (status == 'PENDING' ? Colors.orange : Colors.grey);
+
     String formattedDate = "";
     try {
-       DateTime date = DateTime.parse(ticket['createdAt']);
-       formattedDate = DateFormat('dd MMM yyyy').format(date);
-    } catch(e) {}
+      DateTime date = DateTime.parse(ticket['createdAt']);
+      formattedDate = DateFormat('dd MMM yyyy').format(date);
+    } catch (e) {}
 
     return InkWell(
       onTap: () => Get.toNamed(AppRoutes.ticketChat, arguments: ticket),
@@ -285,23 +366,37 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: statusColor.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
                     status,
-                    style: TextStyle(color: statusColor, fontSize: 10, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: statusColor,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-                Text(formattedDate, style: const TextStyle(color: Colors.white38, fontSize: 11)),
+                Text(
+                  formattedDate,
+                  style: const TextStyle(color: Colors.white38, fontSize: 11),
+                ),
               ],
             ),
             const SizedBox(height: 8),
             Text(
               ticket['subject'] ?? "",
-              style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 4),
             GoldenText(

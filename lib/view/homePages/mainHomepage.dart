@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:nazar_ott/data/models/response_model/content_response_model/content_model.dart';
+import 'package:nazar_ott/view_model/company_info_controller/company_info_controller.dart';
 import '../../app/routes/app_routes.dart';
 import '../../app/theme/app_colors.dart';
 import '../../utils/app_images.dart';
@@ -29,6 +30,9 @@ class MainHomePage extends StatelessWidget {
     final HomeController controller = Get.put(HomeController());
     final AuthController authController = Get.find<AuthController>();
     final notificationService = NotificationService.to;
+    final CompanyController companyController = Get.put(
+      CompanyController(),
+    ); // 👈 added
 
     // Update selectedIndex based on route for Web Deep Linking
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -62,6 +66,7 @@ class MainHomePage extends StatelessWidget {
             authController,
             contentController,
             notificationService,
+            companyController,
           ),
           desktop: _buildDesktopLayout(
             context,
@@ -69,6 +74,7 @@ class MainHomePage extends StatelessWidget {
             authController,
             contentController,
             notificationService,
+            companyController,
           ),
         ),
       ),
@@ -81,6 +87,7 @@ class MainHomePage extends StatelessWidget {
     AuthController authController,
     ContentController contentController,
     NotificationService notificationService,
+    CompanyController companyController,
   ) {
     return Stack(
       children: [
@@ -92,9 +99,10 @@ class MainHomePage extends StatelessWidget {
                 _buildUpcomingContent(notificationService, authController),
                 RefreshIndicator(
                   onRefresh: () async {
-                  await  contentController.allContent();
-                  await contentController.fetchContent();
-                  await contentController.trendingContent();
+                    await contentController.allContent();
+                    await contentController.fetchContent();
+                    await contentController.trendingContent();
+                    await companyController.fetchCompanyInfo();
                   },
                   child: _buildHomeContent(
                     context,
@@ -102,6 +110,7 @@ class MainHomePage extends StatelessWidget {
                     authController,
                     contentController,
                     notificationService,
+                    companyController,
                   ),
                 ),
                 ProfilePage(
@@ -144,6 +153,7 @@ class MainHomePage extends StatelessWidget {
     AuthController authController,
     ContentController contentController,
     NotificationService notificationService,
+    CompanyController companyController,
   ) {
     return Column(
       children: [
@@ -167,6 +177,7 @@ class MainHomePage extends StatelessWidget {
                   authController,
                   contentController,
                   notificationService,
+                  companyController,
                   isDesktop: true,
                 ),
                 ProfilePage(
@@ -359,7 +370,8 @@ class MainHomePage extends StatelessWidget {
     HomeController controller,
     AuthController authController,
     ContentController contentController,
-    NotificationService notificationService, {
+    NotificationService notificationService,
+    CompanyController companyController, {
     bool isDesktop = false,
   }) {
     return Column(
@@ -428,7 +440,7 @@ class MainHomePage extends StatelessWidget {
                       ),
                     ),
 
-                  _buildFooter(),
+                  _buildFooter(companyController),
                   const SizedBox(height: 120),
                 ],
               ),
@@ -503,7 +515,7 @@ class MainHomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildFooter() {
+  Widget _buildFooter(CompanyController companyController) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 40),
@@ -580,19 +592,26 @@ class MainHomePage extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 30),
-          const Column(
-            children: [
-              Text(
-                "PLOT B-D-82 RSC 25, B-23, MANGAL CO-OP HSC, VARSOVA,\nANDHERI WEST, Mumbai, Mumbai Suburban, Maharashtra - 400058",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 14,
-                  height: 1.4,
+          Obx(() {
+            final data = companyController.companyInfo.value?.data;
+            final address = data == null
+                ? ''
+                : '${data.addressLine1}, ${data.city}, ${data.state} - ${data.postalCode}';
+
+            return Column(
+              children: [
+                Text(
+                  address,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                    height: 1.4,
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            );
+          }),
         ],
       ),
     );
