@@ -6,10 +6,12 @@ class ContentModel {
   final String description;
   final List<String> genre;
   final int releaseYear;
+  final bool isPublished;
   final String? duration;
   final String language;
   final String poster;
   final bool is18Plus; // Added this field
+  final String type; // 'movie', 'series', 'episode'
 
   final String banner;
   final String? videoUrl;
@@ -33,6 +35,7 @@ class ContentModel {
   final int? episodeNumber;
 
   ContentModel({
+    required this.type,
     required this.id,
     required this.title,
     required this.description,
@@ -60,10 +63,12 @@ class ContentModel {
     this.seasonNumber,
     this.episodeNumber,
     required this.is18Plus,
+    required this.isPublished,
   });
 
   factory ContentModel.fromJson(Map<String, dynamic> json) {
     String baseUrl = AppConstants.serverUrl;
+    String contentType = json['type'] ?? '';
 
     String formatUrl(String? url) {
       if (url == null || url.isEmpty) return '';
@@ -81,6 +86,8 @@ class ContentModel {
     }
 
     return ContentModel(
+      isPublished: json['isPublished'],
+      type: contentType,
       id: json['_id'] ?? '',
       title: json['title'] ?? '',
       description: json['description'] ?? '',
@@ -142,6 +149,9 @@ class ContentModel {
       'totalEpisodes': totalEpisodes,
       'seriesId': seriesId,
       'seasonNumber': seasonNumber,
+      'type': type,
+      'isPublished':isPublished,
+
       'episodeNumber': episodeNumber,
     };
   }

@@ -433,6 +433,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
 
         // 🔞 Agar content 18+ nahi hai to age dialog bilkul skip karo
         if (widget.content.is18Plus != true) {
+          print(widget.content.trailerUrl);
           Get.toNamed(
             AppRoutes.videoPlayer,
             arguments: {
@@ -449,6 +450,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
         );
 
         if (isOver18 == true) {
+          print(widget.content.trailerUrl);
           Get.toNamed(
             AppRoutes.videoPlayer,
             arguments: {

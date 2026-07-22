@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
@@ -12,8 +14,14 @@ class VideoController extends GetxController {
 
   final RxBool isInitialized = false.obs;
   final RxBool isPlaying = false.obs;
+  final RxBool isBuffering = false.obs;
   final RxBool showControls = true.obs;
   final RxBool isFullscreen = false.obs;
+
+  /// NEW: surfaced error state so the UI can show something instead of
+  /// spinning forever when a stream fails to load/play.
+  final RxBool hasError = false.obs;
+  final RxString errorMessage = ''.obs;
 
   final Rx<Duration> currentPosition = Duration.zero.obs;
   final Rx<Duration> totalDuration = Duration.zero.obs;
@@ -21,13 +29,13 @@ class VideoController extends GetxController {
   final RxDouble volume = 1.0.obs;
   final RxDouble playbackSpeed = 1.0.obs;
 
-  /// True jab tak naya quality controller initialize ho raha hai —
-  /// widget isko chhota loading spinner dikhane ke liye use karta hai
-  /// (pura black-screen restart jaisa nahi lagta).
+  /// True while a new quality controller is initializing — widget shows a
+  /// small spinner over the video instead of a full black-screen restart.
   final RxBool isSwitchingQuality = false.obs;
 
+  final RxInt playerVersion = 0.obs;
+
   Timer? _hideControlsTimer;
-  Timer? _positionTimer;
 
   /// Original URL passed to the player (master playlist / source url)
   String? _sourceUrl;
@@ -38,29 +46,91 @@ class VideoController extends GetxController {
   Future<void> initializeVideo(String url) async {
     _sourceUrl = url;
     isInitialized.value = false;
+    hasError.value = false;
+    errorMessage.value = '';
 
-    final newController = VideoPlayerController.networkUrl(Uri.parse(url));
-    await newController.initialize();
+    if (kIsWeb && url.toLowerCase().contains('.m3u8')) {
+      // video_player on Flutter Web uses the browser's native <video> tag,
+      // which does NOT support HLS except in Safari. This is a platform
+      // limitation, not a bug you can fix here — you need an hls.js-backed
+      // web player (or a dedicated web video plugin) for HLS on web.
+      hasError.value = true;
+      errorMessage.value =
+          'HLS (.m3u8) playback is not supported on this browser. '
+          'Please use the mobile/desktop app, or Safari.';
+      return;
+    }
 
-    videoPlayerController = newController;
-    totalDuration.value = newController.value.duration;
+    try {
+      final bool isHls = url.toLowerCase().contains('.m3u8');
 
-    newController.addListener(_videoListener);
+      final newController = VideoPlayerController.networkUrl(
+        Uri.parse(url),
+        // Explicit format hint — without this, ExoPlayer on Android can
+        // mis-detect the container when the CDN redirects the URL or omits
+        // a clean file extension, and playback fails silently.
+        formatHint: isHls ? VideoFormat.hls : VideoFormat.other,
+        videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+        // Chrome opens this exact URL fine but ExoPlayer gets a 403 —
+        // that rules out referrer/token restrictions (a plain address-bar
+        // navigation sends no Referer either) and points to User-Agent
+        // based bot detection instead. ExoPlayer's default UA
+        // ("AndroidXMedia3/... ExoPlayerLib/...") looks nothing like a
+        // browser, so a WAF/CDN in front of Bunny blocks it. Spoofing a
+        // real browser UA works around that.
+        httpHeaders: const {
+          'User-Agent':
+              'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+              '(KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+        },
+      );
 
-    isInitialized.value = true;
-    newController.play();
-    isPlaying.value = true;
+      await newController.initialize();
 
-    _startHideControlsTimer();
-    update();
+      videoPlayerController = newController;
+      totalDuration.value = newController.value.duration;
+
+      newController.addListener(_videoListener);
+
+      isInitialized.value = true;
+      hasError.value = false;
+      playerVersion.value++;
+      await newController.play();
+      isPlaying.value = true;
+
+      _startHideControlsTimer();
+      update();
+    } catch (e, st) {
+      debugPrint('Video init error: $e');
+      debugPrintStack(stackTrace: st);
+      isInitialized.value = false;
+      hasError.value = true;
+      errorMessage.value = 'Unable to play this video. Please try again.';
+    }
+  }
+
+  /// Retry after a failure, using the last known source url.
+  Future<void> retry() async {
+    if (_sourceUrl == null) return;
+    await initializeVideo(_sourceUrl!);
   }
 
   void _videoListener() {
     if (videoPlayerController == null) return;
     final value = videoPlayerController!.value;
 
+    // NEW: surface mid-playback errors (segment fetch failures, stream
+    // drops, decoder errors) instead of ignoring them.
+    if (value.hasError) {
+      hasError.value = true;
+      errorMessage.value = value.errorDescription ?? 'Playback error.';
+      isPlaying.value = false;
+      return;
+    }
+
     currentPosition.value = value.position;
     totalDuration.value = value.duration;
+    isBuffering.value = value.isBuffering;
 
     if (isPlaying.value != value.isPlaying) {
       isPlaying.value = value.isPlaying;
@@ -111,12 +181,12 @@ class VideoController extends GetxController {
 
   // ─────────────────────────────────────────────
   // FULLSCREEN
+  // NOTE: actual SystemChrome orientation/UI-mode calls now live in
+  // _AdvancedVideoPlayerState (_enterFullscreen/_exitFullscreen) since
+  // those are platform/UI side effects tied to this specific page's
+  // lifecycle, not something the controller should own. This just tracks
+  // the boolean state for the icon.
   // ─────────────────────────────────────────────
-  void toggleFullscreen() {
-    isFullscreen.value = !isFullscreen.value;
-    // Actual orientation/fullscreen system UI change karna ho to yahan
-    // SystemChrome calls add karo (aapke existing implementation ke hisaab se).
-  }
 
   // ─────────────────────────────────────────────
   // CONTROLS SHOW/HIDE
@@ -144,15 +214,25 @@ class VideoController extends GetxController {
   }
 
   // ─────────────────────────────────────────────
-  // QUALITY CHANGE — HLS (.m3u8) ke liye position-preserving switch
-  // Non-HLS (.mp4 etc.) URLs ke liye bhi same URL replace logic try
-  // karta hai; agar aapka backend alag naming deta hai to yahan
-  // sirf `_buildQualityUrl` function edit karna hoga.
+  // QUALITY CHANGE
+  //
+  // IMPORTANT: Bunny Stream's master playlist (playlist.m3u8) is normally
+  // ADAPTIVE — it already lists every bitrate internally via
+  // #EXT-X-STREAM-INF, and the player auto-switches based on bandwidth.
+  // Manually rewriting the URL to "{res}p/video.m3u8" ONLY works if your
+  // Bunny library actually serves separate per-resolution playlists at
+  // that exact path. If it doesn't, every switch 404s.
+  //
+  // Verify your real sub-playlist naming by opening the master
+  // playlist.m3u8 in a text editor / browser — look for lines like:
+  //   #EXT-X-STREAM-INF:BANDWIDTH=...,RESOLUTION=1280x720
+  //   720p/video.m3u8
+  // and adjust _buildQualityUrl to match exactly what you see there.
   // ─────────────────────────────────────────────
-  Future<void> changeQuality(String quality, String originalUrl) async {
-    if (videoPlayerController == null) return;
+  Future<bool> changeQuality(String quality, String originalUrl) async {
+    if (videoPlayerController == null) return false;
 
-    final bool isHls = originalUrl.toLowerCase().contains(".m3u8");
+    final bool isHls = originalUrl.toLowerCase().contains('.m3u8');
 
     final String newUrl = _buildQualityUrl(
       originalUrl: originalUrl,
@@ -160,10 +240,11 @@ class VideoController extends GetxController {
       isHls: isHls,
     );
 
-    // Agar URL badla hi nahi (already same quality), to kuch mat karo
-    if (newUrl == videoPlayerController!.dataSource) return;
+    // URL didn't change (already this quality, or unsupported combo) —
+    // nothing to do.
+    if (newUrl == videoPlayerController!.dataSource) return true;
 
-    // 1. Current state save karo
+    // 1. Save current state
     final Duration currentPos = videoPlayerController!.value.position;
     final bool wasPlaying = videoPlayerController!.value.isPlaying;
     final double currentVolume = volume.value;
@@ -175,11 +256,21 @@ class VideoController extends GetxController {
     isSwitchingQuality.value = true;
 
     try {
-      // 2. Naya controller banao aur initialize karo (background me)
-      final newController = VideoPlayerController.networkUrl(Uri.parse(newUrl));
+      // 2. Build + initialize the new controller in the background
+      final newController = VideoPlayerController.networkUrl(
+        Uri.parse(newUrl),
+        formatHint: isHls ? VideoFormat.hls : VideoFormat.other,
+        videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+        httpHeaders: const {
+          'User-Agent':
+              'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+              '(KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+        },
+      );
       await newController.initialize();
 
-      // 3. Same position pe seek karo — YAHI restart-from-zero rokta hai
+      // 3. Seek to the same position — this is what prevents a
+      // restart-from-zero on quality switch.
       await newController.seekTo(currentPos);
       await newController.setVolume(currentVolume);
       await newController.setPlaybackSpeed(currentSpeed);
@@ -194,53 +285,63 @@ class VideoController extends GetxController {
         await newController.play();
       }
       isPlaying.value = wasPlaying;
+      hasError.value = false;
+      // This is what fixes the black screen: without bumping this, Obx
+      // never knows the underlying controller instance changed and keeps
+      // showing the disposed one.
+      playerVersion.value++;
 
-      // 4. Ab purana controller safely dispose karo
+      // 4. Now it's safe to dispose the old controller
       await oldController?.dispose();
 
-      _sourceUrl = quality == "Auto" ? originalUrl : newUrl;
+      _sourceUrl = quality == 'Auto' ? originalUrl : newUrl;
 
       update();
-    } catch (e) {
-      // Naya controller fail hua to purane controller pe hi wapas chalo
-      debugPrint("Quality change failed: $e");
+      return true;
+    } catch (e, st) {
+      // New quality URL failed (commonly a 404 because that resolution
+      // playlist doesn't actually exist) — fall back to the old
+      // controller so playback doesn't just die.
+      debugPrint('Quality change failed: $e');
+      debugPrintStack(stackTrace: st);
       oldController?.addListener(_videoListener);
+      return false;
     } finally {
       isSwitchingQuality.value = false;
     }
   }
 
-  /// Bunny CDN HLS URL pattern:
+  /// Bunny CDN HLS URL pattern (VERIFY against your actual master
+  /// playlist — see note above changeQuality()):
   /// master : https://vz-xxxxx.b-cdn.net/{video_id}/playlist.m3u8
   /// quality: https://vz-xxxxx.b-cdn.net/{video_id}/{res}p/video.m3u8
-  ///
-  /// ⚠️ Apni Bunny library ka actual sub-playlist naming pattern
-  /// master playlist file khol ke verify kar lena — agar different
-  /// hai to niche wali String replacement update kar dena.
   String _buildQualityUrl({
     required String originalUrl,
     required String quality,
     required bool isHls,
   }) {
-    if (quality == "Auto" || !isHls) {
+    if (quality == 'Auto' || !isHls) {
       return originalUrl;
     }
 
-    final resolutionNumber = quality.replaceAll(RegExp(r'[^0-9]'), "");
+    final resolutionNumber = quality.replaceAll(RegExp(r'[^0-9]'), '');
     if (resolutionNumber.isEmpty) return originalUrl;
 
-    if (originalUrl.contains("playlist.m3u8")) {
+    if (originalUrl.contains('playlist.m3u8')) {
       return originalUrl.replaceFirst(
-        "playlist.m3u8",
-        "$resolutionNumber" "p/video.m3u8",
+        'playlist.m3u8',
+        '${resolutionNumber}p/video.m3u8',
       );
     }
 
-    // Agar URL already ek specific quality folder pe point kar raha hai
-    // (jaise .../720p/video.m3u8), to us segment ko replace karo.
+    // If URL already points at a specific quality folder
+    // (e.g. .../720p/video.m3u8), replace that segment.
     final regex = RegExp(r'/\d+p/video\.m3u8');
     if (regex.hasMatch(originalUrl)) {
-      return originalUrl.replaceFirst(regex, "/$resolutionNumber" "p/video.m3u8");
+      return originalUrl.replaceFirst(
+        regex,
+        '/${resolutionNumber}p/video.m3u8',
+      );
     }
 
     return originalUrl;
@@ -249,13 +350,11 @@ class VideoController extends GetxController {
   @override
   void onClose() {
     _hideControlsTimer?.cancel();
-    _positionTimer?.cancel();
     videoPlayerController?.removeListener(_videoListener);
     videoPlayerController?.dispose();
     super.onClose();
   }
 }
-
 
 class AdvancedVideoPlayer extends StatefulWidget {
   final String url;
@@ -272,9 +371,13 @@ class AdvancedVideoPlayer extends StatefulWidget {
 }
 
 class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer> {
-  final VideoController controller = Get.put(VideoController());
+  // NEW: tag the controller with the url so navigating between different
+  // videos never accidentally reuses a stale controller/player instance.
+  late final String _tag = widget.url;
+  late final VideoController controller = Get.put(VideoController(), tag: _tag);
+
   final RxBool isLocked = false.obs;
-  final RxString quality = "Auto".obs;
+  final RxString quality = 'Auto'.obs;
 
   @override
   void initState() {
@@ -283,100 +386,253 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer> {
   }
 
   @override
+  void dispose() {
+    // Always restore portrait + system bars when leaving this page —
+    // otherwise a fullscreen/landscape lock leaks into every other screen
+    // in the app.
+    _restoreSystemUi();
+
+    // NEW: remove this controller from GetX so the next video page gets a
+    // fresh instance instead of a disposed/stale one.
+    Get.delete<VideoController>(tag: _tag);
+    super.dispose();
+  }
+
+  /// Locks to landscape and hides status/nav bars for a real fullscreen
+  /// video experience.
+  void _enterFullscreen() {
+    controller.isFullscreen.value = true;
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  }
+
+  /// Reverts back to portrait and restores the status/nav bars.
+  void _exitFullscreen() {
+    controller.isFullscreen.value = false;
+    _restoreSystemUi();
+  }
+
+  void _restoreSystemUi() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual,
+      overlays: SystemUiOverlay.values,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Obx(() {
+        if (controller.hasError.value) {
+          return _errorView();
+        }
+
         if (!controller.isInitialized.value) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const Center(child: CircularProgressIndicator());
         }
 
         return Stack(
           children: [
             /// 🎬 VIDEO
-            Container(
-              color: Colors.black,
-              width: double.infinity,
-              height: double.infinity,
-              child: Center(
-                child: AspectRatio(
-                  aspectRatio: controller
-                      .videoPlayerController!
-                      .value
-                      .aspectRatio,
-                  child: VideoPlayer(
-                      controller.videoPlayerController!),
+            /// Dedicated Obx reading `playerVersion` — this is what makes
+            /// the widget rebuild against the new controller instance
+            /// after a quality switch (fixes the black screen).
+            Obx(() {
+              // ignore: unused_local_variable
+              final _version = controller.playerVersion.value;
+              return Container(
+                color: Colors.black,
+                width: double.infinity,
+                height: double.infinity,
+                child: Center(
+                  child: AspectRatio(
+                    aspectRatio:
+                        controller.videoPlayerController!.value.aspectRatio,
+                    child: VideoPlayer(controller.videoPlayerController!),
+                  ),
                 ),
-              ),
+              );
+            }),
+
+            /// ⏳ BUFFERING INDICATOR
+            Obx(
+              () => controller.isBuffering.value
+                  ? const Center(
+                      child: CircularProgressIndicator(strokeWidth: 2.5),
+                    )
+                  : const SizedBox.shrink(),
             ),
 
             /// 👆 TAPPABLE OVERLAY (Always active to catch mouse/touch events)
+            /// When locked, only the lock button area can be tapped
             Positioned.fill(
               child: GestureDetector(
-                onTap: () => controller.toggleControls(),
+                onTap: () {
+                  // Don't toggle controls if locked
+                  if (!isLocked.value) {
+                    controller.toggleControls();
+                  }
+                },
                 behavior: HitTestBehavior.opaque,
                 child: const SizedBox.expand(),
               ),
             ),
 
-            /// 🔒 LOCK BUTTON
-            Obx(() => controller.showControls.value ? Positioned(
+            /// 🔒 LOCK BUTTON - Always visible and tappable even when locked
+            Positioned(
               left: 20,
               top: MediaQuery.of(context).size.height / 2 - 25,
-              child: IconButton(
-                style: IconButton.styleFrom(
-                  backgroundColor: Colors.black45,
-                  padding: const EdgeInsets.all(12),
-                ),
-                icon: Icon(
-                  isLocked.value ? Icons.lock : Icons.lock_open,
-                  color: isLocked.value ? AppColors.primary : Colors.white,
-                  size: 26,
-                ),
-                onPressed: () {
+              child: GestureDetector(
+                onTap: () {
+                  // Toggle lock state - this always works
                   isLocked.value = !isLocked.value;
-                  controller.showControls.value = true;
-                  controller.toggleControls(); // Reset hide timer
+                  // When unlocking, show controls briefly
+                  if (!isLocked.value) {
+                    controller.showControls.value = true;
+                    controller.toggleControls(); // Reset hide timer
+                  } else {
+                    // When locking, hide controls immediately
+                    controller.showControls.value = false;
+                    controller._hideControlsTimer?.cancel();
+                  }
                 },
-              ),
-            ) : const SizedBox.shrink()),
-
-            /// 🎮 CONTROLS
-            Obx(() => controller.showControls.value && !isLocked.value
-                ? Positioned.fill(child: _controls(context))
-                : const SizedBox.shrink()),
-
-            /// ⏳ QUALITY-SWITCH LOADING OVERLAY (chhota, video ke upar,
-            /// pura restart jaisa feel nahi dega)
-            Obx(() => controller.isSwitchingQuality.value
-                ? const Positioned.fill(
-              child: ColoredBox(
-                color: Colors.black26,
-                child: Center(
-                  child: SizedBox(
-                    width: 32,
-                    height: 32,
-                    child: CircularProgressIndicator(strokeWidth: 2.5),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black45,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: const EdgeInsets.all(12),
+                  child: Icon(
+                    isLocked.value ? Icons.lock : Icons.lock_open,
+                    color: isLocked.value ? AppColors.primary : Colors.white,
+                    size: 26,
                   ),
                 ),
               ),
-            )
-                : const SizedBox.shrink()),
+            ),
+
+            /// 🎮 CONTROLS - Only show when not locked
+            Obx(
+              () => !isLocked.value && controller.showControls.value
+                  ? Positioned.fill(child: _controls(context))
+                  : const SizedBox.shrink(),
+            ),
+
+            /// 🔒 LOCKED OVERLAY MESSAGE - Show when locked
+            Obx(
+              () => isLocked.value
+                  ? Positioned(
+                      bottom: 80,
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.black54,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Text(
+                            'Tap 🔒 to unlock',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
+
+            /// ⏳ QUALITY-SWITCH LOADING OVERLAY
+            Obx(
+              () => controller.isSwitchingQuality.value
+                  ? const Positioned.fill(
+                      child: ColoredBox(
+                        color: Colors.black26,
+                        child: Center(
+                          child: SizedBox(
+                            width: 32,
+                            height: 32,
+                            child: CircularProgressIndicator(strokeWidth: 2.5),
+                          ),
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
           ],
         );
       }),
     );
   }
 
+  /// ❌ ERROR VIEW — shown instead of an infinite spinner when playback
+  /// fails to initialize or errors out mid-stream.
+  Widget _errorView() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline, color: Colors.white54, size: 48),
+            const SizedBox(height: 16),
+            Obx(
+              () => Text(
+                controller.errorMessage.value,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.white70),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextButton(
+                  onPressed: () => Get.back(),
+                  child: const Text(
+                    'Go Back',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                ElevatedButton(
+                  onPressed: () => controller.retry(),
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   /// 🎮 CONTROLS
   Widget _controls(BuildContext context) {
     return GestureDetector(
-      onTap: () => controller.toggleControls(),
+      onTap: () {
+        // Only toggle controls if not locked
+        if (!isLocked.value) {
+          controller.toggleControls();
+        }
+      },
       behavior: HitTestBehavior.opaque,
       child: Container(
-        color: Colors.black45, // Slightly darker for better visibility
+        color: Colors.black45,
         child: Column(
           children: [
             /// 🔝 TOP BAR
@@ -395,7 +651,7 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer> {
                     icon: const Icon(Icons.share, color: Colors.white),
                     onPressed: () {
                       Share.share(
-                        "Watch ${widget.title} on Nazar OTT: ${widget.url}",
+                        'Watch ${widget.title} on Nazar OTT: ${widget.url}',
                         subject: widget.title,
                       );
                     },
@@ -413,30 +669,44 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer> {
                     iconSize: 40,
                     icon: const Icon(Icons.replay_10, color: Colors.white),
                     onPressed: () {
-                      final current = controller.videoPlayerController!.value.position;
-                      controller.videoPlayerController!
-                          .seekTo(current - const Duration(seconds: 10));
+                      if (!isLocked.value) {
+                        final current =
+                            controller.videoPlayerController!.value.position;
+                        controller.videoPlayerController!.seekTo(
+                          current - const Duration(seconds: 10),
+                        );
+                      }
                     },
                   ),
                   const SizedBox(width: 40),
-                  Obx(() => IconButton(
-                    iconSize: 70,
-                    icon: Icon(
-                      controller.isPlaying.value
-                          ? Icons.pause_circle_filled
-                          : Icons.play_circle_filled,
-                      color: Colors.white,
+                  Obx(
+                    () => IconButton(
+                      iconSize: 70,
+                      icon: Icon(
+                        controller.isPlaying.value
+                            ? Icons.pause_circle_filled
+                            : Icons.play_circle_filled,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        if (!isLocked.value) {
+                          controller.togglePlay();
+                        }
+                      },
                     ),
-                    onPressed: controller.togglePlay,
-                  )),
+                  ),
                   const SizedBox(width: 40),
                   IconButton(
                     iconSize: 40,
                     icon: const Icon(Icons.forward_10, color: Colors.white),
                     onPressed: () {
-                      final current = controller.videoPlayerController!.value.position;
-                      controller.videoPlayerController!
-                          .seekTo(current + const Duration(seconds: 10));
+                      if (!isLocked.value) {
+                        final current =
+                            controller.videoPlayerController!.value.position;
+                        controller.videoPlayerController!.seekTo(
+                          current + const Duration(seconds: 10),
+                        );
+                      }
                     },
                   ),
                 ],
@@ -448,78 +718,115 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer> {
               top: false,
               bottom: true,
               child: Padding(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(2),
                 child: Column(
                   children: [
                     /// 🔥 SEEK BAR
                     Obx(() {
                       final total = controller.totalDuration.value.inSeconds;
-                      final current = controller.currentPosition.value.inSeconds;
-
+                      final current =
+                          controller.currentPosition.value.inSeconds;
                       final progress = total == 0 ? 0.0 : current / total;
 
                       return Slider(
-                        value: progress,
-                        onChanged: controller.seekTo,
+                        value: progress.clamp(0.0, 1.0),
+                        onChanged: (value) {
+                          if (!isLocked.value) {
+                            controller.seekTo(value);
+                          }
+                        },
                         activeColor: AppColors.primary,
                         inactiveColor: Colors.white30,
                       );
                     }),
 
                     /// ⏱ TIME + OPTIONS
-                    Obx(() => Row(
-                      children: [
-                        Text(
-                          "${_format(controller.currentPosition.value)} / ${_format(controller.totalDuration.value)}",
-                          style: const TextStyle(color: Colors.white, fontSize: 13),
-                        ),
-                        const SizedBox(width: 20),
-
-                        /// 🔊 VOLUME
-                        const Icon(Icons.volume_up, color: Colors.white, size: 20),
-                        SizedBox(
-                          width: 100,
-                          child: SliderTheme(
-                            data: SliderTheme.of(context).copyWith(
-                              trackHeight: 2,
-                              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
-                              overlayShape: const RoundSliderOverlayShape(overlayRadius: 10),
-                            ),
-                            child: Slider(
-                              value: controller.volume.value,
-                              onChanged: controller.setVolume,
-                              activeColor: Colors.white,
-                              inactiveColor: Colors.white24,
+                    Obx(
+                      () => Row(
+                        children: [
+                          Text(
+                            '${_format(controller.currentPosition.value)} / ${_format(controller.totalDuration.value)}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
                             ),
                           ),
-                        ),
+                          const SizedBox(width: 20),
 
-                        const Spacer(),
-
-                        /// ⚡ SPEED
-                        IconButton(
-                          icon: const Icon(Icons.speed, color: Colors.white),
-                          onPressed: () => _showSpeedDialog(context),
-                        ),
-
-                        /// 🎬 QUALITY
-                        IconButton(
-                          icon: const Icon(Icons.hd, color: Colors.white),
-                          onPressed: () => _showQualityDialog(context),
-                        ),
-
-                        /// 📺 FULLSCREEN
-                        IconButton(
-                          icon: Icon(
-                            controller.isFullscreen.value
-                                ? Icons.fullscreen_exit
-                                : Icons.fullscreen,
+                          /// 🔊 VOLUME
+                          const Icon(
+                            Icons.volume_up,
                             color: Colors.white,
+                            size: 20,
                           ),
-                          onPressed: controller.toggleFullscreen,
-                        ),
-                      ],
-                    )),
+                          SizedBox(
+                            width: MediaQuery.sizeOf(context).width * 0.25,
+                            child: SliderTheme(
+                              data: SliderTheme.of(context).copyWith(
+                                trackHeight: 2,
+                                thumbShape: const RoundSliderThumbShape(
+                                  enabledThumbRadius: 6,
+                                ),
+                                overlayShape: const RoundSliderOverlayShape(
+                                  overlayRadius: 10,
+                                ),
+                              ),
+                              child: Slider(
+                                value: controller.volume.value,
+                                onChanged: (value) {
+                                  if (!isLocked.value) {
+                                    controller.setVolume(value);
+                                  }
+                                },
+                                activeColor: Colors.white,
+                                inactiveColor: Colors.white24,
+                              ),
+                            ),
+                          ),
+
+                          const Spacer(),
+
+                          /// ⚡ SPEED
+                          IconButton(
+                            icon: const Icon(Icons.speed, color: Colors.white),
+                            onPressed: () {
+                              if (!isLocked.value) {
+                                _showSpeedDialog(context);
+                              }
+                            },
+                          ),
+
+                          /// 🎬 QUALITY
+                          IconButton(
+                            icon: const Icon(Icons.hd, color: Colors.white),
+                            onPressed: () {
+                              if (!isLocked.value) {
+                                _showQualityDialog(context);
+                              }
+                            },
+                          ),
+
+                          /// 📺 FULLSCREEN
+                          IconButton(
+                            icon: Icon(
+                              controller.isFullscreen.value
+                                  ? Icons.fullscreen_exit
+                                  : Icons.fullscreen,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              if (!isLocked.value) {
+                                if (controller.isFullscreen.value) {
+                                  _exitFullscreen();
+                                } else {
+                                  _enterFullscreen();
+                                }
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -532,9 +839,8 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer> {
 
   /// ⏱ FORMAT
   String _format(Duration d) {
-    String two(int n) =>
-        n.toString().padLeft(2, "0");
-    return "${two(d.inMinutes)}:${two(d.inSeconds % 60)}";
+    String two(int n) => n.toString().padLeft(2, '0');
+    return '${two(d.inMinutes)}:${two(d.inSeconds % 60)}';
   }
 
   /// ⚡ SPEED DIALOG
@@ -542,33 +848,49 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer> {
     showDialog(
       context: context,
       builder: (_) => SimpleDialog(
-        title: const Text("Speed"),
+        title: const Text('Speed'),
         children: [0.5, 1, 1.5, 2].map((e) {
           return SimpleDialogOption(
             onPressed: () {
               controller.setPlaybackSpeed(e.toDouble());
               Navigator.pop(context);
             },
-            child: Text("${e}x"),
+            child: Text('${e}x'),
           );
         }).toList(),
       ),
     );
   }
 
-  /// 🎬 QUALITY DIALOG — UI bilkul same, sirf onPressed me
-  /// changeQuality() call add hua jo position preserve karke switch karega
+  /// 🎬 QUALITY DIALOG
+  /// FIXED: reverts the selected quality label if the switch fails, and
+  /// shows a snackbar so the user isn't left with a mismatched UI state.
   void _showQualityDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (_) => SimpleDialog(
-        title: const Text("Quality"),
-        children: ["Auto", "1080p", "720p", "480p"].map((q) {
+        title: const Text('Quality'),
+        children: ['Auto', '1080p', '720p', '480p'].map((q) {
           return SimpleDialogOption(
             onPressed: () async {
               Navigator.pop(context);
+              final previousQuality = quality.value;
               quality.value = q;
-              await controller.changeQuality(q, widget.url);
+
+              final success = await controller.changeQuality(q, widget.url);
+
+              if (!success) {
+                // Revert UI state so it matches what's actually playing.
+                quality.value = previousQuality;
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('$q is not available for this video.'),
+                      backgroundColor: Colors.black87,
+                    ),
+                  );
+                }
+              }
             },
             child: Text(q),
           );

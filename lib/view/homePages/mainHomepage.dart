@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:nazar_ott/data/models/response_model/content_response_model/content_model.dart';
 import '../../app/routes/app_routes.dart';
 import '../../app/theme/app_colors.dart';
 import '../../utils/app_images.dart';
@@ -12,24 +12,13 @@ import '../../widgets/golden_button.dart';
 import '../../widgets/golden_text.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../navbar/bottomNavbar.dart';
-import '../dramaDetails/dramaDetailsPage.dart';
 import 'auto_slider.dart';
 import 'coming_soon.dart';
-import '../../widgets/home_slider_section.dart';
-import '../search_pages/searchPage.dart';
-import 'top_10_list.dart';
-import '../auth/signInPage.dart';
-import '../premium/goPremium.dart';
+
 import '../profile/profilePage.dart';
 import '../../view_model/home_controller/home_controller.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
 import '../../utils/notification_service.dart';
-import '../notifications/notification_page.dart';
-
-import '../profile/privacy_policy_page.dart';
-import '../profile/terms_condition_page.dart';
-import '../profile/refund_policy_page.dart';
-import '../profile/help_page.dart';
 
 class MainHomePage extends StatelessWidget {
   const MainHomePage({super.key});
@@ -101,12 +90,17 @@ class MainHomePage extends StatelessWidget {
               index: controller.selectedIndex.value,
               children: [
                 _buildUpcomingContent(notificationService, authController),
-                _buildHomeContent(
-                  context,
-                  controller,
-                  authController,
-                  contentController,
-                  notificationService,
+                RefreshIndicator(
+                  onRefresh: ()async {
+                    contentController.allCategory();
+                  },
+                  child: _buildHomeContent(
+                    context,
+                    controller,
+                    authController,
+                    contentController,
+                    notificationService,
+                  ),
                 ),
                 ProfilePage(
                   onLogout: () {
@@ -195,7 +189,7 @@ class MainHomePage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 5),
       decoration: BoxDecoration(
-        color: Colors.black, // Solid background
+        color: Colors.black,
         border: Border(
           bottom: BorderSide(color: Colors.white.withOpacity(0.1)),
         ),
@@ -372,116 +366,65 @@ class MainHomePage extends StatelessWidget {
         if (!isDesktop) _buildHeader(notificationService),
         Expanded(
           child: Obx(() {
-            if (contentController.isLoading.value) {
+            if (contentController.isLoading.value ||
+                contentController.isCategoryLoading.value) {
               return const Center(
                 child: CircularProgressIndicator(color: AppColors.primary),
               );
             }
+
+            final List<ContentModel> allContent = List<ContentModel>.from(
+              contentController.allContent,
+            );
+
+            final List<ContentModel> availableContent = allContent
+                .where((c) => c.isComingSoon == false)
+                .toList();
+
+            final List<ContentModel> trendingContent = availableContent
+                .where((c) => c.isTrending == true)
+                .toList();
+
+            final List<ContentModel> sliderContent = trendingContent.isNotEmpty
+                ? trendingContent
+                : availableContent.take(10).toList();
+
+            // Already ordered ascending by priority (10 shows above 11, etc.)
+            final List<CategorySection> categorySections =
+                contentController.categorySections;
 
             return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 10),
-                  AutoSlider(
-                    content: contentController.allContent
-                        .where(
-                          (c) =>
-                              (c.category.contains('trending') ||
-                                  c.contentType == 'movie') &&
-                              c.isComingSoon == false,
-                        )
-                        .toList(),
-                    isSignedIn: authController.isLoggedIn.value,
-                  ),
 
-                  SizedBox(height: isDesktop ? 30 : 0),
-
-                  _buildAnimatedSection(
-                    isDesktop: isDesktop,
-                    delay: 200,
-                    child: Column(
+                  // Trending Slider Section
+                  if (sliderContent.isNotEmpty)
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: GoldenText(
-                            "Web Series",
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 1.2,
-                            ),
-                          ),
+                        const SizedBox(height: 5),
+                        AutoSlider(
+                          content: sliderContent,
+                          isSignedIn: authController.isLoggedIn.value,
                         ),
-                        // const SizedBox(height: 20),
-                        Obx(() {
-                          final seriesContent = contentController.allContent
-                              .where(
-                                (c) =>
-                                    c.contentType == 'series' &&
-                                    c.isComingSoon == false,
-                              )
-                              .toList();
-
-                          return SizedBox(
-                            height: isDesktop ? 340 : 170,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 10,
-                              ),
-                              itemCount: seriesContent.length,
-                              itemBuilder: (context, index) {
-                                final item = seriesContent[index];
-                                return _WebSeriesHoverCard(
-                                  item: item,
-                                  isSignedIn: authController.isLoggedIn.value,
-                                  isDesktop: isDesktop,
-                                );
-                              },
-                            ),
-                          );
-                        }),
+                        SizedBox(height: isDesktop ? 30 : 10),
                       ],
                     ),
-                  ),
 
-                  const SizedBox(height: 30),
-
-                  _buildAnimatedSection(
-                    isDesktop: isDesktop,
-                    delay: 400,
-                    child: Top10List(
-                      content: contentController.allContent
-                          .where(
-                            (c) =>
-                                c.category.contains('top10') &&
-                                c.isComingSoon == false,
-                          )
-                          .toList(),
-                      isSignedIn: authController.isLoggedIn.value,
+                  // Dynamic sections in explicit priority order
+                  for (var section in categorySections)
+                    _buildAnimatedSection(
+                      isDesktop: isDesktop,
+                      delay: 200,
+                      child: _buildCategorySection(
+                        title: section.title,
+                        content: section.content,
+                        isSignedIn: authController.isLoggedIn.value,
+                        isDesktop: isDesktop,
+                      ),
                     ),
-                  ),
-
-                  const SizedBox(height: 30),
-
-                  _buildAnimatedSection(
-                    isDesktop: isDesktop,
-                    delay: 600,
-                    child: HomeSliderSection(
-                      title: "Nazar Exclusives",
-                      content: contentController.allContent
-                          .where(
-                            (c) =>
-                                c.contentType == 'movie' &&
-                                c.isComingSoon == false,
-                          )
-                          .toList(),
-                      isSignedIn: authController.isLoggedIn.value,
-                    ),
-                  ),
 
                   _buildFooter(),
                   const SizedBox(height: 120),
@@ -490,6 +433,47 @@ class MainHomePage extends StatelessWidget {
             );
           }),
         ),
+      ],
+    );
+  }
+
+  Widget _buildCategorySection({
+    required String title,
+    required List<ContentModel> content,
+    required bool isSignedIn,
+    required bool isDesktop,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: GoldenText(
+            title,
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.2,
+            ),
+          ),
+        ),
+        SizedBox(
+          height: isDesktop ? 340 : 170,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            itemCount: content.length,
+            itemBuilder: (context, index) {
+              final item = content[index];
+              return _ContentHoverCard(
+                item: item,
+                isSignedIn: isSignedIn,
+                isDesktop: isDesktop,
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 30),
       ],
     );
   }
@@ -596,11 +580,6 @@ class MainHomePage extends StatelessWidget {
           const SizedBox(height: 30),
           const Column(
             children: [
-              // Text(
-              //   "Address:",
-              //   style: TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.bold),
-              // ),
-              // SizedBox(height: 8),
               Text(
                 "PLOT B-D-82 RSC 25, B-23, MANGAL CO-OP HSC, VARSOVA,\nANDHERI WEST, Mumbai, Mumbai Suburban, Maharashtra - 400058",
                 textAlign: TextAlign.center,
@@ -664,22 +643,22 @@ class MainHomePage extends StatelessWidget {
   }
 }
 
-class _WebSeriesHoverCard extends StatefulWidget {
-  final dynamic item;
+class _ContentHoverCard extends StatefulWidget {
+  final ContentModel item;
   final bool isSignedIn;
   final bool isDesktop;
 
-  const _WebSeriesHoverCard({
+  const _ContentHoverCard({
     required this.item,
     required this.isSignedIn,
     required this.isDesktop,
   });
 
   @override
-  State<_WebSeriesHoverCard> createState() => _WebSeriesHoverCardState();
+  State<_ContentHoverCard> createState() => _ContentHoverCardState();
 }
 
-class _WebSeriesHoverCardState extends State<_WebSeriesHoverCard> {
+class _ContentHoverCardState extends State<_ContentHoverCard> {
   bool isHovered = false;
 
   @override

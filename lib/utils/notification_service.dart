@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -6,6 +7,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:nazar_ott/data/models/response_model/content_response_model/content_model.dart';
+import 'package:nazar_ott/view_model/auth_controller/auth_controller.dart';
+import 'package:nazar_ott/view_model/content_controller/content_controller.dart';
 import 'package:path_provider/path_provider.dart';
 import '../data/network/base_api_service.dart';
 import '../utils/constants.dart';
@@ -74,7 +78,7 @@ class NotificationService extends GetxController {
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         // Handle notification click here (foreground local notification tap)
         print("Notification clicked: ${response.payload}");
-        _handleNotificationTap(response.payload);
+        _handleNotificationTapFromPayload(response.payload);
       },
     );
 
@@ -91,7 +95,10 @@ class NotificationService extends GetxController {
         "📲 Notification Clicked (Background): ${message.notification?.title}",
       );
       _handleMessage(message);
-      _handleNotificationTap(message.data['link']);
+      _handleNotificationTap(
+        message.data['contentId'],
+        message.data['contentType'],
+      );
     });
 
     /// 🚀 App opened from terminated state via notification tap
@@ -101,7 +108,10 @@ class NotificationService extends GetxController {
       print(
         "🚀 App opened from terminated state via notification: ${initialMessage.notification?.title}",
       );
-      _handleNotificationTap(initialMessage.data['link']);
+      _handleNotificationTap(
+        initialMessage.data['contentId'],
+        initialMessage.data['contentType'],
+      );
     }
 
     _loadNotifications();
@@ -179,6 +189,7 @@ class NotificationService extends GetxController {
         final List fetchedList = response['notifications'] ?? [];
         notifications.assignAll(
           fetchedList.map((e) {
+            final metadata = e['metadata'] as Map<String, dynamic>?;
             return {
               'id': e['_id'],
               'title': e['title'],
@@ -187,10 +198,10 @@ class NotificationService extends GetxController {
                   e['sentAt'] ?? e['createdAt'] ?? DateTime.now().toString(),
               'isRead': e['isRead'] ?? false,
               'type': e['type'],
-              'image': e['image'] as String?, // 🖼️ optional image URL
-              'link':
-                  e['link']
-                      as String?, // 🔗 optional deep link / content id for a particular series
+              'image': e['imageUrl'] as String?, // 🖼️ optional image URL
+              'contentId': metadata?['contentId'] as String?, // 🔗 content id
+              'contentType':
+                  metadata?['contentType'] as String?, // movie / series
             };
           }).toList(),
         );
@@ -298,15 +309,50 @@ class NotificationService extends GetxController {
     }
   }
 
-  /// 🔗 Navigate based on the link/content id sent in the notification data
-  void _handleNotificationTap(String? link) {
-    if (link == null || link.isEmpty) return;
+  /// 🔗 Navigate based on contentId/contentType sent in the notification data
+  void _handleNotificationTap(String? contentId, String? contentType) {
+    if (contentId == null || contentId.isEmpty) return;
+
     try {
-      // Adjust the route + argument key to match how your dramaDetails page
-      // expects to receive a content id (fetch content first if needed).
-      Get.toNamed(AppRoutes.dramaDetails, arguments: {'contentId': link});
+      final ContentController contentController = Get.find<ContentController>();
+      final AuthController authController = Get.find<AuthController>();
+
+      final ContentModel? matchedContent = contentController.allContent
+          .firstWhereOrNull(
+            (c) => c.id == contentId,
+          ); // 🔧 ADJUST: use the actual id field name on ContentModel
+
+      if (matchedContent == null) {
+        print(
+          "⚠️ Content with id $contentId not found locally, skipping navigation.",
+        );
+        return;
+      }
+
+      Get.toNamed(
+        AppRoutes.dramaDetails,
+        arguments: {
+          'content': matchedContent,
+          'isSignedIn': authController.isLoggedIn.value,
+        },
+      );
     } catch (e) {
       print("⚠️ Failed to navigate from notification tap: $e");
+    }
+  }
+
+  /// Local notification taps only give us a single String payload,
+  /// so decode the JSON we encoded when the notification was shown.
+  void _handleNotificationTapFromPayload(String? payload) {
+    if (payload == null || payload.isEmpty) return;
+    try {
+      final decoded = jsonDecode(payload) as Map<String, dynamic>;
+      _handleNotificationTap(
+        decoded['contentId'] as String?,
+        decoded['contentType'] as String?,
+      );
+    } catch (e) {
+      print("⚠️ Failed to decode notification payload: $e");
     }
   }
 
@@ -392,8 +438,11 @@ class NotificationService extends GetxController {
       message.notification?.title,
       message.notification?.body,
       platformDetails,
-      // Store the link/content id as payload so a tap can navigate to it
-      payload: message.data['link'] ?? '',
+      // Store contentId + contentType as JSON so a tap can navigate correctly
+      payload: jsonEncode({
+        'contentId': message.data['contentId'],
+        'contentType': message.data['contentType'],
+      }),
     );
   }
 
