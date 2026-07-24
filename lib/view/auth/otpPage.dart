@@ -5,7 +5,6 @@ import '../../app/theme/app_colors.dart';
 import '../../widgets/golden_text.dart';
 import '../../widgets/golden_button.dart';
 import '../../utils/responsive.dart';
-import '../profile/create_profile_page.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
 import '../../view_model/auth_controller/otp_controller.dart';
 import '../../app/routes/app_routes.dart';

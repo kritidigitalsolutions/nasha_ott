@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:nazar_ott/view/homePages/mainHomepage.dart';
 import '../../app/routes/app_routes.dart';
 import '../../utils/responsive.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
@@ -82,7 +83,9 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
         elevation: 0,
         leading: Responsive.backButton(
           context,
-          onPressed: () => Navigator.maybePop(context),
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(builder: ((context) => MainHomePage())));
+          }
         ),
       ),
       body: SingleChildScrollView(

@@ -1,7 +1,7 @@
 class AppConstants {
   // static const String serverUrl = 'http://192.168.1.24:5000';
-  // static const String serverUrl = 'https://nasha-ott.vercel.app';
-  static const String serverUrl = 'http://192.168.1.17:5000';
+  static const String serverUrl = 'https://api.nazarott.com';
+  // static const String serverUrl = 'http://192.168.1.9:5000';
   static const String baseUrl = '$serverUrl/api';
 
   // Auth Endpoints

@@ -594,22 +594,17 @@ class MainHomePage extends StatelessWidget {
           const SizedBox(height: 30),
           Obx(() {
             final data = companyController.companyInfo.value?.data;
-            final address = data == null
-                ? ''
-                : '${data.addressLine1}, ${data.city}, ${data.state} - ${data.postalCode}';
+            final address =
+                '${data?.addressLine1}, ${data?.city}, ${data?.state} - ${data?.postalCode}';
 
-            return Column(
-              children: [
-                Text(
-                  address,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
-                    height: 1.4,
-                  ),
-                ),
-              ],
+            return Text(
+              address,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 14,
+                height: 1.4,
+              ),
             );
           }),
         ],

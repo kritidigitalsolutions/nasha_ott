@@ -28,6 +28,19 @@ class ContentRepository {
     }
   }
 
+  Future<ContentModel?> getContentById(String contentId) async {
+    try {
+      final response = await apiProvider.getApi(AppConstants.getContentById(contentId));
+      if (response['success'] == true) {
+        return ContentModel.fromJson(response['content']);
+      }
+      return null;
+    } catch (e) {
+      print("Error fetching content by ID: $e");
+      rethrow;
+    }
+  }
+
   Future<List<ContentModel>> getEpisodes(String seriesId) async {
     try {
       final response = await apiProvider.getApi(

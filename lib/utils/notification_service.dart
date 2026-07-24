@@ -306,41 +306,47 @@ class NotificationService extends GetxController {
     if (message.notification != null) {
       print("📩 Processing Message: ${message.notification?.title}");
       fetchNotifications(); // Refresh list from server
+
+      // 🔄 A notification may reference content (e.g. a newly published
+      // movie/series episode) that isn't in ContentController.allContent
+      // yet. Refresh it here so that if the user taps this notification,
+      // _handleNotificationTap can actually find the matching content
+      // instead of silently skipping navigation.
+      try {
+        Get.find<ContentController>().fetchContent();
+      } catch (e) {
+        print("⚠️ Could not refresh content on notification: $e");
+      }
     }
   }
 
   /// 🔗 Navigate based on contentId/contentType sent in the notification data
-  void _handleNotificationTap(String? contentId, String? contentType) {
-    if (contentId == null || contentId.isEmpty) return;
+  void _handleNotificationTap(String? contentId, String? contentType) async {
+  if (contentId == null || contentId.isEmpty) return;
 
-    try {
-      final ContentController contentController = Get.find<ContentController>();
-      final AuthController authController = Get.find<AuthController>();
+  final contentController = Get.find<ContentController>();
+  final authController = Get.find<AuthController>();
 
-      final ContentModel? matchedContent = contentController.allContent
-          .firstWhereOrNull(
-            (c) => c.id == contentId,
-          ); // 🔧 ADJUST: use the actual id field name on ContentModel
+  ContentModel? matched = contentController.allContent
+      .firstWhereOrNull((c) => c.id == contentId);
 
-      if (matchedContent == null) {
-        print(
-          "⚠️ Content with id $contentId not found locally, skipping navigation.",
-        );
-        return;
-      }
-
-      Get.toNamed(
-        AppRoutes.dramaDetails,
-        arguments: {
-          'content': matchedContent,
-          'isSignedIn': authController.isLoggedIn.value,
-        },
-      );
-    } catch (e) {
-      print("⚠️ Failed to navigate from notification tap: $e");
-    }
+  if (matched == null) {
+    // Not found locally — refresh once, then retry
+    await contentController.fetchContent();
+    matched = contentController.allContent
+        .firstWhereOrNull((c) => c.id == contentId);
   }
 
+  if (matched == null) {
+    print("⚠️ Content with id $contentId not found even after refresh.");
+    return;
+  }
+
+  Get.toNamed(AppRoutes.dramaDetails, arguments: {
+    'content': matched,
+    'isSignedIn': authController.isLoggedIn.value,
+  });
+}
   /// Local notification taps only give us a single String payload,
   /// so decode the JSON we encoded when the notification was shown.
   void _handleNotificationTapFromPayload(String? payload) {
