@@ -28,19 +28,6 @@ class ContentRepository {
     }
   }
 
-  Future<ContentModel?> getContentById(String contentId) async {
-    try {
-      final response = await apiProvider.getApi(AppConstants.getContentById(contentId));
-      if (response['success'] == true) {
-        return ContentModel.fromJson(response['content']);
-      }
-      return null;
-    } catch (e) {
-      print("Error fetching content by ID: $e");
-      rethrow;
-    }
-  }
-
   Future<List<ContentModel>> getEpisodes(String seriesId) async {
     try {
       final response = await apiProvider.getApi(
@@ -82,6 +69,23 @@ class ContentRepository {
     } catch (e, stackTrace) {
       debugPrint('Category API Error: $e');
       debugPrintStack(stackTrace: stackTrace);
+      rethrow;
+    }
+  }
+
+  Future<ContentModel?> getContentDetail(String id) async {
+    try {
+      final response = await apiProvider.getApi(
+        AppConstants.contentDetail(id: id),
+      );
+      if (response['success'] == true) {
+        final data = response['content'];
+        if (data == null) return null;
+        return ContentModel.fromJson(data);
+      }
+      return null;
+    } catch (e) {
+      print("Error fetching content detail: $e");
       rethrow;
     }
   }

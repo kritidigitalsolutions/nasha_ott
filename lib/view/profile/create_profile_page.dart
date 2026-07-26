@@ -11,8 +11,9 @@ import '../../utils/custom_snackbar.dart';
 
 class CreateProfilePage extends StatefulWidget {
   final String? phone;
+  final String? id; // NEW: optional content id to carry forward after profile creation
 
-  const CreateProfilePage({super.key, this.phone});
+  const CreateProfilePage({super.key, this.phone, this.id});
 
   @override
   State<CreateProfilePage> createState() => _CreateProfilePageState();
@@ -23,6 +24,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
   late final AuthController authController;
   late final CreateProfileController createProfileController;
   late final String displayPhone;
+  String? contentId; // NEW: resolved id from widget or arguments
 
   @override
   void initState() {
@@ -31,6 +33,10 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
     authController = Get.find<AuthController>();
     createProfileController = Get.put(CreateProfileController());
     displayPhone = widget.phone ?? Get.arguments?['phone'] ?? '';
+
+    // NEW: resolve id — prefer the constructor value, fall back to arguments
+    contentId = widget.id ??
+        (Get.arguments is Map ? Get.arguments['id'] : null);
   }
 
   @override
@@ -133,8 +139,14 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
 
                                   if (success) {
                                     String? returnRoute = Get.arguments is Map ? Get.arguments['returnRoute'] : null;
+
                                     if (returnRoute != null && returnRoute.isNotEmpty) {
-                                      Get.offAllNamed(returnRoute);
+                                      // NEW: forward the content id, if present, alongside returnRoute
+                                      if (contentId != null) {
+                                        Get.offAllNamed(returnRoute, arguments: {'id': contentId});
+                                      } else {
+                                        Get.offAllNamed(returnRoute);
+                                      }
                                     } else {
                                       Get.offAllNamed(AppRoutes.home); // Navigate to home
                                     }

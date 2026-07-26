@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
-
 import '../../app/theme/app_colors.dart';
 import '../../utils/responsive.dart';
 
@@ -870,7 +869,7 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer> {
       context: context,
       builder: (_) => SimpleDialog(
         title: const Text('Quality'),
-        children: ['Auto', '1080p', '720p', '480p'].map((q) {
+        children: ['Auto', '1080p', '720p', '480p','360p','240p'].map((q) {
           return SimpleDialogOption(
             onPressed: () async {
               Navigator.pop(context);

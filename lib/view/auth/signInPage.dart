@@ -31,12 +31,14 @@ class _SignInPageState extends State<SignInPage> {
   final TextEditingController codeController = TextEditingController();
 
   String? returnRoute;
+  String? contentId; // NEW: carries the drama-details content id forward
 
   @override
   void initState() {
     super.initState();
-    // Capture return route from arguments if provided
+    // Capture return route and content id from arguments if provided
     returnRoute = Get.arguments is Map ? Get.arguments['returnRoute'] : null;
+    contentId = Get.arguments is Map ? Get.arguments['id'] : null; // NEW
   }
 
   void _handleLoginSuccess() {

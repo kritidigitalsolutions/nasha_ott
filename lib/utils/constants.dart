@@ -80,4 +80,5 @@ class AppConstants {
 
   //HELP
   static String helpApi = "$baseUrl/help";
+  static String contentDetail({required String id})=>"$baseUrl/content/$id";
 }

@@ -4,7 +4,6 @@ import '../../data/network/base_api_service.dart';
 import '../../data/repositories/interaction_repository.dart';
 import '../../utils/custom_snackbar.dart';
 import '../auth_controller/auth_controller.dart';
-import '../../view/auth/signInPage.dart';
 
 class InteractionController extends GetxController {
   final InteractionRepository _repo = InteractionRepository(Get.find<BaseApiService>());

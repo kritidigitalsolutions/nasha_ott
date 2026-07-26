@@ -27,11 +27,11 @@ import '../../utils/custom_snackbar.dart';
 class DramaDetailsPage extends StatefulWidget {
   final bool isSignedIn;
   final ContentModel content;
-
+  final String? id;
   const DramaDetailsPage({
     super.key,
     required this.isSignedIn,
-    required this.content,
+    required this.content, this.id,
   });
 
   @override
@@ -51,6 +51,21 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
   );
   final DownloadController downloadController = Get.put(DownloadController());
 
+  /// Resolves which content model to display:
+  /// - If an `id` was passed AND the detail fetch has completed, use that.
+  /// - Otherwise, fall back to the `content` passed directly to the widget.
+  ContentModel get content {
+    if (widget.id != null && contentController.contentDetail.value != null) {
+      return contentController.contentDetail.value!;
+    }
+    return widget.content;
+  }
+
+  /// The real, resolved content id — from the fetched detail (if widget.id
+  /// was provided and detail loaded) or from the ContentModel passed in.
+  /// Always use this (not widget.id) when forwarding an id, e.g. to SignInPage.
+  String get contentId => content.id;
+
   @override
   void initState() {
     super.initState();
@@ -62,18 +77,16 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
     if (widget.content.contentType == 'series') {
       contentController.fetchEpisodes(widget.content.id);
     }
+
+    // If an id was passed, fetch full content detail; otherwise skip.
+    if (widget.id != null) {
+      contentController.fetchContentDetail(widget.id!);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     bool isDesktop = Responsive.isDesktop(context);
-    final List<ContentModel> relatedContent = contentController.allContent
-        .where((item) {
-          return item.id != widget.content.id &&
-              item.contentType == widget.content.contentType &&
-              item.category.any((cat) => widget.content.category.contains(cat));
-        })
-        .toList();
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -89,84 +102,96 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            /// 🎬 CINEMATIC HERO SECTION
-            _buildHeroSection(isDesktop),
+        child: Obx(() {
+          final ContentModel data = content;
 
-            /// 📖 CONTENT AREA
-            Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1200),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isDesktop ? 60 : 16,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 20),
+          final List<ContentModel> relatedContent = contentController.allContent
+              .where((item) {
+                return item.id != data.id &&
+                    item.contentType == data.contentType &&
+                    item.category.any((cat) => data.category.contains(cat));
+              })
+              .toList();
 
-                      /// WATCH & DOWNLOAD BUTTONS (Moved here from Banner)
-                      if (widget.content.contentType != 'series') ...[
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildWatchButton(isDesktop: isDesktop),
-                            ),
-                            if (!kIsWeb) ...[
-                              const SizedBox(width: 15),
+          return Column(
+            children: [
+              /// 🎬 CINEMATIC HERO SECTION
+              _buildHeroSection(isDesktop),
+
+              /// 📖 CONTENT AREA
+              Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1200),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isDesktop ? 60 : 16,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 20),
+
+                        /// WATCH & DOWNLOAD BUTTONS (Moved here from Banner)
+                        if (data.contentType != 'series') ...[
+                          Row(
+                            children: [
                               Expanded(
-                                child: _buildMainDownloadButton(
-                                  isDesktop: isDesktop,
-                                ),
+                                child: _buildWatchButton(isDesktop: isDesktop),
                               ),
+                              if (!kIsWeb) ...[
+                                const SizedBox(width: 15),
+                                Expanded(
+                                  child: _buildMainDownloadButton(
+                                    isDesktop: isDesktop,
+                                  ),
+                                ),
+                              ],
                             ],
-                          ],
-                        ),
-                        const SizedBox(height: 25),
-                      ],
-
-                      /// DESCRIPTION & INFO (Mobile Only or additional)
-                      if (!isDesktop) ...[
-                        Text(
-                          widget.content.description,
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 16,
-                            height: 1.5,
                           ),
-                        ),
-                        const SizedBox(height: 20),
-                        _buildSmallActionsRow(),
-                        const SizedBox(height: 20),
+                          const SizedBox(height: 25),
+                        ],
+
+                        /// DESCRIPTION & INFO (Mobile Only or additional)
+                        if (!isDesktop) ...[
+                          Text(
+                            data.description,
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 16,
+                              height: 1.5,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          _buildSmallActionsRow(),
+                          const SizedBox(height: 20),
+                        ],
+
+                        /// 📺 SEASONS & EPISODES
+                        if (data.contentType == 'series')
+                          _buildEpisodesSection(context, isDesktop),
+
+                        const SizedBox(height: 30),
+
+                        /// 🎭 CAST & CREW
+                        if (data.cast != null &&
+                            data.cast!.isNotEmpty)
+                          _buildCastSection(isDesktop),
+
+                        const SizedBox(height: 30),
+
+                        /// ❤️ MORE LIKE THIS
+                        if (relatedContent.isNotEmpty)
+                          _buildRelatedSection(relatedContent, isDesktop),
+
+                        const SizedBox(height: 100),
                       ],
-
-                      /// 📺 SEASONS & EPISODES
-                      if (widget.content.contentType == 'series')
-                        _buildEpisodesSection(context, isDesktop),
-
-                      const SizedBox(height: 30),
-
-                      /// 🎭 CAST & CREW
-                      if (widget.content.cast != null &&
-                          widget.content.cast!.isNotEmpty)
-                        _buildCastSection(isDesktop),
-
-                      const SizedBox(height: 30),
-
-                      /// ❤️ MORE LIKE THIS
-                      if (relatedContent.isNotEmpty)
-                        _buildRelatedSection(relatedContent, isDesktop),
-
-                      const SizedBox(height: 100),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
+            ],
+          );
+        }),
       ),
     );
   }
@@ -180,11 +205,10 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
         children: [
           /// THE ACTUAL BANNER
           CustomNetworkImage(
-            imageUrl: widget.content.banner,
+            imageUrl: content.banner,
             width: double.infinity,
             height: isDesktop ? 750 : 350,
-            fit:
-                BoxFit.fill, // Shows full banner without cropping or black bars
+            fit: BoxFit.fill,
           ),
 
           /// SUBTLE GRADIENT OVERLAY
@@ -214,7 +238,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  widget.content.title,
+                  content.title,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: isDesktop ? 42 : 24,
@@ -232,14 +256,14 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
                 Row(
                   children: [
                     Text(
-                      "${widget.content.releaseYear} • ${widget.content.language}",
+                      "${content.releaseYear} • ${content.language}",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: isDesktop ? 16 : 13,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    if (widget.content.duration != null) ...[
+                    if (content.duration != null) ...[
                       const SizedBox(width: 15),
                       Container(
                         padding: const EdgeInsets.symmetric(
@@ -251,7 +275,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          widget.content.duration!,
+                          content.duration!,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 11,
@@ -267,7 +291,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
                   SizedBox(
                     width: 700,
                     child: Text(
-                      widget.content.description,
+                      content.description,
                       style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 16,
@@ -286,8 +310,8 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
           ),
 
           /// TRAILER BUTTON AT BOTTOM RIGHT
-          if (widget.content.trailerUrl != null &&
-              widget.content.trailerUrl!.isNotEmpty)
+          if (content.trailerUrl != null &&
+              content.trailerUrl!.isNotEmpty)
             Positioned(
               bottom: 10,
               right: 10,
@@ -302,12 +326,12 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
     return Obx(() {
       final bool userLoggedIn = authController.isLoggedIn.value;
       final bool isAlreadyDownloaded = downloadController.isDownloaded(
-        widget.content.id,
+        content.id,
       );
       final bool downloading =
-          downloadController.isDownloading[widget.content.id] ?? false;
+          downloadController.isDownloading[content.id] ?? false;
       final double progress =
-          downloadController.downloadProgress[widget.content.id] ?? 0;
+          downloadController.downloadProgress[content.id] ?? 0;
 
       return OutlinedButton.icon(
         style: OutlinedButton.styleFrom(
@@ -319,12 +343,12 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
           if (!userLoggedIn) {
             Get.toNamed(
               AppRoutes.signIn,
-              arguments: {"returnRoute": Get.currentRoute},
+              arguments: {"returnRoute": Get.currentRoute, "id": contentId},
             );
           } else if (isAlreadyDownloaded) {
             CustomSnackbar.show(title: "Info", message: "Already downloaded");
           } else {
-            downloadController.downloadVideo(widget.content);
+            downloadController.downloadVideo(content);
           }
         },
         icon: downloading
@@ -366,9 +390,9 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
       return GoldenButton(
         height: isDesktop ? 60 : 55,
         borderRadius: BorderRadius.circular(8),
-        onPressed: widget.content.isComingSoon
+        onPressed: content.isComingSoon
             ? null
-            : () => _handlePlay(widget.content, isPurchased, userLoggedIn),
+            : () => _handlePlay(content, isPurchased, userLoggedIn),
         child: FittedBox(
           fit: BoxFit.scaleDown,
           child: Row(
@@ -381,7 +405,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
               ),
               const SizedBox(width: 8),
               Text(
-                widget.content.isComingSoon ? "COMING SOON" : "WATCH NOW",
+                content.isComingSoon ? "COMING SOON" : "WATCH NOW",
                 style: const TextStyle(
                   color: AppColors.buttonTextColor,
                   fontSize: 16,
@@ -400,7 +424,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
     if (!userLoggedIn) {
       Get.toNamed(
         AppRoutes.signIn,
-        arguments: {"returnRoute": Get.currentRoute},
+        arguments: {"returnRoute": Get.currentRoute, "id": contentId},
       );
     } else if (isPurchased || !item.isPremium) {
       if (item.videoUrl != null && item.videoUrl!.isNotEmpty) {
@@ -429,19 +453,19 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
         if (!authController.isLoggedIn.value) {
           Get.toNamed(
             AppRoutes.signIn,
-            arguments: {"returnRoute": Get.currentRoute},
+            arguments: {"returnRoute": Get.currentRoute, "id": contentId},
           );
           return;
         }
 
         // 🔞 Agar content 18+ nahi hai to age dialog bilkul skip karo
-        if (widget.content.is18Plus != true) {
-          print(widget.content.trailerUrl);
+        if (content.is18Plus != true) {
+          print(content.trailerUrl);
           Get.toNamed(
             AppRoutes.videoPlayer,
             arguments: {
-              'url': widget.content.trailerUrl!,
-              'title': '${widget.content.title} - Trailer',
+              'url': content.trailerUrl!,
+              'title': '${content.title} - Trailer',
             },
           );
           return;
@@ -453,17 +477,15 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
         );
 
         if (isOver18 == true) {
-          print(widget.content.trailerUrl);
+          print(content.trailerUrl);
           Get.toNamed(
             AppRoutes.videoPlayer,
             arguments: {
-              'url': widget.content.trailerUrl!,
-              'title': '${widget.content.title} - Trailer',
+              'url': content.trailerUrl!,
+              'title': '${content.title} - Trailer',
             },
           );
         }
-        // isOver18 == false/null ho to kahin navigate nahi karna —
-        // user ne confirm nahi kiya ki wo 18+ hai
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -489,7 +511,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
 
   Widget _buildSmallActionsRow() {
     return Obx(() {
-      final String contentId = widget.content.id;
+      final String contentId = content.id;
       final bool userLoggedIn = authController.isLoggedIn.value;
       return Row(
         mainAxisSize: MainAxisSize.min,
@@ -503,7 +525,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
               if (!userLoggedIn) {
                 Get.toNamed(
                   AppRoutes.signIn,
-                  arguments: {"returnRoute": Get.currentRoute},
+                  arguments: {"returnRoute": Get.currentRoute, "id": contentId},
                 );
               } else {
                 watchlistController.toggleWatchlist(contentId);
@@ -520,12 +542,12 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
               if (!userLoggedIn) {
                 Get.toNamed(
                   AppRoutes.signIn,
-                  arguments: {"returnRoute": Get.currentRoute},
+                  arguments: {"returnRoute": Get.currentRoute, "id": contentId},
                 );
               } else {
                 interactionController.toggleLike(
                   contentId: contentId,
-                  contentType: widget.content.contentType,
+                  contentType: content.contentType,
                 );
               }
             },
@@ -538,12 +560,12 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
               if (!userLoggedIn) {
                 Get.toNamed(
                   AppRoutes.signIn,
-                  arguments: {"returnRoute": Get.currentRoute},
+                  arguments: {"returnRoute": Get.currentRoute, "id": contentId},
                 );
               } else {
                 ShareService.shareContent(
-                  title: widget.content.title,
-                  imageUrl: widget.content.poster,
+                  title: content.title,
+                  imageUrl: content.poster,
                 );
               }
             },
@@ -596,7 +618,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
 
         /// SEASON SELECTOR (Modern Underline style)
         Row(
-          children: List.generate(widget.content.totalSeasons ?? 1, (index) {
+          children: List.generate(content.totalSeasons ?? 1, (index) {
             int seasonNum = index + 1;
             return Obx(() {
               bool isSelected = controller.selectedSeason.value == seasonNum;
@@ -757,8 +779,6 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
                           shape: BoxShape.circle,
                         ),
                       ),
-                      // const SizedBox(width: 8),
-                      // const Text("FREE", style: TextStyle(color: Colors.green, fontSize: 10, fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ],
@@ -866,9 +886,9 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
           height: 160,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: widget.content.cast!.length,
+            itemCount: content.cast!.length,
             itemBuilder: (context, index) {
-              final actor = widget.content.cast![index];
+              final actor = content.cast![index];
               return GestureDetector(
                 onTap: () => Get.toNamed(
                   AppRoutes.castDetails,
@@ -963,7 +983,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
     if (!authController.isLoggedIn.value) {
       Get.toNamed(
         AppRoutes.signIn,
-        arguments: {"returnRoute": Get.currentRoute},
+        arguments: {"returnRoute": Get.currentRoute, "id": contentId},
       );
       return;
     }

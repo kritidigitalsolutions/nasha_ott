@@ -26,7 +26,8 @@ class ContentController extends GetxController {
   final InteractionRepository _interactionRepo = InteractionRepository(
     NetworkApiService(),
   );
-
+  var contentDetail = Rxn<ContentModel>();
+var isContentDetailLoading = false.obs;
   var isLoading = true.obs;
   var isCategoryLoading = true.obs;
 
@@ -163,5 +164,15 @@ class ContentController extends GetxController {
     } catch (e) {
       print("Error fetching stats for $contentId: $e");
     }
+  }Future<void> fetchContentDetail(String id) async {
+  try {
+    isContentDetailLoading.value = true;
+    final result = await _repository.getContentDetail(id);
+    contentDetail.value = result;
+  } catch (e) {
+    print("Error in fetchContentDetail: $e");
+  } finally {
+    isContentDetailLoading.value = false;
   }
+}
 }

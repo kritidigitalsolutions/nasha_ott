@@ -60,7 +60,10 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.createProfile,
-      page: () => CreateProfilePage(),
+      page: () => CreateProfilePage(
+        phone: Get.arguments is Map ? Get.arguments['phone'] : null,
+        id: Get.arguments is Map ? Get.arguments['id'] : null, // NEW
+      ),
       title: 'Create Profile | Nazar OTT',
     ),
     GetPage(
@@ -88,6 +91,7 @@ class AppPages {
       page: () => DramaDetailsPage(
         isSignedIn: Get.arguments?['isSignedIn'] ?? false,
         content: Get.arguments?['content'] ?? ContentModel.fromJson({}),
+        id: Get.arguments is Map ? Get.arguments['id'] : null, // NEW
       ),
       title: 'Drama Details | Nazar OTT',
     ),

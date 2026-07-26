@@ -73,6 +73,8 @@ class _OtpPageState extends State<OtpPage> {
       
       bool isNew = response.isNewUser;
       String? returnRoute = Get.arguments is Map ? Get.arguments['returnRoute'] : null;
+      // NEW: carry the drama-details content id forward through every exit path
+      String? incomingId = Get.arguments is Map ? Get.arguments['id'] : null;
 
       // ✅ Unfocus before navigating
       FocusManager.instance.primaryFocus?.unfocus();
@@ -83,10 +85,17 @@ class _OtpPageState extends State<OtpPage> {
         bool isEmail = displayPhone.contains('@');
         
         if (!isEmail && isNew) {
+          // NEW: forward id into createProfile so it can carry it further
           Get.offAllNamed(AppRoutes.createProfile, arguments: {'phone': displayPhone, ...?Get.arguments});
         } else {
           if (returnRoute != null && returnRoute.isNotEmpty) {
-            Get.offAllNamed(returnRoute);
+            // NEW: if we have a content id, forward it as the route argument
+            // so DramaDetailsPage rebuilds correctly with the real id.
+            if (incomingId != null) {
+              Get.offAllNamed(returnRoute, arguments: {'id': incomingId});
+            } else {
+              Get.offAllNamed(returnRoute);
+            }
           } else {
             // Check where we came from. If we have history, go back.
             // For OtpPage, we usually want to pop twice (Otp -> SignIn -> Previous)
