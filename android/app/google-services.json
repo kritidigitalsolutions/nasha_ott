@@ -14,11 +14,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "717480494085-na0k68ni1kc2g53np4rufk3e8sav2agg.apps.googleusercontent.com",
+          "client_id": "717480494085-64pijim8qmf5aga76frjupci6hnguhpu.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.company.nazarott",
-            "certificate_hash": "d11285a512aa73926e1450017dfb5d6fdaa17601"
+            "certificate_hash": "05c0598f2c4afbe9d9b6f05ce3a6bfeb109b09bf"
+          }
+        },
+        {
+          "client_id": "717480494085-b93balrm7srnc1lrchor184launnveh6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.company.nazarott",
+            "certificate_hash": "6ba88512c9d7999113097ab310311ad632665492"
           }
         },
         {
