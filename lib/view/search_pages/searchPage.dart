@@ -9,10 +9,6 @@ import '../../widgets/custom_network_image.dart';
 
 import '../../app/theme/app_colors.dart';
 import '../../data/models/response_model/content_response_model/content_model.dart';
-import '../dramaDetails/cast_crewPage.dart';
-import '../dramaDetails/dramaDetailsPage.dart';
-import '../dramaDetails/topArtistpage.dart';
-import '../popUp/search_with_mic.dart';
 
 class SearchPage extends StatelessWidget {
   const SearchPage({super.key});
@@ -41,34 +37,54 @@ class SearchPage extends StatelessWidget {
             children: [
               /// SEARCH BAR WITH BACK ICON
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 15,
+                ),
                 child: Row(
                   children: [
-                    Responsive.backButton(context, onPressed: () => Navigator.maybePop(context)),
+                    Responsive.backButton(
+                      context,
+                      onPressed: () => Navigator.maybePop(context),
+                    ),
                     Expanded(
                       child: TextField(
                         controller: controller.searchController,
-                        onChanged: (value) => controller.updateSearchQuery(value),
+                        onChanged: (value) =>
+                            controller.updateSearchQuery(value),
                         style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                           hintText: "Search for movies, shows & more",
                           hintStyle: const TextStyle(color: Colors.white54),
                           filled: true,
                           fillColor: Colors.grey[900],
-                          prefixIcon: const Icon(Icons.search, color: Colors.white),
+                          prefixIcon: const Icon(
+                            Icons.search,
+                            color: Colors.white,
+                          ),
                           suffixIcon: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Obx(() => controller.searchQuery.value.isNotEmpty
-                                  ? IconButton(
-                                      icon: const Icon(Icons.clear, color: Colors.white),
-                                      onPressed: controller.clearSearch,
-                                    )
-                                  : const SizedBox.shrink()),
+                              Obx(
+                                () => controller.searchQuery.value.isNotEmpty
+                                    ? IconButton(
+                                        icon: const Icon(
+                                          Icons.clear,
+                                          color: Colors.white,
+                                        ),
+                                        onPressed: controller.clearSearch,
+                                      )
+                                    : const SizedBox.shrink(),
+                              ),
                               IconButton(
-                                icon: const Icon(Icons.mic, color: Colors.white),
+                                icon: const Icon(
+                                  Icons.mic,
+                                  color: Colors.white,
+                                ),
                                 onPressed: () async {
-                                  final result = await Get.toNamed(AppRoutes.searchWithMic);
+                                  final result = await Get.toNamed(
+                                    AppRoutes.searchWithMic,
+                                  );
                                   if (result != null && result is String) {
                                     controller.searchController.text = result;
                                     controller.updateSearchQuery(result);
@@ -93,7 +109,11 @@ class SearchPage extends StatelessWidget {
                 if (controller.searchQuery.value.isNotEmpty) {
                   return _buildSearchResults(controller, authController);
                 } else {
-                  return _buildDefaultSearchView(context, contentController, authController);
+                  return _buildDefaultSearchView(
+                    context,
+                    contentController,
+                    authController,
+                  );
                 }
               }),
             ],
@@ -104,7 +124,10 @@ class SearchPage extends StatelessWidget {
   }
 
   /// 🔍 SEARCH RESULTS VIEW
-  Widget _buildSearchResults(AppSearchController controller, AuthController authController) {
+  Widget _buildSearchResults(
+    AppSearchController controller,
+    AuthController authController,
+  ) {
     if (controller.searchResults.isEmpty) {
       return const Center(
         child: Padding(
@@ -126,10 +149,13 @@ class SearchPage extends StatelessWidget {
         final item = controller.searchResults[index];
         return ListTile(
           onTap: () {
-            Get.toNamed(AppRoutes.dramaDetails, arguments: {
-              'isSignedIn': authController.isLoggedIn.value,
-              'content': item,
-            });
+            Get.toNamed(
+              AppRoutes.dramaDetails,
+              arguments: {
+                'isSignedIn': authController.isLoggedIn.value,
+                'content': item,
+              },
+            );
           },
           leading: CustomNetworkImage(
             imageUrl: item.poster,
@@ -140,25 +166,38 @@ class SearchPage extends StatelessWidget {
           ),
           title: Text(
             item.title,
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           subtitle: Text(
             "${item.releaseYear} • ${item.language}",
             style: const TextStyle(color: Colors.white54, fontSize: 12),
           ),
-          trailing: const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
+          trailing: const Icon(
+            Icons.arrow_forward_ios,
+            size: 14,
+            color: Colors.grey,
+          ),
         );
       },
     );
   }
 
   /// 🔥 DEFAULT VIEW (Top Series, Artists)
-  Widget _buildDefaultSearchView(BuildContext context, ContentController contentController, AuthController authController) {
+  Widget _buildDefaultSearchView(
+    BuildContext context,
+    ContentController contentController,
+    AuthController authController,
+  ) {
     // 1. Filter series and release items (not coming soon)
     final List<ContentModel> topSeries = contentController.allContent
-        .where((item) => item.contentType == 'series' && item.isComingSoon == false)
+        .where(
+          (item) => item.contentType == 'series' && item.isComingSoon == false,
+        )
         .toList();
-    
+
     // 2. Sort by likes (descending)
     topSeries.sort((a, b) {
       int likesA = contentController.contentLikes[a.id] ?? 0;
@@ -197,10 +236,13 @@ class SearchPage extends StatelessWidget {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(12),
                     onTap: () {
-                      Get.toNamed(AppRoutes.dramaDetails, arguments: {
-                        'isSignedIn': authController.isLoggedIn.value,
-                        'content': item,
-                      });
+                      Get.toNamed(
+                        AppRoutes.dramaDetails,
+                        arguments: {
+                          'isSignedIn': authController.isLoggedIn.value,
+                          'content': item,
+                        },
+                      );
                     },
                     child: CustomNetworkImage(
                       imageUrl: item.poster,

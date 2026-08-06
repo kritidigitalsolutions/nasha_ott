@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import '../../app/routes/app_routes.dart';
 import '../../app/theme/app_colors.dart';
 import '../../data/models/shorts_model.dart';
-import 'vertical_shorts_player.dart';
 import '../../view_model/shorts_controller/shorts_controller.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
 import '../../view_model/primium_controller/premium_controller.dart';
@@ -34,11 +33,18 @@ class ShortsEpisodesGrid extends StatelessWidget {
         future: controller.fetchEpisodes(drama.id),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(color: AppColors.buttonColor));
+            return const Center(
+              child: CircularProgressIndicator(color: AppColors.buttonColor),
+            );
           }
-          
+
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text("No episodes found", style: TextStyle(color: Colors.white)));
+            return const Center(
+              child: Text(
+                "No episodes found",
+                style: TextStyle(color: Colors.white),
+              ),
+            );
           }
 
           final episodes = snapshot.data!;
@@ -54,13 +60,14 @@ class ShortsEpisodesGrid extends StatelessWidget {
             itemCount: episodes.length,
             itemBuilder: (context, index) {
               final episode = episodes[index];
-              
+
               // Lock logic
               bool isLocked = true;
               final bool loggedIn = authController.isLoggedIn.value;
               if (loggedIn) {
                 final sub = premiumController.subscriptionData.value;
-                final bool hasActivePlan = sub != null && sub['status'] == 'active';
+                final bool hasActivePlan =
+                    sub != null && sub['status'] == 'active';
                 if (episode.episodeNumber == 1 || hasActivePlan) {
                   isLocked = false;
                 }
@@ -68,11 +75,14 @@ class ShortsEpisodesGrid extends StatelessWidget {
 
               return GestureDetector(
                 onTap: () {
-                  Get.toNamed(AppRoutes.shortsPlayer, arguments: {
-                    'episodes': episodes,
-                    'initialIndex': index,
-                    'dramaName': drama.title,
-                  });
+                  Get.toNamed(
+                    AppRoutes.shortsPlayer,
+                    arguments: {
+                      'episodes': episodes,
+                      'initialIndex': index,
+                      'dramaName': drama.title,
+                    },
+                  );
                 },
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,18 +97,20 @@ class ShortsEpisodesGrid extends StatelessWidget {
                             borderRadius: 8,
                           ),
                           Container(
-                            color: isLocked ? Colors.black45 : Colors.transparent,
+                            color: isLocked
+                                ? Colors.black45
+                                : Colors.transparent,
                           ),
-                            Center(
-                              child: Icon(
-                                isLocked ? Icons.lock : Icons.play_circle_outline,
-                                color: Colors.white,
-                                size: 30,
-                              ),
+                          Center(
+                            child: Icon(
+                              isLocked ? Icons.lock : Icons.play_circle_outline,
+                              color: Colors.white,
+                              size: 30,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
+                    ),
                     const SizedBox(height: 4),
                     Text(
                       episode.title,

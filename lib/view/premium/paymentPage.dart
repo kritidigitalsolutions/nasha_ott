@@ -4,7 +4,7 @@ import '../../view_model/primium_controller/premium_controller.dart';
 import '../../app/theme/app_colors.dart';
 
 class PaymentBottomSheet extends StatelessWidget {
-  const PaymentBottomSheet({Key? key}) : super(key: key);
+  const PaymentBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +18,7 @@ class PaymentBottomSheet extends StatelessWidget {
         return Container(
           decoration: const BoxDecoration(
             color: AppColors.black,
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(25),
-            ),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
           ),
           child: Column(
             children: [
@@ -52,24 +50,40 @@ class PaymentBottomSheet extends StatelessWidget {
 
               /// Payment Methods List
               Expanded(
-                child: Obx(() => Stack(
-                  children: [
-                    ListView(
-                      controller: scrollController,
-                      children: [
-                        _paymentTile(Icons.account_balance_wallet, "UPI", controller),
-                        _paymentTile(Icons.credit_card, "Credit / Debit Card", controller),
-                        _paymentTile(Icons.account_balance, "Net Banking", controller),
-                        _paymentTile(Icons.payments, "Wallet", controller),
-                        _paymentTile(Icons.qr_code, "Scan & Pay", controller),
-                      ],
-                    ),
-                    if (controller.isSubscribing.value)
-                      const Center(
-                        child: CircularProgressIndicator(color: AppColors.primary),
+                child: Obx(
+                  () => Stack(
+                    children: [
+                      ListView(
+                        controller: scrollController,
+                        children: [
+                          _paymentTile(
+                            Icons.account_balance_wallet,
+                            "UPI",
+                            controller,
+                          ),
+                          _paymentTile(
+                            Icons.credit_card,
+                            "Credit / Debit Card",
+                            controller,
+                          ),
+                          _paymentTile(
+                            Icons.account_balance,
+                            "Net Banking",
+                            controller,
+                          ),
+                          _paymentTile(Icons.payments, "Wallet", controller),
+                          _paymentTile(Icons.qr_code, "Scan & Pay", controller),
+                        ],
                       ),
-                  ],
-                )),
+                      if (controller.isSubscribing.value)
+                        const Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primary,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
@@ -79,17 +93,23 @@ class PaymentBottomSheet extends StatelessWidget {
   }
 
   /// 🔹 Payment Tile
-  Widget _paymentTile(IconData icon, String title, PremiumController controller) {
+  Widget _paymentTile(
+    IconData icon,
+    String title,
+    PremiumController controller,
+  ) {
     return ListTile(
       leading: Icon(icon, color: Colors.white),
-      title: Text(
-        title,
-        style: const TextStyle(color: Colors.white),
+      title: Text(title, style: const TextStyle(color: Colors.white)),
+      trailing: const Icon(
+        Icons.arrow_forward_ios,
+        size: 16,
+        color: Colors.grey,
       ),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
       onTap: () {
         if (controller.plans.isNotEmpty) {
-          final selectedPlan = controller.plans[controller.selectedPlanIndex.value];
+          final selectedPlan =
+              controller.plans[controller.selectedPlanIndex.value];
           controller.subscribeToPlan(selectedPlan.id);
         }
       },

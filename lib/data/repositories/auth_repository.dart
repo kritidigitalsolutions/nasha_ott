@@ -12,7 +12,7 @@ class AuthRepository {
     try {
       final response = await apiProvider.postApi(AppConstants.sendOtp, {
         'identifier': identifier,
-        'phone': identifier,   // 🔥 ADD THIS
+        'phone': identifier, // 🔥 ADD THIS
         'type': 'phone',
       });
       return SendOtpResponse.fromJson(response);
@@ -53,10 +53,7 @@ class AuthRepository {
       if (profileImage != null && profileImage.isNotEmpty) {
         final response = await apiProvider.postMultipartApi(
           AppConstants.createProfile,
-          {
-            'phone': phone,
-            'name': name,
-          },
+          {'phone': phone, 'name': name},
           {'profileImage': profileImage},
         );
         return response;
@@ -67,6 +64,17 @@ class AuthRepository {
         });
         return response;
       }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<dynamic> updateProfile({required String phone}) async {
+    try {
+      final response = await apiProvider.pacthApi(AppConstants.updateProfile, {
+        'phone': phone,
+      });
+      return response;
     } catch (e) {
       rethrow;
     }

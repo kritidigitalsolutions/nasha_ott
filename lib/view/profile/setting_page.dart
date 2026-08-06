@@ -29,28 +29,38 @@ class SettingsPage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         children: [
           _buildSectionHeader("Notifications"),
-          Obx(() => _buildSwitchTile(
-                "Push Notifications",
-                controller.isPushNotificationsEnabled.value,
-                controller.togglePushNotifications,
-              )),
+          Obx(
+            () => _buildSwitchTile(
+              "Push Notifications",
+              controller.isPushNotificationsEnabled.value,
+              controller.togglePushNotifications,
+            ),
+          ),
           const SizedBox(height: 20),
           _buildSectionHeader("Playback"),
-          Obx(() => _buildSwitchTile(
-                "Auto Play",
-                controller.isAutoPlayEnabled.value,
-                controller.toggleAutoPlay,
-              )),
-          Obx(() => _buildSwitchTile(
-                "WiFi Only",
-                controller.isWiFiOnlyEnabled.value,
-                controller.toggleWiFiOnly,
-              )),
+          Obx(
+            () => _buildSwitchTile(
+              "Auto Play",
+              controller.isAutoPlayEnabled.value,
+              controller.toggleAutoPlay,
+            ),
+          ),
+          Obx(
+            () => _buildSwitchTile(
+              "WiFi Only",
+              controller.isWiFiOnlyEnabled.value,
+              controller.toggleWiFiOnly,
+            ),
+          ),
           const SizedBox(height: 20),
           _buildSectionHeader("Account"),
           _buildActionTile("Language", "English", () {}),
           // _buildActionTile("Help & Support", "", () => Get.toNamed(AppRoutes.helpSupport)),
-          _buildActionTile("Delete Account", "", () => Get.toNamed(AppRoutes.deleteAccount)),
+          _buildActionTile(
+            "Delete Account",
+            "",
+            () => Get.toNamed(AppRoutes.deleteAccount),
+          ),
           _buildActionTile("App Version", "1.0.0", null),
         ],
       ),
@@ -62,10 +72,7 @@ class SettingsPage extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 10),
       child: GoldenText(
         title,
-        style: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
-        ),
+        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -73,11 +80,14 @@ class SettingsPage extends StatelessWidget {
   Widget _buildSwitchTile(String title, bool value, Function(bool) onChanged) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      title: Text(title, style: const TextStyle(color: Colors.white, fontSize: 16)),
+      title: Text(
+        title,
+        style: const TextStyle(color: Colors.white, fontSize: 16),
+      ),
       trailing: Switch(
         value: value,
         onChanged: onChanged,
-        activeColor: AppColors.primary,
+        activeThumbColor: AppColors.primary,
       ),
     );
   }
@@ -86,8 +96,14 @@ class SettingsPage extends StatelessWidget {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       onTap: onTap,
-      title: Text(title, style: const TextStyle(color: Colors.white, fontSize: 16)),
-      trailing: Text(trailing, style: const TextStyle(color: Colors.grey, fontSize: 14)),
+      title: Text(
+        title,
+        style: const TextStyle(color: Colors.white, fontSize: 16),
+      ),
+      trailing: Text(
+        trailing,
+        style: const TextStyle(color: Colors.grey, fontSize: 14),
+      ),
     );
   }
 }

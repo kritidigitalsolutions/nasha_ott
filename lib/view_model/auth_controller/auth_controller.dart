@@ -133,6 +133,21 @@ class AuthController extends GetxController {
     }
   }
 
+  Future<bool> updatePhoneNumber(String phone) async {
+    try {
+      // Use a local loading state if needed, but don't block the global one if it's a silent sync
+      final response = await repository.updateProfile(phone: phone);
+      if (response != null) {
+        await getProfile(); // Refresh user data to get updated phone
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint("❌ Update Phone Error: $e");
+      return false;
+    }
+  }
+
   Future<VerifyOtpResponse?> signInWithGoogle([
     GoogleSignInAccount? authenticatedUser,
   ]) async {

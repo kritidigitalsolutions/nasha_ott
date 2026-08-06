@@ -6,7 +6,6 @@ import '../../data/models/response_model/content_response_model/content_model.da
 import '../../utils/responsive.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
 import '../../view_model/content_controller/content_controller.dart';
-import 'dramaDetailsPage.dart';
 
 class CastDetailsPage extends StatelessWidget {
   final String castName;
@@ -27,16 +26,18 @@ class CastDetailsPage extends StatelessWidget {
     final AuthController authController = Get.find<AuthController>();
 
     /// 🎬 MOVIES FILTER
-    final List<ContentModel> movies =
-    contentController.allContent.where((item) {
+    final List<ContentModel> movies = contentController.allContent.where((
+      item,
+    ) {
       return item.contentType == "movie" &&
           item.cast != null &&
           item.cast!.any((c) => c.name == castName);
     }).toList();
 
     /// 📺 SERIES FILTER
-    final List<ContentModel> series =
-    contentController.allContent.where((item) {
+    final List<ContentModel> series = contentController.allContent.where((
+      item,
+    ) {
       return item.contentType == "series" &&
           item.cast != null &&
           item.cast!.any((c) => c.name == castName);
@@ -44,15 +45,23 @@ class CastDetailsPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: isDesktop ? AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Responsive.getBackIcon(context) ?? Icons.arrow_back, color: Colors.white),
-          onPressed: () => Get.back(),
-        ),
-        title: Text(castName, style: const TextStyle(color: Colors.white)),
-      ) : null,
+      appBar: isDesktop
+          ? AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                icon: Icon(
+                  Responsive.getBackIcon(context) ?? Icons.arrow_back,
+                  color: Colors.white,
+                ),
+                onPressed: () => Get.back(),
+              ),
+              title: Text(
+                castName,
+                style: const TextStyle(color: Colors.white),
+              ),
+            )
+          : null,
       body: Align(
         alignment: Alignment.topCenter,
         child: ConstrainedBox(
@@ -69,7 +78,8 @@ class CastDetailsPage extends StatelessWidget {
                       height: isDesktop ? 300 : height * 0.25,
                       width: double.infinity,
                       alignment: Alignment.center,
-                      child: (castImage.isNotEmpty && castImage.startsWith('http'))
+                      child:
+                          (castImage.isNotEmpty && castImage.startsWith('http'))
                           ? CustomNetworkImage(
                               imageUrl: castImage,
                               width: isDesktop ? 200 : 140,
@@ -79,30 +89,35 @@ class CastDetailsPage extends StatelessWidget {
                             )
                           : CircleAvatar(
                               radius: isDesktop ? 100 : 70,
-                              backgroundImage: const AssetImage('assets/images/user.png'),
+                              backgroundImage: const AssetImage(
+                                'assets/images/user.png',
+                              ),
                             ),
                     ),
 
                     const SizedBox(height: 10),
 
                     /// 🔥 CAST NAME
-                    if (!isDesktop) Center(
-                      child: Text(
-                        castName,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                    if (!isDesktop)
+                      Center(
+                        child: Text(
+                          castName,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
 
                     const SizedBox(height: 25),
 
                     /// 🎬 MOVIES SECTION
                     if (movies.isNotEmpty) ...[
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: isDesktop ? 40 : 16),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isDesktop ? 40 : 16,
+                        ),
                         child: const Text(
                           "Movies",
                           style: TextStyle(
@@ -119,16 +134,22 @@ class CastDetailsPage extends StatelessWidget {
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: movies.length,
-                          padding: EdgeInsets.symmetric(horizontal: isDesktop ? 24 : 0),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isDesktop ? 24 : 0,
+                          ),
                           itemBuilder: (context, index) {
                             final item = movies[index];
 
                             return GestureDetector(
                               onTap: () {
-                                Get.toNamed(AppRoutes.dramaDetails, arguments: {
-                                  'content': item,
-                                  'isSignedIn': authController.isLoggedIn.value,
-                                });
+                                Get.toNamed(
+                                  AppRoutes.dramaDetails,
+                                  arguments: {
+                                    'content': item,
+                                    'isSignedIn':
+                                        authController.isLoggedIn.value,
+                                  },
+                                );
                               },
                               child: Container(
                                 width: isDesktop ? 180 : 120,
@@ -146,7 +167,8 @@ class CastDetailsPage extends StatelessWidget {
                                     Text(
                                       item.title,
                                       style: const TextStyle(
-                                          color: Colors.white),
+                                        color: Colors.white,
+                                      ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ],
@@ -162,7 +184,9 @@ class CastDetailsPage extends StatelessWidget {
                     /// 📺 SERIES SECTION
                     if (series.isNotEmpty) ...[
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: isDesktop ? 40 : 16),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isDesktop ? 40 : 16,
+                        ),
                         child: const Text(
                           "Series",
                           style: TextStyle(
@@ -179,16 +203,22 @@ class CastDetailsPage extends StatelessWidget {
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: series.length,
-                          padding: EdgeInsets.symmetric(horizontal: isDesktop ? 24 : 0),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isDesktop ? 24 : 0,
+                          ),
                           itemBuilder: (context, index) {
                             final item = series[index];
 
                             return GestureDetector(
                               onTap: () {
-                                Get.toNamed(AppRoutes.dramaDetails, arguments: {
-                                  'content': item,
-                                  'isSignedIn': authController.isLoggedIn.value,
-                                });
+                                Get.toNamed(
+                                  AppRoutes.dramaDetails,
+                                  arguments: {
+                                    'content': item,
+                                    'isSignedIn':
+                                        authController.isLoggedIn.value,
+                                  },
+                                );
                               },
                               child: Container(
                                 width: isDesktop ? 180 : 120,
@@ -206,7 +236,8 @@ class CastDetailsPage extends StatelessWidget {
                                     Text(
                                       item.title,
                                       style: const TextStyle(
-                                          color: Colors.white),
+                                        color: Colors.white,
+                                      ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ],
@@ -236,14 +267,18 @@ class CastDetailsPage extends StatelessWidget {
               ),
 
               /// 🔙 BACK BUTTON (Mobile only)
-              if (!isDesktop) Positioned(
-                top: 40,
-                left: 10,
-                child: IconButton(
-                  icon: Icon(Responsive.getBackIcon(context) ?? Icons.arrow_back, color: Colors.white),
-                  onPressed: () => Get.back(),
+              if (!isDesktop)
+                Positioned(
+                  top: 40,
+                  left: 10,
+                  child: IconButton(
+                    icon: Icon(
+                      Responsive.getBackIcon(context) ?? Icons.arrow_back,
+                      color: Colors.white,
+                    ),
+                    onPressed: () => Get.back(),
+                  ),
                 ),
-              ),
             ],
           ),
         ),

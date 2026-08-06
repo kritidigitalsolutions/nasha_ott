@@ -23,8 +23,11 @@ class _OtpPageState extends State<OtpPage> {
   late final AuthController authController;
   late final OtpController otpController;
   late final String displayPhone;
-  
-  final List<TextEditingController> controllers = List.generate(6, (index) => TextEditingController());
+
+  final List<TextEditingController> controllers = List.generate(
+    6,
+    (index) => TextEditingController(),
+  );
   final List<FocusNode> focusNodes = List.generate(6, (index) => FocusNode());
 
   @override
@@ -32,7 +35,7 @@ class _OtpPageState extends State<OtpPage> {
     super.initState();
     authController = Get.find<AuthController>();
     otpController = Get.put(OtpController());
-    
+
     // ✅ Robustly get phone number from widget or arguments
     if (widget.phoneNumber != null && widget.phoneNumber!.isNotEmpty) {
       displayPhone = widget.phoneNumber!;
@@ -62,7 +65,11 @@ class _OtpPageState extends State<OtpPage> {
     String otp = controllers.map((e) => e.text).join();
 
     if (otp.length < 6) {
-      CustomSnackbar.show(title: 'Error', message: 'Please enter 6-digit OTP', isError: true);
+      CustomSnackbar.show(
+        title: 'Error',
+        message: 'Please enter 6-digit OTP',
+        isError: true,
+      );
       return;
     }
 
@@ -70,9 +77,11 @@ class _OtpPageState extends State<OtpPage> {
 
     if (response != null && response.success) {
       authController.setLoginStatus(true);
-      
+
       bool isNew = response.isNewUser;
-      String? returnRoute = Get.arguments is Map ? Get.arguments['returnRoute'] : null;
+      String? returnRoute = Get.arguments is Map
+          ? Get.arguments['returnRoute']
+          : null;
       // NEW: carry the drama-details content id forward through every exit path
       String? incomingId = Get.arguments is Map ? Get.arguments['id'] : null;
 
@@ -81,12 +90,15 @@ class _OtpPageState extends State<OtpPage> {
 
       Future.delayed(const Duration(milliseconds: 100), () {
         if (!mounted) return;
-        
+
         bool isEmail = displayPhone.contains('@');
-        
+
         if (!isEmail && isNew) {
           // NEW: forward id into createProfile so it can carry it further
-          Get.offAllNamed(AppRoutes.createProfile, arguments: {'phone': displayPhone, ...?Get.arguments});
+          Get.offAllNamed(
+            AppRoutes.createProfile,
+            arguments: {'phone': displayPhone, ...?Get.arguments},
+          );
         } else {
           if (returnRoute != null && returnRoute.isNotEmpty) {
             // NEW: if we have a content id, forward it as the route argument
@@ -99,7 +111,8 @@ class _OtpPageState extends State<OtpPage> {
           } else {
             // Check where we came from. If we have history, go back.
             // For OtpPage, we usually want to pop twice (Otp -> SignIn -> Previous)
-            if (Get.previousRoute.isNotEmpty && Get.previousRoute != AppRoutes.splash) {
+            if (Get.previousRoute.isNotEmpty &&
+                Get.previousRoute != AppRoutes.splash) {
               Get.back();
               Get.back();
             } else {
@@ -133,18 +146,13 @@ class _OtpPageState extends State<OtpPage> {
                   const SizedBox(height: 60),
                   const GoldenText(
                     "Verify OTP",
-                    style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
                   const GoldenText(
                     "Enter the OTP sent to",
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(fontSize: 14),
                   ),
                   GoldenText(
                     displayPhone,
@@ -194,10 +202,10 @@ class _OtpPageState extends State<OtpPage> {
                               focusNodes[index - 1].requestFocus();
                             }
                             if (value.length == 1 && index == 5) {
-                               FocusManager.instance.primaryFocus?.unfocus();
-                               if (!authController.isLoading.value) {
-                                 verifyOtp();
-                               }
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              if (!authController.isLoading.value) {
+                                verifyOtp();
+                              }
                             }
                           },
                         ),
@@ -207,40 +215,56 @@ class _OtpPageState extends State<OtpPage> {
 
                   const SizedBox(height: 40),
 
-                  Obx(() => GoldenButton(
-                        onPressed: authController.isLoading.value ? null : verifyOtp,
-                        child: authController.isLoading.value
-                            ? const CircularProgressIndicator(color: AppColors.buttonTextColor)
-                            : const FittedBox(
-                                child: Text(
-                                  "Verify",
-                                  style: TextStyle(fontSize: 16, color: AppColors.buttonTextColor),
+                  Obx(
+                    () => GoldenButton(
+                      onPressed: authController.isLoading.value
+                          ? null
+                          : verifyOtp,
+                      child: authController.isLoading.value
+                          ? const CircularProgressIndicator(
+                              color: AppColors.buttonTextColor,
+                            )
+                          : const FittedBox(
+                              child: Text(
+                                "Verify",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: AppColors.buttonTextColor,
                                 ),
                               ),
-                      )),
+                            ),
+                    ),
+                  ),
 
                   const SizedBox(height: 20),
 
                   Center(
-                    child: Obx(() => TextButton(
-                      onPressed: (otpController.isResendButtonDisabled.value || authController.isLoading.value)
-                          ? null
-                          : () async {
-                              bool success = await authController.sendOtp(displayPhone);
-                              if (success) {
-                                otpController.startTimer();
-                              }
-                            },
-                      child: GoldenText(
-                        otpController.isResendButtonDisabled.value
-                            ? 'Resend OTP in ${otpController.countdown.value}\s'
-                            : 'Resend OTP',
-                        style: TextStyle(
+                    child: Obx(
+                      () => TextButton(
+                        onPressed:
+                            (otpController.isResendButtonDisabled.value ||
+                                authController.isLoading.value)
+                            ? null
+                            : () async {
+                                bool success = await authController.sendOtp(
+                                  displayPhone,
+                                );
+                                if (success) {
+                                  otpController.startTimer();
+                                }
+                              },
+                        child: GoldenText(
+                          otpController.isResendButtonDisabled.value
+                              ? 'Resend OTP in ${otpController.countdown.value}s'
+                              : 'Resend OTP',
+                          style: TextStyle(
                             color: otpController.isResendButtonDisabled.value
                                 ? Colors.grey
-                                : AppColors.buttonColor),
+                                : AppColors.buttonColor,
+                          ),
+                        ),
                       ),
-                    )),
+                    ),
                   ),
                 ],
               ),

@@ -5,8 +5,6 @@ import '../../widgets/custom_network_image.dart';
 import 'package:video_player/video_player.dart';
 import '../../app/theme/app_colors.dart';
 import '../../data/models/shorts_model.dart';
-import 'vertical_shorts_player.dart';
-import 'shorts_episodes_grid.dart';
 import '../../view_model/shorts_controller/shorts_controller.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
 
@@ -24,12 +22,19 @@ class ShortsPage extends StatelessWidget {
           Expanded(
             child: Obx(() {
               if (controller.isLoading.value) {
-                return const Center(child: CircularProgressIndicator(color: AppColors.buttonColor));
+                return const Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.buttonColor,
+                  ),
+                );
               }
-              
+
               if (controller.shortDramas.isEmpty) {
                 return const Center(
-                  child: Text("No short dramas found", style: TextStyle(color: Colors.white)),
+                  child: Text(
+                    "No short dramas found",
+                    style: TextStyle(color: Colors.white),
+                  ),
                 );
               }
 
@@ -40,7 +45,9 @@ class ShortsPage extends StatelessWidget {
                   itemCount: controller.shortDramas.length,
                   padding: const EdgeInsets.only(bottom: 100),
                   itemBuilder: (context, index) {
-                    return ShortDramaListItem(drama: controller.shortDramas[index]);
+                    return ShortDramaListItem(
+                      drama: controller.shortDramas[index],
+                    );
                   },
                 ),
               );
@@ -78,18 +85,18 @@ class _ShortDramaListItemState extends State<ShortDramaListItem> {
   Future<void> _loadFirstEpisode() async {
     _episodes = await shortsController.fetchEpisodes(widget.drama.id);
     if (_episodes != null && _episodes!.isNotEmpty && mounted) {
-      _controller = VideoPlayerController.networkUrl(
-        Uri.parse(_episodes![0].videoUrl),
-      )..initialize().then((_) {
-          if (mounted) {
-            setState(() {
-              _isInitialized = true;
-              _controller?.setLooping(true);
-              _controller?.setVolume(0); // Mute for autoplay
-              _controller?.play();
+      _controller =
+          VideoPlayerController.networkUrl(Uri.parse(_episodes![0].videoUrl))
+            ..initialize().then((_) {
+              if (mounted) {
+                setState(() {
+                  _isInitialized = true;
+                  _controller?.setLooping(true);
+                  _controller?.setVolume(0); // Mute for autoplay
+                  _controller?.play();
+                });
+              }
             });
-          }
-        });
     }
   }
 
@@ -111,14 +118,19 @@ class _ShortDramaListItemState extends State<ShortDramaListItem> {
             GestureDetector(
               onTap: () async {
                 if (_episodes == null || _episodes!.isEmpty) {
-                   _episodes = await shortsController.fetchEpisodes(widget.drama.id);
+                  _episodes = await shortsController.fetchEpisodes(
+                    widget.drama.id,
+                  );
                 }
                 if (_episodes != null && _episodes!.isNotEmpty) {
-                  Get.toNamed(AppRoutes.shortsPlayer, arguments: {
-                    'episodes': _episodes!,
-                    'initialIndex': 0,
-                    'dramaName': widget.drama.title,
-                  });
+                  Get.toNamed(
+                    AppRoutes.shortsPlayer,
+                    arguments: {
+                      'episodes': _episodes!,
+                      'initialIndex': 0,
+                      'dramaName': widget.drama.title,
+                    },
+                  );
                 }
               },
               child: Container(
@@ -130,7 +142,10 @@ class _ShortDramaListItemState extends State<ShortDramaListItem> {
                   children: [
                     /// Video / Image
                     Positioned.fill(
-                      child: _isInitialized && _controller != null && authController.isLoggedIn.value
+                      child:
+                          _isInitialized &&
+                              _controller != null &&
+                              authController.isLoggedIn.value
                           ? FittedBox(
                               fit: BoxFit.cover,
                               child: SizedBox(
@@ -194,6 +209,7 @@ class _ShortDramaListItemState extends State<ShortDramaListItem> {
                             ),
                           ),
                           const SizedBox(height: 6),
+
                           /// Details
                           Text(
                             "${widget.drama.language} • ${widget.drama.totalEpisodes} Episodes",
@@ -203,13 +219,20 @@ class _ShortDramaListItemState extends State<ShortDramaListItem> {
                             ),
                           ),
                           const SizedBox(height: 10),
+
                           /// View Episodes Button
                           GestureDetector(
                             onTap: () {
-                              Get.toNamed(AppRoutes.shortsEpisodes, arguments: {'drama': widget.drama});
+                              Get.toNamed(
+                                AppRoutes.shortsEpisodes,
+                                arguments: {'drama': widget.drama},
+                              );
                             },
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 8,
+                              ),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(30),

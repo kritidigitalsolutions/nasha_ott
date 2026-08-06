@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../utils/responsive.dart';
-import '../../widgets/golden_text.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/profile/privacy_controller.dart';
 
@@ -44,29 +43,33 @@ class TermsAndConditionsPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Obx(() => Text(
-                    controller.termsTitle.value,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                  Obx(
+                    () => Text(
+                      controller.termsTitle.value,
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
-                  )),
+                  ),
                   const SizedBox(height: 20),
-                  Obx(() => Text(
-                    controller.termsContent.value,
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 16,
+                  Obx(
+                    () => Text(
+                      controller.termsContent.value,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 16,
+                      ),
                     ),
-                  )),
+                  ),
                   const SizedBox(height: 40),
                   const Center(
                     child: Text(
                       "© 2026 Nazar OTT",
                       style: TextStyle(color: Colors.white54),
                     ),
-                  )
+                  ),
                 ],
               ),
             );

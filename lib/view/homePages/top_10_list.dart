@@ -29,12 +29,9 @@ class Top10List extends StatelessWidget {
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const GoldenText(
+                GoldenText(
                   "Trending on Nazar",
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(width: 8),
                 Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
@@ -55,10 +52,10 @@ class Top10List extends StatelessWidget {
             itemBuilder: (context, index) {
               final item = content[index];
               return _Top10HoverCard(
-                item: item, 
-                index: index, 
-                isSignedIn: isSignedIn, 
-                isDesktop: isDesktop
+                item: item,
+                index: index,
+                isSignedIn: isSignedIn,
+                isDesktop: isDesktop,
               );
             },
           ),
@@ -75,10 +72,10 @@ class _Top10HoverCard extends StatefulWidget {
   final bool isDesktop;
 
   const _Top10HoverCard({
-    required this.item, 
-    required this.index, 
-    required this.isSignedIn, 
-    required this.isDesktop
+    required this.item,
+    required this.index,
+    required this.isSignedIn,
+    required this.isDesktop,
   });
 
   @override
@@ -96,16 +93,23 @@ class _Top10HoverCardState extends State<_Top10HoverCard> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         width: widget.isDesktop ? 240 : 130, // Increased width
-        margin: const EdgeInsets.only(right: 32), // Increased margin to prevent overlap
-        transform: isHovered 
-          ? (Matrix4.identity()..translate(0, -10, 0)..scale(1.05)) 
-          : Matrix4.identity(),
+        margin: const EdgeInsets.only(
+          right: 32,
+        ), // Increased margin to prevent overlap
+        transform: isHovered
+            ? (Matrix4.identity()
+                ..translate(0, -10, 0)
+                ..scale(1.05))
+            : Matrix4.identity(),
         child: GestureDetector(
           onTap: () {
-            Get.toNamed(AppRoutes.dramaDetails, arguments: {
-              'isSignedIn': widget.isSignedIn,
-              'content': widget.item,
-            });
+            Get.toNamed(
+              AppRoutes.dramaDetails,
+              arguments: {
+                'isSignedIn': widget.isSignedIn,
+                'content': widget.item,
+              },
+            );
           },
           child: Stack(
             clipBehavior: Clip.none,
@@ -114,7 +118,8 @@ class _Top10HoverCardState extends State<_Top10HoverCard> {
                 left: 0,
                 bottom: widget.isDesktop ? -30 : -10,
                 child: ShaderMask(
-                  shaderCallback: (bounds) => AppColors.goldenGradient.createShader(bounds),
+                  shaderCallback: (bounds) =>
+                      AppColors.goldenGradient.createShader(bounds),
                   child: Text(
                     '${widget.index + 1}',
                     style: TextStyle(
@@ -134,20 +139,22 @@ class _Top10HoverCardState extends State<_Top10HoverCard> {
                   duration: const Duration(milliseconds: 250),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    boxShadow: isHovered ? [
-                      BoxShadow(
-                        color: AppColors.primary.withOpacity(0.6),
-                        blurRadius: 30,
-                        spreadRadius: 3,
-                        offset: const Offset(0, 10),
-                      )
-                    ] : [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 10,
-                        offset: const Offset(0, 5),
-                      )
-                    ],
+                    boxShadow: isHovered
+                        ? [
+                            BoxShadow(
+                              color: AppColors.primary.withOpacity(0.6),
+                              blurRadius: 30,
+                              spreadRadius: 3,
+                              offset: const Offset(0, 10),
+                            ),
+                          ]
+                        : [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
                   ),
                   child: CustomNetworkImage(
                     imageUrl: widget.item.poster,

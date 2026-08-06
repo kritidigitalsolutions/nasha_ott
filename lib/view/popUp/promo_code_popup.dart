@@ -5,7 +5,7 @@ import '../../widgets/golden_button.dart';
 import '../../view_model/primium_controller/premium_controller.dart';
 
 class ApplyPromoPopup extends StatefulWidget {
-  const ApplyPromoPopup({Key? key}) : super(key: key);
+  const ApplyPromoPopup({super.key});
 
   @override
   State<ApplyPromoPopup> createState() => _ApplyPromoPopupState();
@@ -19,9 +19,7 @@ class _ApplyPromoPopupState extends State<ApplyPromoPopup> {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.black,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: SingleChildScrollView(
@@ -51,7 +49,7 @@ class _ApplyPromoPopupState extends State<ApplyPromoPopup> {
                     GestureDetector(
                       onTap: () => Navigator.pop(context),
                       child: const Icon(Icons.close, color: AppColors.white),
-                    )
+                    ),
                   ],
                 ),
 
@@ -66,20 +64,29 @@ class _ApplyPromoPopupState extends State<ApplyPromoPopup> {
 
                 Row(
                   children: [
-                    const Icon(Icons.workspace_premium, color: AppColors.buttonColor),
+                    const Icon(
+                      Icons.workspace_premium,
+                      color: AppColors.buttonColor,
+                    ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(selectedPlan.name ?? "Premium Plan",
-                              style: const TextStyle(
-                                  color: AppColors.white,
-                                  fontWeight: FontWeight.bold)),
-                          Text("Billed every ${selectedPlan.duration} days",
-                              style: const TextStyle(
-                                  color: AppColors.grey,
-                                  fontSize: 12)),
+                          Text(
+                            selectedPlan.name ?? "Premium Plan",
+                            style: const TextStyle(
+                              color: AppColors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            "Billed every ${selectedPlan.duration} days",
+                            style: const TextStyle(
+                              color: AppColors.grey,
+                              fontSize: 12,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -91,9 +98,13 @@ class _ApplyPromoPopupState extends State<ApplyPromoPopup> {
                 Text(
                   "INR ${controller.originalPrice.value.toStringAsFixed(0)}",
                   style: TextStyle(
-                    color: controller.isPromoApplied.value ? AppColors.grey : AppColors.buttonColor,
+                    color: controller.isPromoApplied.value
+                        ? AppColors.grey
+                        : AppColors.buttonColor,
                     fontWeight: FontWeight.bold,
-                    decoration: controller.isPromoApplied.value ? TextDecoration.lineThrough : null,
+                    decoration: controller.isPromoApplied.value
+                        ? TextDecoration.lineThrough
+                        : null,
                   ),
                 ),
 
@@ -122,7 +133,9 @@ class _ApplyPromoPopupState extends State<ApplyPromoPopup> {
                             borderSide: BorderSide(color: AppColors.grey),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColors.buttonColor),
+                            borderSide: BorderSide(
+                              color: AppColors.buttonColor,
+                            ),
                           ),
                         ),
                       ),
@@ -133,14 +146,25 @@ class _ApplyPromoPopupState extends State<ApplyPromoPopup> {
                       width: 100,
                       onPressed: controller.isApplyingPromo.value
                           ? null
-                          : () => controller.applyPromoCode(promoController.text.trim()),
+                          : () => controller.applyPromoCode(
+                              promoController.text.trim(),
+                            ),
                       child: controller.isApplyingPromo.value
-                          ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.buttonTextColor))
-                          : const Text("Apply",
-                        style: TextStyle(
-                            color: AppColors.buttonTextColor,
-                            fontWeight: FontWeight.bold
-                        ),),
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: AppColors.buttonTextColor,
+                              ),
+                            )
+                          : const Text(
+                              "Apply",
+                              style: TextStyle(
+                                color: AppColors.buttonTextColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ],
                 ),
@@ -150,14 +174,17 @@ class _ApplyPromoPopupState extends State<ApplyPromoPopup> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text("Total Amount",
-                        style: TextStyle(color: AppColors.white)),
+                    const Text(
+                      "Total Amount",
+                      style: TextStyle(color: AppColors.white),
+                    ),
                     Text(
                       "INR ${controller.discountedPrice.value.toStringAsFixed(0)}",
                       style: const TextStyle(
-                          color: AppColors.buttonColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18),
+                        color: AppColors.buttonColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
                     ),
                   ],
                 ),
@@ -168,15 +195,18 @@ class _ApplyPromoPopupState extends State<ApplyPromoPopup> {
                   height: 45,
                   onPressed: controller.isSubscribing.value
                       ? null
-                      : () => controller.subscribeToPlan(selectedPlan.id!),
+                      : () => controller.subscribeToPlan(selectedPlan.id),
                   child: controller.isSubscribing.value
-                      ? const CircularProgressIndicator(color: AppColors.buttonTextColor)
+                      ? const CircularProgressIndicator(
+                          color: AppColors.buttonTextColor,
+                        )
                       : const Text(
-                    "Proceed To Pay",
-                    style: TextStyle(
-                        color: AppColors.buttonTextColor,
-                        fontWeight: FontWeight.bold),
-                  ),
+                          "Proceed To Pay",
+                          style: TextStyle(
+                            color: AppColors.buttonTextColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
               ],
             );

@@ -4,8 +4,6 @@ import 'package:video_player/video_player.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../app/routes/app_routes.dart';
 import '../../data/models/shorts_model.dart';
-import '../auth/signInPage.dart';
-import '../premium/goPremium.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
 import '../../view_model/primium_controller/premium_controller.dart';
 import '../../widgets/golden_button.dart';
@@ -88,10 +86,10 @@ class _ShortVideoItemState extends State<ShortVideoItem> {
 
     final sub = premiumController.subscriptionData.value;
     final bool hasActivePlan = sub != null && sub['status'] == 'active';
-    
+
     // Episode 1 is always unlocked for signed-in users
     if (widget.episode.episodeNumber == 1) return false;
-    
+
     // Other episodes are locked if no active plan
     return !hasActivePlan;
   }
@@ -105,16 +103,17 @@ class _ShortVideoItemState extends State<ShortVideoItem> {
   }
 
   void _initializePlayer() {
-    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.episode.videoUrl))
-      ..initialize().then((_) {
-        if (mounted) {
-          setState(() {
-            _isInitialized = true;
-            _controller?.play();
-            _controller?.setLooping(true);
+    _controller =
+        VideoPlayerController.networkUrl(Uri.parse(widget.episode.videoUrl))
+          ..initialize().then((_) {
+            if (mounted) {
+              setState(() {
+                _isInitialized = true;
+                _controller?.play();
+                _controller?.setLooping(true);
+              });
+            }
           });
-        }
-      });
   }
 
   @override
@@ -154,7 +153,7 @@ class _ShortVideoItemState extends State<ShortVideoItem> {
             )
           else
             const Center(child: CircularProgressIndicator(color: Colors.white)),
-          
+
           /// Play/Pause Icon Overlay
           if (!isLocked && !_isPlaying)
             const Center(
@@ -173,7 +172,11 @@ class _ShortVideoItemState extends State<ShortVideoItem> {
                   Share.share(widget.episode.videoUrl);
                 }),
                 const SizedBox(height: 20),
-                _buildOption(Icons.playlist_play, "Episodes", widget.onEpisodesClick),
+                _buildOption(
+                  Icons.playlist_play,
+                  "Episodes",
+                  widget.onEpisodesClick,
+                ),
               ],
             ),
           ),
@@ -188,7 +191,11 @@ class _ShortVideoItemState extends State<ShortVideoItem> {
               children: [
                 Text(
                   widget.dramaName,
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -196,6 +203,7 @@ class _ShortVideoItemState extends State<ShortVideoItem> {
                   style: const TextStyle(color: Colors.white, fontSize: 16),
                 ),
                 const SizedBox(height: 12),
+
                 /// Progress Indicator
                 if (!isLocked && _isInitialized && _controller != null)
                   VideoProgressIndicator(
@@ -210,7 +218,7 @@ class _ShortVideoItemState extends State<ShortVideoItem> {
               ],
             ),
           ),
-          
+
           /// Back Button
           Positioned(
             top: 40,
@@ -236,7 +244,11 @@ class _ShortVideoItemState extends State<ShortVideoItem> {
           const SizedBox(height: 20),
           Text(
             loggedIn ? "Subscribe to watch all episodes" : "Sign in to watch",
-            style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 30),
           GoldenButton(
@@ -247,12 +259,18 @@ class _ShortVideoItemState extends State<ShortVideoItem> {
               if (loggedIn) {
                 Get.toNamed(AppRoutes.goPremium);
               } else {
-                Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute});
+                Get.toNamed(
+                  AppRoutes.signIn,
+                  arguments: {"returnRoute": Get.currentRoute},
+                );
               }
             },
             child: Text(
               loggedIn ? "GO PREMIUM" : "SIGN IN",
-              style: const TextStyle(color: AppColors.buttonTextColor, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                color: AppColors.buttonTextColor,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],
@@ -267,7 +285,10 @@ class _ShortVideoItemState extends State<ShortVideoItem> {
         children: [
           Icon(icon, color: Colors.white, size: 35),
           const SizedBox(height: 4),
-          Text(label, style: const TextStyle(color: Colors.white, fontSize: 12)),
+          Text(
+            label,
+            style: const TextStyle(color: Colors.white, fontSize: 12),
+          ),
         ],
       ),
     );

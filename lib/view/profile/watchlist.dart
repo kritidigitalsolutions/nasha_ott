@@ -34,7 +34,9 @@ class WatchlistPage extends StatelessWidget {
       body: Obx(() {
         /// 🔄 LOADING
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator(color: AppColors.primary));
+          return const Center(
+            child: CircularProgressIndicator(color: AppColors.primary),
+          );
         }
 
         /// ❌ EMPTY STATE
@@ -59,11 +61,13 @@ class WatchlistPage extends StatelessWidget {
 
             if (contentData != null && contentData is Map<String, dynamic>) {
               // Copy data and inject itemModel as 'type' if missing
-              final Map<String, dynamic> fullData = Map<String, dynamic>.from(contentData);
+              final Map<String, dynamic> fullData = Map<String, dynamic>.from(
+                contentData,
+              );
               if (fullData['type'] == null && item['itemModel'] != null) {
                 fullData['type'] = item['itemModel'].toString().toLowerCase();
               }
-              
+
               contentItem = ContentModel.fromJson(fullData);
               title = contentItem.title;
               poster = contentItem.poster;
@@ -79,10 +83,13 @@ class WatchlistPage extends StatelessWidget {
               child: ListTile(
                 onTap: () {
                   if (contentItem != null) {
-                    Get.toNamed(AppRoutes.dramaDetails, arguments: {
-                      'isSignedIn': authController.isLoggedIn.value,
-                      'content': contentItem!,
-                    });
+                    Get.toNamed(
+                      AppRoutes.dramaDetails,
+                      arguments: {
+                        'isSignedIn': authController.isLoggedIn.value,
+                        'content': contentItem,
+                      },
+                    );
                   }
                 },
                 leading: poster.isNotEmpty
@@ -96,14 +103,20 @@ class WatchlistPage extends StatelessWidget {
                     : const Icon(Icons.movie, color: Colors.white, size: 50),
                 title: Text(
                   title,
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 subtitle: Text(
                   year != "0" ? "Year: $year" : "Watchlist Item",
                   style: const TextStyle(color: Colors.white54, fontSize: 12),
                 ),
                 trailing: IconButton(
-                  icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
+                  icon: const Icon(
+                    Icons.delete_outline,
+                    color: Colors.redAccent,
+                  ),
                   onPressed: () {
                     controller.removeFromWatchlist(watchlistId);
                   },
@@ -131,7 +144,11 @@ class WatchlistPage extends StatelessWidget {
                 shape: BoxShape.circle,
                 border: Border.all(color: Colors.grey.shade700, width: 2),
               ),
-              child: const Icon(Icons.bookmark_border, size: 50, color: AppColors.white),
+              child: const Icon(
+                Icons.bookmark_border,
+                size: 50,
+                color: AppColors.white,
+              ),
             ),
             const SizedBox(height: 30),
             const GoldenText(
@@ -154,7 +171,11 @@ class WatchlistPage extends StatelessWidget {
               },
               child: const Text(
                 "Start Adding",
-                style: TextStyle(color: AppColors.buttonTextColor, fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: AppColors.buttonTextColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],

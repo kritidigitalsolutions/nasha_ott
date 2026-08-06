@@ -1,7 +1,7 @@
 class AppConstants {
   // static const String serverUrl = 'http://192.168.1.24:5000';
-  static const String serverUrl = 'https://api.nazarott.com';
-  // static const String serverUrl = 'http://192.168.1.9:5000';
+  // static const String serverUrl = 'https://api.nazarott.com';
+  static const String serverUrl = 'http://192.168.1.33:5001';
   static const String baseUrl = '$serverUrl/api';
 
   // Auth Endpoints
@@ -12,6 +12,7 @@ class AppConstants {
   /// user proflie
   static const String getProfile = '$baseUrl/user/profile';
   static const String createProfile = '$baseUrl/user/complete-profile';
+  static const String updateProfile = '$baseUrl/user/update-profile';
 
   /// fcm
   static const String updateFcmToken = '$baseUrl/notifications/fcm-token';
@@ -80,5 +81,5 @@ class AppConstants {
 
   //HELP
   static String helpApi = "$baseUrl/help";
-  static String contentDetail({required String id})=>"$baseUrl/content/$id";
+  static String contentDetail({required String id}) => "$baseUrl/content/$id";
 }

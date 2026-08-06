@@ -49,9 +49,7 @@ class VideoController extends GetxController {
       currentPosition.value = value.position;
       isPlaying.value = value.isPlaying;
 
-      if (value.duration != null) {
-        totalDuration.value = value.duration;
-      }
+      totalDuration.value = value.duration;
     });
 
     _startHideTimer();
@@ -69,9 +67,7 @@ class VideoController extends GetxController {
         ]);
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
       } else {
-        SystemChrome.setPreferredOrientations([
-          DeviceOrientation.portraitUp,
-        ]);
+        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
       }
     }
@@ -115,9 +111,7 @@ class VideoController extends GetxController {
     final duration = c.value.duration;
     if (duration.inSeconds == 0) return;
 
-    final newPos = Duration(
-      seconds: (duration.inSeconds * value).toInt(),
-    );
+    final newPos = Duration(seconds: (duration.inSeconds * value).toInt());
 
     c.seekTo(newPos);
     _startHideTimer();
@@ -141,9 +135,7 @@ class VideoController extends GetxController {
     _hideTimer?.cancel();
     videoPlayerController?.dispose();
     if (!kIsWeb) {
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.portraitUp,
-      ]);
+      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     }
     super.onClose();

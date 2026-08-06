@@ -33,10 +33,7 @@ class DownloadsPage extends StatelessWidget {
         leading: Responsive.backButton(context, onPressed: () => Get.back()),
         title: const GoldenText(
           "Downloads",
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
 
@@ -46,7 +43,10 @@ class DownloadsPage extends StatelessWidget {
           return _baseEmptyView(
             title: "Please sign in to view your downloads",
             buttonText: "Sign In",
-            onTap: () => Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute}),
+            onTap: () => Get.toNamed(
+              AppRoutes.signIn,
+              arguments: {"returnRoute": Get.currentRoute},
+            ),
           );
         }
 
@@ -81,10 +81,13 @@ class DownloadsPage extends StatelessWidget {
 
                 /// 🎬 OPEN DETAILS PAGE
                 onTap: () {
-                  Get.toNamed(AppRoutes.dramaDetails, arguments: {
-                    'isSignedIn': authController.isLoggedIn.value,
-                    'content': item,
-                  });
+                  Get.toNamed(
+                    AppRoutes.dramaDetails,
+                    arguments: {
+                      'isSignedIn': authController.isLoggedIn.value,
+                      'content': item,
+                    },
+                  );
                 },
 
                 /// 🎞 POSTER
@@ -98,20 +101,17 @@ class DownloadsPage extends StatelessWidget {
 
                 /// 📄 TITLE + DETAILS
                 title: Text(
-                  item.contentType == 'episode' ? "${item.title}" : item.title,
+                  item.contentType == 'episode' ? item.title : item.title,
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 subtitle: Text(
-                  item.contentType == 'episode' 
-                    ? "S${item.seasonNumber} E${item.episodeNumber} • ${item.duration ?? ''}"
-                    : "${item.releaseYear} • ${item.language}",
-                  style: const TextStyle(
-                    color: Colors.white54,
-                    fontSize: 12,
-                  ),
+                  item.contentType == 'episode'
+                      ? "S${item.seasonNumber} E${item.episodeNumber} • ${item.duration ?? ''}"
+                      : "${item.releaseYear} • ${item.language}",
+                  style: const TextStyle(color: Colors.white54, fontSize: 12),
                 ),
 
                 /// 🎯 ACTION BUTTONS
@@ -127,10 +127,10 @@ class DownloadsPage extends StatelessWidget {
                       ),
                       onPressed: () {
                         if (localPath != null && File(localPath).existsSync()) {
-                          Get.toNamed(AppRoutes.videoPlayer, arguments: {
-                            'url': localPath,
-                            'title': item.title,
-                          });
+                          Get.toNamed(
+                            AppRoutes.videoPlayer,
+                            arguments: {'url': localPath, 'title': item.title},
+                          );
                         } else {
                           CustomSnackbar.show(
                             title: "Error",
@@ -151,12 +151,21 @@ class DownloadsPage extends StatelessWidget {
                         Get.dialog(
                           AlertDialog(
                             backgroundColor: Colors.grey[900],
-                            title: const Text("Delete Download", style: TextStyle(color: Colors.white)),
-                            content: const Text("Are you sure you want to delete this download?", style: TextStyle(color: Colors.white70)),
+                            title: const Text(
+                              "Delete Download",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            content: const Text(
+                              "Are you sure you want to delete this download?",
+                              style: TextStyle(color: Colors.white70),
+                            ),
                             actions: [
                               TextButton(
                                 onPressed: () => Get.back(),
-                                child: const Text("Cancel", style: TextStyle(color: Colors.white)),
+                                child: const Text(
+                                  "Cancel",
+                                  style: TextStyle(color: Colors.white),
+                                ),
                               ),
                               GoldenButton(
                                 width: 100,
@@ -165,7 +174,12 @@ class DownloadsPage extends StatelessWidget {
                                   Get.back(); // Close dialog first
                                   downloadController.removeDownload(item.id);
                                 },
-                                child: const Text("Delete", style: TextStyle(color: AppColors.buttonTextColor)),
+                                child: const Text(
+                                  "Delete",
+                                  style: TextStyle(
+                                    color: AppColors.buttonTextColor,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -228,7 +242,7 @@ class DownloadsPage extends StatelessWidget {
                   fontSize: 16,
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

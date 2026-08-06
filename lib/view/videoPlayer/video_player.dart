@@ -446,7 +446,7 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer> {
             /// after a quality switch (fixes the black screen).
             Obx(() {
               // ignore: unused_local_variable
-              final _version = controller.playerVersion.value;
+              final version = controller.playerVersion.value;
               return Container(
                 color: Colors.black,
                 width: double.infinity,
@@ -869,7 +869,7 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer> {
       context: context,
       builder: (_) => SimpleDialog(
         title: const Text('Quality'),
-        children: ['Auto', '1080p', '720p', '480p','360p','240p'].map((q) {
+        children: ['Auto', '1080p', '720p', '480p', '360p', '240p'].map((q) {
           return SimpleDialogOption(
             onPressed: () async {
               Navigator.pop(context);

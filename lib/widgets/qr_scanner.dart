@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
-import '../utils/custom_snackbar.dart';
 
 class QrScannerPage extends StatelessWidget {
   const QrScannerPage({super.key});

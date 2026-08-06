@@ -334,7 +334,7 @@ class _SignInPageState extends State<SignInPage> {
                 if (_formKey.currentState!.validate()) {
                   String valueToSend = "+91${phoneController.text.trim()}";
                   bool success = await authController.sendOtp(valueToSend);
-                  if (success)
+                  if (success) {
                     Get.toNamed(
                       AppRoutes.otpPage,
                       arguments: {
@@ -342,6 +342,7 @@ class _SignInPageState extends State<SignInPage> {
                         ...?Get.arguments,
                       },
                     );
+                  }
                 }
               }
             : null,

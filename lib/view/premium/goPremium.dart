@@ -4,13 +4,10 @@ import '../../app/routes/app_routes.dart';
 import '../../utils/responsive.dart';
 import '../../view_model/primium_controller/premium_controller.dart';
 import '../../app/theme/app_colors.dart';
-import '../../view_model/home_controller/home_controller.dart';
 import '../../widgets/expendable_plan_card.dart';
 import '../../widgets/golden_button.dart';
 import '../../widgets/golden_text.dart';
-import '../auth/signInPage.dart';
 import '../popUp/promo_code_popup.dart';
-import '../popUp/redeem_voucher_page.dart';
 import '../../utils/custom_snackbar.dart';
 
 class GoPremiumPage extends StatelessWidget {
@@ -34,7 +31,9 @@ class GoPremiumPage extends StatelessWidget {
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator(color: AppColors.primary));
+          return const Center(
+            child: CircularProgressIndicator(color: AppColors.primary),
+          );
         }
 
         return SafeArea(
@@ -46,7 +45,11 @@ class GoPremiumPage extends StatelessWidget {
                     children: [
                       /// 🔹 Header Section with Icon
                       const SizedBox(height: 20),
-                      const Icon(Icons.stars, color: AppColors.goldBase, size: 60),
+                      const Icon(
+                        Icons.stars,
+                        color: AppColors.goldBase,
+                        size: 60,
+                      ),
                       const SizedBox(height: 10),
                       const GoldenText(
                         "Unlock Premium Content",
@@ -73,8 +76,11 @@ class GoPremiumPage extends StatelessWidget {
                         child: Obx(() {
                           if (controller.plans.isEmpty) {
                             return const Center(
-                              child: GoldenText("No plans available", 
-                              style: TextStyle(fontSize: 16)));
+                              child: GoldenText(
+                                "No plans available",
+                                style: TextStyle(fontSize: 16),
+                              ),
+                            );
                           }
                           return ListView.builder(
                             shrinkWrap: true,
@@ -82,24 +88,37 @@ class GoPremiumPage extends StatelessWidget {
                             itemCount: controller.plans.length,
                             itemBuilder: (context, index) {
                               final plan = controller.plans[index];
-                              return Obx(() => ExpandablePlanCard(
-                                title: plan.name,
-                                price: "₹${plan.price}",
-                                duration: "/ ${plan.duration} Days",
-                                features: plan.features,
-                                isHighlighted: controller.selectedPlanIndex.value == index,
-                                onSelect: () => controller.selectPlan(index),
-                                onBuy: () {
-                                  controller.selectPlan(index);
-                                  if (!controller.isUserLoggedIn.value) {
-                                    Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute});
-                                  } else if (controller.hasActiveSubscription) {
-                                    CustomSnackbar.show(title: "Info", message: "Already Purchased");
-                                  } else {
-                                    controller.subscribeToPlan(plan.id!);
-                                  }
-                                },
-                              ));
+                              return Obx(
+                                () => ExpandablePlanCard(
+                                  title: plan.name,
+                                  price: "₹${plan.price}",
+                                  duration: "/ ${plan.duration} Days",
+                                  features: plan.features,
+                                  isHighlighted:
+                                      controller.selectedPlanIndex.value ==
+                                      index,
+                                  onSelect: () => controller.selectPlan(index),
+                                  onBuy: () {
+                                    controller.selectPlan(index);
+                                    if (!controller.isUserLoggedIn.value) {
+                                      Get.toNamed(
+                                        AppRoutes.signIn,
+                                        arguments: {
+                                          "returnRoute": Get.currentRoute,
+                                        },
+                                      );
+                                    } else if (controller
+                                        .hasActiveSubscription) {
+                                      CustomSnackbar.show(
+                                        title: "Info",
+                                        message: "Already Purchased",
+                                      );
+                                    } else {
+                                      controller.subscribeToPlan(plan.id);
+                                    }
+                                  },
+                                ),
+                              );
                             },
                           );
                         }),
@@ -170,8 +189,14 @@ class GoPremiumPage extends StatelessWidget {
                   _showSignInPopup();
                 }
               },
-              icon: const Icon(Icons.local_offer_outlined, color: AppColors.primary),
-              label: const GoldenText("Promo Code", style: TextStyle(fontWeight: FontWeight.w600)),
+              icon: const Icon(
+                Icons.local_offer_outlined,
+                color: AppColors.primary,
+              ),
+              label: const GoldenText(
+                "Promo Code",
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
             ),
           ),
           Container(height: 30, width: 1, color: Colors.white10),
@@ -184,8 +209,14 @@ class GoPremiumPage extends StatelessWidget {
                   _showSignInPopup();
                 }
               },
-              icon: const Icon(Icons.confirmation_num_outlined, color: AppColors.primary),
-              label: const GoldenText("Redeem Code", style: TextStyle(fontWeight: FontWeight.w600)),
+              icon: const Icon(
+                Icons.confirmation_num_outlined,
+                color: AppColors.primary,
+              ),
+              label: const GoldenText(
+                "Redeem Code",
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
             ),
           ),
         ],
@@ -197,7 +228,10 @@ class GoPremiumPage extends StatelessWidget {
     Get.dialog(
       AlertDialog(
         backgroundColor: Colors.grey[900],
-        title: const GoldenText("Sign In Required", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const GoldenText(
+          "Sign In Required",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         content: const Text(
           "Please sign in to complete the payment.",
           style: TextStyle(color: Colors.white70),
@@ -212,9 +246,18 @@ class GoPremiumPage extends StatelessWidget {
             height: 40,
             onPressed: () {
               Get.back();
-              Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute});
+              Get.toNamed(
+                AppRoutes.signIn,
+                arguments: {"returnRoute": Get.currentRoute},
+              );
             },
-            child: const Text("Sign In", style: TextStyle(color: AppColors.buttonTextColor, fontWeight: FontWeight.bold)),
+            child: const Text(
+              "Sign In",
+              style: TextStyle(
+                color: AppColors.buttonTextColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),

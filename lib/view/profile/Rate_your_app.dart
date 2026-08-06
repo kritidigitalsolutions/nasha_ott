@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import '../../utils/responsive.dart';
 import '../../widgets/golden_button.dart';
 import '../../app/theme/app_colors.dart';
-import '../../view_model/profile/review_controller.dart';
 import '../../view_model/review_controller/review_controller.dart';
 
 class ReviewPage extends StatelessWidget {
@@ -54,31 +53,30 @@ class ReviewPage extends StatelessWidget {
                   const Text(
                     "Your feedback helps us improve!",
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: Colors.white70, fontSize: 14),
                   ),
 
                   const SizedBox(height: 40),
 
                   /// ⭐ Rating Stars
-                  Obx(() => Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(5, (index) {
-                          return IconButton(
-                            splashRadius: 25,
-                            icon: Icon(
-                              index < controller.rating.value
-                                  ? Icons.star
-                                  : Icons.star_border,
-                              color: Colors.amber,
-                              size: 40,
-                            ),
-                            onPressed: () => controller.updateRating(index + 1),
-                          );
-                        }),
-                      )),
+                  Obx(
+                    () => Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(5, (index) {
+                        return IconButton(
+                          splashRadius: 25,
+                          icon: Icon(
+                            index < controller.rating.value
+                                ? Icons.star
+                                : Icons.star_border,
+                            color: Colors.amber,
+                            size: 40,
+                          ),
+                          onPressed: () => controller.updateRating(index + 1),
+                        );
+                      }),
+                    ),
+                  ),
 
                   const SizedBox(height: 30),
 
@@ -103,29 +101,31 @@ class ReviewPage extends StatelessWidget {
                   const SizedBox(height: 40),
 
                   /// 🚀 Submit Button with Loader
-                  Obx(() => GoldenButton(
-                        height: 50,
-                        onPressed: controller.isLoading.value
-                            ? null
-                            : controller.submitReview,
-                        child: controller.isLoading.value
-                            ? const SizedBox(
-                                height: 22,
-                                width: 22,
-                                child: CircularProgressIndicator(
-                                  color: AppColors.buttonTextColor,
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Text(
-                                "Submit Review",
-                                style: TextStyle(
-                                  color: AppColors.buttonTextColor,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                  Obx(
+                    () => GoldenButton(
+                      height: 50,
+                      onPressed: controller.isLoading.value
+                          ? null
+                          : controller.submitReview,
+                      child: controller.isLoading.value
+                          ? const SizedBox(
+                              height: 22,
+                              width: 22,
+                              child: CircularProgressIndicator(
+                                color: AppColors.buttonTextColor,
+                                strokeWidth: 2,
                               ),
-                      )),
+                            )
+                          : const Text(
+                              "Submit Review",
+                              style: TextStyle(
+                                color: AppColors.buttonTextColor,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                    ),
+                  ),
 
                   const SizedBox(height: 20),
                 ],

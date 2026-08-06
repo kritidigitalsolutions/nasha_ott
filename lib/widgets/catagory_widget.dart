@@ -3,9 +3,7 @@ import 'package:get/get.dart';
 import '../app/routes/app_routes.dart';
 import '../data/models/response_model/content_response_model/content_model.dart';
 import '../utils/responsive.dart';
-import '../view/dramaDetails/dramaDetailsPage.dart';
 import 'custom_network_image.dart';
-import 'golden_text.dart';
 
 class CategoryGridPage extends StatelessWidget {
   final String title;
@@ -25,12 +23,17 @@ class CategoryGridPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: isDesktop ? AppBar(
-        backgroundColor: Colors.black,
-        elevation: 0,
-        leading: Responsive.backButton(context, onPressed: () => Get.back()),
-        title: Text(title, style: const TextStyle(color: Colors.white)),
-      ) : null,
+      appBar: isDesktop
+          ? AppBar(
+              backgroundColor: Colors.black,
+              elevation: 0,
+              leading: Responsive.backButton(
+                context,
+                onPressed: () => Get.back(),
+              ),
+              title: Text(title, style: const TextStyle(color: Colors.white)),
+            )
+          : null,
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -38,28 +41,38 @@ class CategoryGridPage extends StatelessWidget {
             child: Column(
               children: [
                 /// 🔙 BACK + TITLE (Mobile only)
-                if (!isDesktop) Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 15),
-                  child: Row(
-                    children: [
-                      Responsive.backButton(context, onPressed: () => Get.back()),
-                      const SizedBox(width: 10),
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                if (!isDesktop)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 15,
+                    ),
+                    child: Row(
+                      children: [
+                        Responsive.backButton(
+                          context,
+                          onPressed: () => Get.back(),
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 10),
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
 
                 /// 🔥 GRID IMAGES
                 Expanded(
                   child: GridView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
                     itemCount: content.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: isDesktop ? 6 : 3,
@@ -72,10 +85,13 @@ class CategoryGridPage extends StatelessWidget {
                       return InkWell(
                         borderRadius: BorderRadius.circular(12),
                         onTap: () {
-                          Get.toNamed(AppRoutes.dramaDetails, arguments: {
-                            'isSignedIn': isSignedIn,
-                            'content': item,
-                          });
+                          Get.toNamed(
+                            AppRoutes.dramaDetails,
+                            arguments: {
+                              'isSignedIn': isSignedIn,
+                              'content': item,
+                            },
+                          );
                         },
                         child: CustomNetworkImage(
                           imageUrl: item.poster,

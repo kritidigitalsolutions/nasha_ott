@@ -99,9 +99,9 @@ class MainHomePage extends StatelessWidget {
                 _buildUpcomingContent(notificationService, authController),
                 RefreshIndicator(
                   onRefresh: () async {
-                    await contentController.allContent();
+                    contentController.allContent();
                     await contentController.fetchContent();
-                    await contentController.trendingContent();
+                    contentController.trendingContent();
                     await companyController.fetchCompanyInfo();
                   },
                   child: _buildHomeContent(

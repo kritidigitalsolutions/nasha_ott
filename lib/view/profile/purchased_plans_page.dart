@@ -6,7 +6,6 @@ import '../../widgets/golden_button.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/primium_controller/premium_controller.dart';
 import '../../widgets/golden_text.dart';
-import '../premium/goPremium.dart';
 
 class PurchasedPlansPage extends StatelessWidget {
   const PurchasedPlansPage({super.key});
@@ -45,22 +44,25 @@ class PurchasedPlansPage extends StatelessWidget {
                 style: TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 15),
-              _buildPlanCard(sub!),
+              _buildPlanCard(sub),
               const SizedBox(height: 30),
-              
+
               const GoldenText(
                 "Subscription Details",
                 style: TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 15),
               _buildDetailsSection(sub),
-              
+
               const SizedBox(height: 40),
               GoldenButton(
                 onPressed: () => Get.toNamed(AppRoutes.goPremium),
                 child: const Text(
                   "UPGRADE OR RENEW PLAN",
-                  style: TextStyle(color: AppColors.buttonTextColor, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: AppColors.buttonTextColor,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],
@@ -82,7 +84,7 @@ class PurchasedPlansPage extends StatelessWidget {
             color: AppColors.goldBase.withOpacity(0.3),
             blurRadius: 10,
             spreadRadius: 2,
-          )
+          ),
         ],
       ),
       child: Column(
@@ -99,22 +101,37 @@ class PurchasedPlansPage extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const Icon(Icons.verified, color: AppColors.buttonTextColor, size: 28),
+              const Icon(
+                Icons.verified,
+                color: AppColors.buttonTextColor,
+                size: 28,
+              ),
             ],
           ),
           const SizedBox(height: 10),
           Text(
             "Status: ${sub['status']?.toString().toUpperCase() ?? 'ACTIVE'}",
-            style: const TextStyle(color: AppColors.buttonTextColor, fontSize: 14, fontWeight: FontWeight.w500),
+            style: const TextStyle(
+              color: AppColors.buttonTextColor,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
           ),
           const SizedBox(height: 20),
           Row(
             children: [
-              const Icon(Icons.calendar_today, color: AppColors.buttonTextColor, size: 16),
+              const Icon(
+                Icons.calendar_today,
+                color: AppColors.buttonTextColor,
+                size: 16,
+              ),
               const SizedBox(width: 8),
               Text(
                 "Expires on: ${Get.find<PremiumController>().formatDate(sub['expiryDate'])}",
-                style: const TextStyle(color: AppColors.buttonTextColor, fontSize: 14),
+                style: const TextStyle(
+                  color: AppColors.buttonTextColor,
+                  fontSize: 14,
+                ),
               ),
             ],
           ),
@@ -150,8 +167,14 @@ class PurchasedPlansPage extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(color: Colors.white70, fontSize: 14)),
-        GoldenText(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+        Text(
+          label,
+          style: const TextStyle(color: Colors.white70, fontSize: 14),
+        ),
+        GoldenText(
+          value,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
       ],
     );
   }
@@ -167,7 +190,11 @@ class PurchasedPlansPage extends StatelessWidget {
             const SizedBox(height: 20),
             const Text(
               "No Active Subscription",
-              style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 10),
             const Text(
@@ -178,7 +205,13 @@ class PurchasedPlansPage extends StatelessWidget {
             const SizedBox(height: 30),
             GoldenButton(
               onPressed: () => Get.toNamed(AppRoutes.goPremium),
-              child: const Text("VIEW PLANS", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              child: const Text(
+                "VIEW PLANS",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         ),

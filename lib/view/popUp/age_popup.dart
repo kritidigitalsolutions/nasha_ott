@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../app/theme/app_colors.dart';
 
 class AgeRestrictionPopup extends StatelessWidget {
   const AgeRestrictionPopup({super.key});
@@ -22,7 +21,7 @@ class AgeRestrictionPopup extends StatelessWidget {
                   color: Colors.black.withOpacity(0.5),
                   blurRadius: 20,
                   spreadRadius: 5,
-                )
+                ),
               ],
             ),
             child: Column(
@@ -59,7 +58,11 @@ class AgeRestrictionPopup extends StatelessWidget {
                   child: Text(
                     "This content may contain violence, adult language, or other mature themes. Please confirm you are over 18 to proceed.",
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white70, fontSize: 14, height: 1.5),
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 14,
+                      height: 1.5,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 30),
@@ -72,12 +75,17 @@ class AgeRestrictionPopup extends StatelessWidget {
                         style: TextButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 20),
                           shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20)),
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(20),
+                            ),
                           ),
                         ),
                         child: const Text(
                           "CANCEL",
-                          style: TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            color: Colors.white54,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
@@ -88,12 +96,17 @@ class AgeRestrictionPopup extends StatelessWidget {
                         style: TextButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 20),
                           shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(bottomRight: Radius.circular(20)),
+                            borderRadius: BorderRadius.only(
+                              bottomRight: Radius.circular(20),
+                            ),
                           ),
                         ),
                         child: const Text(
                           "I'M OVER 18",
-                          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),

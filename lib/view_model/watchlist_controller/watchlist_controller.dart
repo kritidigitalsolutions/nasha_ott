@@ -4,10 +4,11 @@ import '../../data/network/base_api_service.dart';
 import '../../data/repositories/watchlist_repo.dart';
 import '../../utils/custom_snackbar.dart';
 import '../auth_controller/auth_controller.dart';
-import '../../view/auth/signInPage.dart';
 
 class WatchlistController extends GetxController {
-  final WatchlistRepo repo = WatchlistRepo(apiProvider: Get.find<BaseApiService>());
+  final WatchlistRepo repo = WatchlistRepo(
+    apiProvider: Get.find<BaseApiService>(),
+  );
 
   var isLoading = false.obs;
   var watchlist = <Map<String, dynamic>>[].obs;
@@ -15,10 +16,10 @@ class WatchlistController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    
+
     // Auth status check
     final authController = Get.find<AuthController>();
-    
+
     // Initial fetch if logged in
     if (authController.isLoggedIn.value) {
       getWatchlist();
@@ -39,10 +40,12 @@ class WatchlistController extends GetxController {
     try {
       isLoading.value = true;
       final response = await repo.getWatchlist();
-      
+
       if (response != null) {
         final List<dynamic> data = response['data'] ?? [];
-        watchlist.assignAll(data.map((e) => e as Map<String, dynamic>).toList());
+        watchlist.assignAll(
+          data.map((e) => e as Map<String, dynamic>).toList(),
+        );
         print("✅ WATCHLIST FETCHED: ${watchlist.length} items");
       }
     } catch (e) {
@@ -67,14 +70,17 @@ class WatchlistController extends GetxController {
   Future<void> addToWatchlist(String contentId) async {
     final authController = Get.find<AuthController>();
     if (!authController.isLoggedIn.value) {
-      Get.toNamed(AppRoutes.signIn, arguments: {"returnRoute": Get.currentRoute});
+      Get.toNamed(
+        AppRoutes.signIn,
+        arguments: {"returnRoute": Get.currentRoute},
+      );
       return;
     }
 
     try {
       isLoading.value = true;
       final response = await repo.addToWatchlist(contentId);
-      
+
       if (response != null) {
         CustomSnackbar.show(
           title: "Success",
@@ -135,7 +141,7 @@ class WatchlistController extends GetxController {
           }
           return contentItem == contentId;
         });
-        
+
         final String? watchlistId = watchlistItem['_id'];
         if (watchlistId != null) {
           await removeFromWatchlist(watchlistId);
