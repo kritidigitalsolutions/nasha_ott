@@ -1,22 +1,23 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
-import 'package:nazar_ott/data/models/response_model/content_response_model/content_model.dart';
-import 'package:nazar_ott/view_model/auth_controller/auth_controller.dart';
-import 'package:nazar_ott/view_model/content_controller/content_controller.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
 import '../data/network/base_api_service.dart';
 import '../utils/constants.dart';
-import '../app/routes/app_routes.dart';
 
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+
+import '../view_model/auth_controller/auth_controller.dart';
+import '../view_model/content_controller/content_controller.dart';
+import '../app/routes/app_routes.dart';
+import '../data/models/response_model/content_response_model/content_model.dart';
 
 class NotificationService extends GetxController {
   static NotificationService get to => Get.find();
@@ -76,9 +77,16 @@ class NotificationService extends GetxController {
     await _localNotificationsPlugin.initialize(
       initSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
-        // Handle notification click here (foreground local notification tap)
+        // Handle notification click here
         print("Notification clicked: ${response.payload}");
-        _handleNotificationTapFromPayload(response.payload);
+        if (response.payload != null) {
+          try {
+            final Map<String, dynamic> data = jsonDecode(response.payload!);
+            _handleNotificationClick(data);
+          } catch (e) {
+            print("Error parsing notification payload: $e");
+          }
+        }
       },
     );
 
@@ -89,29 +97,21 @@ class NotificationService extends GetxController {
       _showLocalNotification(message);
     });
 
-    /// 📲 Notification Click (App in background, tapped to open)
+    /// 📲 Notification Click (App in background)
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print(
         "📲 Notification Clicked (Background): ${message.notification?.title}",
       );
       _handleMessage(message);
-      _handleNotificationTap(
-        message.data['contentId'],
-        message.data['contentType'],
-      );
+      _handleNotificationClick(message.data);
     });
 
-    /// 🚀 App opened from terminated state via notification tap
+    /// 🚀 Check if app was opened from a notification (App was terminated)
     RemoteMessage? initialMessage = await _firebaseMessaging
         .getInitialMessage();
     if (initialMessage != null) {
-      print(
-        "🚀 App opened from terminated state via notification: ${initialMessage.notification?.title}",
-      );
-      _handleNotificationTap(
-        initialMessage.data['contentId'],
-        initialMessage.data['contentType'],
-      );
+      print("🚀 App opened from terminated state via notification");
+      _handleNotificationClick(initialMessage.data);
     }
 
     _loadNotifications();
@@ -135,8 +135,8 @@ class NotificationService extends GetxController {
       tz.TZDateTime.from(scheduledDate, tz.local),
       const NotificationDetails(
         android: AndroidNotificationDetails(
-          'nazar_reminders',
-          'Nazar OTT Reminders',
+          'mirchi_reminders',
+          'Mirchi OTT Reminders',
           channelDescription: 'Reminders for upcoming movies and series',
           importance: Importance.max,
           priority: Priority.high,
@@ -152,10 +152,20 @@ class NotificationService extends GetxController {
     await _localNotificationsPlugin.cancel(id);
   }
 
+  // Future<void> cancelNotification(int id) async {
+  //   await _localNotificationsPlugin.cancel(id);
+  // }
+
   /// 📡 Standardized method to send token to backend
   Future<void> uploadToken() async {
     if (GetPlatform.isWeb) return;
     try {
+      final authController = Get.find<AuthController>();
+      if (!authController.isLoggedIn.value) {
+        print("⏭️ FCM Token upload skipped: User not logged in");
+        return;
+      }
+
       // 🔄 If token is not yet available, try to fetch it
       if (_currentToken == null) {
         print("🔍 Attempting to fetch FCM Token...");
@@ -189,19 +199,15 @@ class NotificationService extends GetxController {
         final List fetchedList = response['notifications'] ?? [];
         notifications.assignAll(
           fetchedList.map((e) {
-            final metadata = e['metadata'] as Map<String, dynamic>?;
             return {
               'id': e['_id'],
               'title': e['title'],
               'body': e['message'],
+              'image': e['image'] ?? e['imageUrl'], // Added image support
               'time':
                   e['sentAt'] ?? e['createdAt'] ?? DateTime.now().toString(),
               'isRead': e['isRead'] ?? false,
               'type': e['type'],
-              'image': e['imageUrl'] as String?, // 🖼️ optional image URL
-              'contentId': metadata?['contentId'] as String?, // 🔗 content id
-              'contentType':
-                  metadata?['contentType'] as String?, // movie / series
             };
           }).toList(),
         );
@@ -303,140 +309,155 @@ class NotificationService extends GetxController {
   }
 
   void _handleMessage(RemoteMessage message) {
-    if (message.notification != null) {
-      print("📩 Processing Message: ${message.notification?.title}");
-      fetchNotifications(); // Refresh list from server
+    print("--- FULL NOTIFICATION CONTENT ---");
+    print("Message ID: ${message.messageId}");
+    print("From: ${message.from}");
+    print("Sent Time: ${message.sentTime}");
 
-      // 🔄 A notification may reference content (e.g. a newly published
-      // movie/series episode) that isn't in ContentController.allContent
-      // yet. Refresh it here so that if the user taps this notification,
-      // _handleNotificationTap can actually find the matching content
-      // instead of silently skipping navigation.
-      try {
-        Get.find<ContentController>().fetchContent();
-      } catch (e) {
-        print("⚠️ Could not refresh content on notification: $e");
+    if (message.notification != null) {
+      print("Notification Title: ${message.notification?.title}");
+      print("Notification Body: ${message.notification?.body}");
+      print(
+        "Notification Android Image: ${message.notification?.android?.imageUrl}",
+      );
+      print(
+        "Notification Apple Image: ${message.notification?.apple?.imageUrl}",
+      );
+    }
+
+    print("Data Payload: ${message.data}");
+    print("----------------------------------");
+
+    if (message.notification != null) {
+      fetchNotifications(); // Refresh list from server
+    }
+  }
+
+  void _handleNotificationClick(Map<String, dynamic> data) {
+    print("🎯 Handling Notification Click with data: $data");
+
+    String? contentType = data['contentType']?.toString().toLowerCase();
+    String? contentId = data['contentId']?.toString();
+    String? actionUrl = data['actionUrl']?.toString();
+
+    // If data fields are missing, try parsing from actionUrl
+    if (contentType == null || contentId == null) {
+      if (actionUrl != null && actionUrl.contains("://")) {
+        final parts = actionUrl.substring(actionUrl.indexOf("://") + 3).split("/");
+        if (parts.length >= 3 && parts[1] == "id") {
+          contentType = parts[0].toLowerCase();
+          contentId = parts[2];
+        }
       }
     }
-  }
 
-  /// 🔗 Navigate based on contentId/contentType sent in the notification data
-  void _handleNotificationTap(String? contentId, String? contentType) async {
-  if (contentId == null || contentId.isEmpty) return;
-
-  final contentController = Get.find<ContentController>();
-  final authController = Get.find<AuthController>();
-
-  ContentModel? matched = contentController.allContent
-      .firstWhereOrNull((c) => c.id == contentId);
-
-  if (matched == null) {
-    // Not found locally — refresh once, then retry
-    await contentController.fetchContent();
-    matched = contentController.allContent
-        .firstWhereOrNull((c) => c.id == contentId);
-  }
-
-  if (matched == null) {
-    print("⚠️ Content with id $contentId not found even after refresh.");
-    return;
-  }
-
-  Get.toNamed(AppRoutes.dramaDetails, arguments: {
-    'content': matched,
-    'isSignedIn': authController.isLoggedIn.value,
-  });
-}
-  /// Local notification taps only give us a single String payload,
-  /// so decode the JSON we encoded when the notification was shown.
-  void _handleNotificationTapFromPayload(String? payload) {
-    if (payload == null || payload.isEmpty) return;
-    try {
-      final decoded = jsonDecode(payload) as Map<String, dynamic>;
-      _handleNotificationTap(
-        decoded['contentId'] as String?,
-        decoded['contentType'] as String?,
-      );
-    } catch (e) {
-      print("⚠️ Failed to decode notification payload: $e");
+    if (contentType == 'plan' || contentType == 'plans') {
+      print("🚀 Navigating to Plans page");
+      Get.toNamed(AppRoutes.goPremium);
+      return;
     }
-  }
 
-  /// 📥 Download image locally so Android can render BigPictureStyle
-  Future<String?> _downloadImageForNotification(String imageUrl) async {
-    try {
-      final Directory dir = await getTemporaryDirectory();
-      final String filePath =
-          '${dir.path}/notif_${DateTime.now().millisecondsSinceEpoch}.jpg';
+    if (contentId != null &&
+        (contentType == 'series' || contentType == 'movie')) {
+      print("🚀 Navigating to Content Details: $contentId ($contentType)");
 
-      final Dio dio = Dio();
-      await dio.download(imageUrl, filePath);
+      final contentController = Get.find<ContentController>();
+      final authController = Get.find<AuthController>();
 
-      return filePath;
-    } catch (e) {
-      print("⚠️ Failed to download notification image: $e");
-      return null;
+      // Try to find the content in the current list
+      ContentModel? content = contentController.allContent.firstWhereOrNull(
+        (c) => c.id == contentId,
+      );
+
+      if (content != null) {
+        Get.toNamed(
+          AppRoutes.dramaDetails,
+          arguments: {
+            'isSignedIn': authController.isLoggedIn.value,
+            'content': content,
+          },
+        );
+      } else {
+        print(
+          "⚠️ Content with ID $contentId not found in local list. Refreshing and retrying...",
+        );
+        // If not found, we could try to fetch all content and search again,
+        // but for now, we'll just show a message or wait.
+        // Better: maybe content controller can fetch a single item?
+        // Since we don't have that, we'll try to fetch all.
+        contentController.fetchContent().then((_) {
+          content = contentController.allContent.firstWhereOrNull(
+            (c) => c.id == contentId,
+          );
+          if (content != null) {
+            Get.toNamed(
+              AppRoutes.dramaDetails,
+              arguments: {
+                'isSignedIn': authController.isLoggedIn.value,
+                'content': content,
+              },
+            );
+          } else {
+            print(
+              "❌ Content with ID $contentId still not found after refresh.",
+            );
+          }
+        });
+      }
     }
   }
 
   Future<void> _showLocalNotification(RemoteMessage message) async {
     if (message.notification == null) return;
 
-    // Image can come either via FCM's notification.android.imageUrl
-    // or via a custom data['image'] field — support both.
-    final String? imageUrl =
-        message.notification?.android?.imageUrl ?? message.data['image'];
+    String? imageUrl =
+        message.notification?.android?.imageUrl ??
+        message.notification?.apple?.imageUrl ??
+        message.data['image'] ??
+        message.data['imageUrl'];
 
-    AndroidNotificationDetails androidDetails;
+    BigPictureStyleInformation? bigPictureStyleInformation;
+    String? largeIconPath;
 
     if (imageUrl != null && imageUrl.isNotEmpty) {
-      final String? localPath = await _downloadImageForNotification(imageUrl);
-
-      if (localPath != null) {
-        androidDetails = AndroidNotificationDetails(
-          'nazar_ott_channel',
-          'Nazar OTT Notifications',
-          channelDescription: 'Important notifications from Nazar OTT',
-          importance: Importance.max,
-          priority: Priority.high,
-          showWhen: true,
-          icon: '@mipmap/ic_launcher',
-          styleInformation: BigPictureStyleInformation(
-            FilePathAndroidBitmap(localPath),
-            largeIcon: FilePathAndroidBitmap(localPath),
-            contentTitle: message.notification?.title,
-            summaryText: message.notification?.body,
-            htmlFormatContentTitle: true,
-            htmlFormatSummaryText: true,
-          ),
+      try {
+        final String fileName =
+            'notification_${DateTime.now().millisecondsSinceEpoch}.jpg';
+        final String imagePath = await _downloadAndSaveFile(imageUrl, fileName);
+        largeIconPath = imagePath;
+        bigPictureStyleInformation = BigPictureStyleInformation(
+          FilePathAndroidBitmap(imagePath),
+          contentTitle: message.notification?.title,
+          summaryText: message.notification?.body,
+          htmlFormatContentTitle: true,
+          htmlFormatSummaryText: true,
         );
-      } else {
-        // Image download failed — fall back to plain notification
-        androidDetails = const AndroidNotificationDetails(
-          'nazar_ott_channel',
-          'Nazar OTT Notifications',
-          channelDescription: 'Important notifications from Nazar OTT',
-          importance: Importance.max,
-          priority: Priority.high,
-          showWhen: true,
-          icon: '@mipmap/ic_launcher',
-        );
+      } catch (e) {
+        print("⚠️ Error downloading notification image: $e");
       }
-    } else {
-      // No image provided — plain notification, this is fine
-      androidDetails = const AndroidNotificationDetails(
-        'nazar_ott_channel',
-        'Nazar OTT Notifications',
-        channelDescription: 'Important notifications from Nazar OTT',
-        importance: Importance.max,
-        priority: Priority.high,
-        showWhen: true,
-        icon: '@mipmap/ic_launcher',
-      );
     }
 
-    final NotificationDetails platformDetails = NotificationDetails(
+    AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      'mirchi_ott_channel',
+      'Mirchi OTT Notifications',
+      channelDescription: 'Important notifications from Mirchi OTT',
+      importance: Importance.max,
+      priority: Priority.high,
+      showWhen: true,
+      icon: '@mipmap/ic_launcher',
+      largeIcon: largeIconPath != null
+          ? FilePathAndroidBitmap(largeIconPath)
+          : null,
+      styleInformation: bigPictureStyleInformation,
+    );
+
+    NotificationDetails platformDetails = NotificationDetails(
       android: androidDetails,
+      iOS: DarwinNotificationDetails(
+        attachments: largeIconPath != null
+            ? [DarwinNotificationAttachment(largeIconPath)]
+            : null,
+      ),
     );
 
     await _localNotificationsPlugin.show(
@@ -444,12 +465,17 @@ class NotificationService extends GetxController {
       message.notification?.title,
       message.notification?.body,
       platformDetails,
-      // Store contentId + contentType as JSON so a tap can navigate correctly
-      payload: jsonEncode({
-        'contentId': message.data['contentId'],
-        'contentType': message.data['contentType'],
-      }),
+      payload: jsonEncode(message.data),
     );
+  }
+
+  Future<String> _downloadAndSaveFile(String url, String fileName) async {
+    final Directory directory = await getApplicationDocumentsDirectory();
+    final String filePath = '${directory.path}/$fileName';
+    final http.Response response = await http.get(Uri.parse(url));
+    final File file = File(filePath);
+    await file.writeAsBytes(response.bodyBytes);
+    return filePath;
   }
 
   void _loadNotifications() {

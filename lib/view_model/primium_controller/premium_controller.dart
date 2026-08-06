@@ -338,7 +338,7 @@ class PremiumController extends GetxController with WidgetsBindingObserver {
 
   Future<void> startSabPaisaPayment(String planId) async {
     try {
-      final token = AppSession.getToken() ?? "";
+      final token = AppSession.getToken() ?? " ";
 
       // Using the real production web link
       String baseUrl = "https://nazarott.com";
