@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "717480494085",
+    "project_id": "nazarott-bc915",
+    "storage_bucket": "nazarott-bc915.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:717480494085:android:18eaacb8e471a31e25886c",
+        "android_client_info": {
+          "package_name": "com.company.nazarott"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "717480494085-64pijim8qmf5aga76frjupci6hnguhpu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.company.nazarott",
+            "certificate_hash": "05c0598f2c4afbe9d9b6f05ce3a6bfeb109b09bf"
+          }
+        },
+        {
+          "client_id": "717480494085-b93balrm7srnc1lrchor184launnveh6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.company.nazarott",
+            "certificate_hash": "6ba88512c9d7999113097ab310311ad632665492"
+          }
+        },
+        {
+          "client_id": "717480494085-f4m3ttcfcb3eflf79gkncjf9je0rirf7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXabD9rWG0KnXYEX3IWR_wqnct_YW76ds"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "717480494085-f4m3ttcfcb3eflf79gkncjf9je0rirf7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

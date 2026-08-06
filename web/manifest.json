@@ -1,0 +1,23 @@
+{
+    "name": "Nazar OTT",
+    "short_name": "Nazar OTT",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#000000",
+    "theme_color": "#000000",
+    "description": "Nazar OTT - Premium Regional Content",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "assets/images/flutter.jpeg",
+            "sizes": "192x192",
+            "type": "image/jpeg"
+        },
+        {
+            "src": "assets/images/flutter.jpeg",
+            "sizes": "512x512",
+            "type": "image/jpeg"
+        }
+    ]
+}
