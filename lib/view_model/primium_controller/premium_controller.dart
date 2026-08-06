@@ -341,7 +341,7 @@ class PremiumController extends GetxController with WidgetsBindingObserver {
       final token = AppSession.getToken() ?? "";
 
       // Using the real production web link
-      String baseUrl = "http://localhost:14625";
+      String baseUrl = "https://nazarott.com";
 
       // Redirect to GoPremium page with token and plan details
       final Uri uri = Uri.parse("$baseUrl/goPremium").replace(
