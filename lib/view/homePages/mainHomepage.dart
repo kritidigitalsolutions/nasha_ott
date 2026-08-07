@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:nazar_ott/data/models/response_model/content_response_model/content_model.dart';
+import 'package:nazar_ott/view/popUp/confirmation_popup.dart';
 import 'package:nazar_ott/view_model/company_info_controller/company_info_controller.dart';
 import '../../app/routes/app_routes.dart';
 import '../../app/theme/app_colors.dart';
@@ -115,8 +116,18 @@ class MainHomePage extends StatelessWidget {
                 ),
                 ProfilePage(
                   onLogout: () {
-                    controller.logout();
-                    authController.setLoginStatus(false);
+                    showDialog(
+                      context: context,
+                      builder: (context) => ConfirmationPopup(
+                        title: "Sign Out",
+                        message: "Are you sure you want to sign out?",
+                        confirmText: "SIGN OUT",
+                        onConfirm: () {
+                          controller.logout();
+                          authController.setLoginStatus(false);
+                        },
+                      ),
+                    );
                   },
                 ),
               ],

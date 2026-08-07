@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import '../app/theme/app_colors.dart';
-import 'golden_button.dart';
-import 'golden_text.dart';
+import 'package:nazar_ott/app/theme/app_colors.dart';
 
 class ExpandablePlanCard extends StatefulWidget {
   final String title;
@@ -9,19 +7,21 @@ class ExpandablePlanCard extends StatefulWidget {
   final String duration;
   final List<String> features;
   final bool isHighlighted;
+  final bool isPurchased;
   final VoidCallback? onBuy;
   final VoidCallback? onSelect;
 
   const ExpandablePlanCard({
-    super.key,
+    Key? key,
     required this.title,
     required this.price,
     required this.duration,
     this.features = const [],
     this.isHighlighted = false,
+    this.isPurchased = false,
     this.onBuy,
     this.onSelect,
-  });
+  }) : super(key: key);
 
   @override
   State<ExpandablePlanCard> createState() => _ExpandablePlanCardState();
@@ -71,9 +71,10 @@ class _ExpandablePlanCardState extends State<ExpandablePlanCard> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        GoldenText(
+                        Text(
                           widget.title,
                           style: const TextStyle(
+                            color: Colors.white,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
@@ -92,9 +93,10 @@ class _ExpandablePlanCardState extends State<ExpandablePlanCard> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      GoldenText(
+                      Text(
                         widget.price,
                         style: const TextStyle(
+                          color: AppColors.primary,
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),
@@ -147,13 +149,27 @@ class _ExpandablePlanCardState extends State<ExpandablePlanCard> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    GoldenButton(
-                      onPressed: widget.onBuy,
-                      child: const Text(
-                        "SELECT PLAN",
-                        style: TextStyle(
-                          color: AppColors.buttonTextColor,
-                          fontWeight: FontWeight.bold,
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: widget.isPurchased
+                              ? Colors.grey
+                              : AppColors.primary,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: widget.isPurchased ? null : widget.onBuy,
+                        child: Text(
+                          widget.isPurchased
+                              ? "ALREADY PURCHASED"
+                              : "SELECT PLAN",
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),

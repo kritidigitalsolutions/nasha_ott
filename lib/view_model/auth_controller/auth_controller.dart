@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -26,6 +28,8 @@ class AuthController extends GetxController {
   var isLoggedIn = false.obs;
   final storage = GetStorage();
   var userData = Rxn<Map<String, dynamic>>();
+
+  StreamSubscription<GoogleSignInAccount?>? _googleSignInSubscription;
 
   @override
   void onInit() {
@@ -215,6 +219,37 @@ class AuthController extends GetxController {
       return null;
     } finally {
       isGoogleLoading.value = false;
+    }
+  }
+
+  @override
+  void onClose() {
+    _googleSignInSubscription?.cancel();
+    super.onClose();
+  }
+
+  Future<bool> websiteLogin(String token) async {
+    isLoading.value = true;
+    try {
+      await AppSession.setToken(token);
+      _updateGlobalToken(token);
+
+      final response = await repository.websiteLogin();
+      if (response != null && response.success) {
+        if (response.user != null) {
+          userData.value = response.user;
+          await storage.write('user_data', response.user);
+        }
+        setLoginStatus(true);
+        //  FacebookEventsService.logLogin(method: "website");
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint("❌ Website Login Error: $e");
+      return false;
+    } finally {
+      isLoading.value = false;
     }
   }
 

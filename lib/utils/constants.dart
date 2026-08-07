@@ -1,13 +1,14 @@
 class AppConstants {
   // static const String serverUrl = 'http://192.168.1.24:5000';
-  static const String serverUrl = 'https://api.nazarott.com';
-  // static const String serverUrl = 'http://192.168.1.33:5000';
+  // static const String serverUrl = 'https://api.nazarott.com';
+  static const String serverUrl = 'http://192.168.1.21:5000';
   static const String baseUrl = '$serverUrl/api';
 
   // Auth Endpoints
   static const String sendOtp = '$baseUrl/auth/send-otp';
   static const String verifyOtp = '$baseUrl/auth/verify-otp';
   static const String googleLogin = '$baseUrl/auth/google-login';
+  static const String websiteLogin = '$baseUrl/auth/website-login';
 
   /// user proflie
   static const String getProfile = '$baseUrl/user/profile';
