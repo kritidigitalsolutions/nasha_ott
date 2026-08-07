@@ -10,12 +10,15 @@ class CategoryResponse {
   });
 
   factory CategoryResponse.fromJson(Map<String, dynamic> json) {
+    // Use 'data' field (primary), fallback to 'categories' for backward compat
+    final List<dynamic> rawList =
+        (json['data'] as List<dynamic>?) ??
+        (json['categories'] as List<dynamic>?) ??
+        [];
     return CategoryResponse(
       success: json['success'] ?? false,
       count: json['count'] ?? 0,
-      categories: (json['categories'] as List<dynamic>? ?? [])
-          .map((e) => CategoryModel.fromJson(e))
-          .toList(),
+      categories: rawList.map((e) => CategoryModel.fromJson(e)).toList(),
     );
   }
 

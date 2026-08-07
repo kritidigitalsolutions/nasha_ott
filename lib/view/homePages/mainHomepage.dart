@@ -101,7 +101,10 @@ class MainHomePage extends StatelessWidget {
                 RefreshIndicator(
                   onRefresh: () async {
                     contentController.allContent();
-                    await contentController.fetchContent();
+                    await Future.wait([
+                      contentController.fetchContent(),
+                      contentController.fetchCategory(),
+                    ]);
                     contentController.trendingContent();
                     await companyController.fetchCompanyInfo();
                   },

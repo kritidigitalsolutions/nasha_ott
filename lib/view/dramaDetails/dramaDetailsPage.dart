@@ -31,7 +31,8 @@ class DramaDetailsPage extends StatefulWidget {
   const DramaDetailsPage({
     super.key,
     required this.isSignedIn,
-    required this.content, this.id,
+    required this.content,
+    this.id,
   });
 
   @override
@@ -78,7 +79,6 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
       contentController.fetchEpisodes(widget.content.id);
     }
 
-    // If an id was passed, fetch full content detail; otherwise skip.
     if (widget.id != null) {
       contentController.fetchContentDetail(widget.id!);
     }
@@ -97,8 +97,10 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
         leading: Responsive.backButton(
           context,
           onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: ((context) => MainHomePage())));
-          }
+            Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: ((context) => MainHomePage())));
+          },
         ),
       ),
       body: SingleChildScrollView(
@@ -107,9 +109,12 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
 
           final List<ContentModel> relatedContent = contentController.allContent
               .where((item) {
+                String normalize(String s) =>
+                    s.trim().toLowerCase().replaceAll(RegExp(r'[\s\-_]+'), '');
                 return item.id != data.id &&
                     item.contentType == data.contentType &&
-                    item.category.any((cat) => data.category.contains(cat));
+                    item.category.any((cat) => data.category.any((dataCat) =>
+                        normalize(dataCat) == normalize(cat)));
               })
               .toList();
 
@@ -173,8 +178,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
                         const SizedBox(height: 30),
 
                         /// 🎭 CAST & CREW
-                        if (data.cast != null &&
-                            data.cast!.isNotEmpty)
+                        if (data.cast != null && data.cast!.isNotEmpty)
                           _buildCastSection(isDesktop),
 
                         const SizedBox(height: 30),
@@ -310,8 +314,7 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
           ),
 
           /// TRAILER BUTTON AT BOTTOM RIGHT
-          if (content.trailerUrl != null &&
-              content.trailerUrl!.isNotEmpty)
+          if (content.trailerUrl != null && content.trailerUrl!.isNotEmpty)
             Positioned(
               bottom: 10,
               right: 10,
@@ -420,14 +423,23 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
     });
   }
 
-  void _handlePlay(dynamic item, bool isPurchased, bool userLoggedIn) {
+  void _handlePlay(
+    dynamic item,
+    bool isPurchased,
+    bool userLoggedIn, {
+    bool? isPremiumOverride,
+  }) async {
+    final bool isPremium = isPremiumOverride ?? item.isPremium;
     if (!userLoggedIn) {
-      Get.toNamed(
-        AppRoutes.signIn,
-        arguments: {"returnRoute": Get.currentRoute, "id": contentId},
-      );
-    } else if (isPurchased || !item.isPremium) {
+      Get.toNamed(AppRoutes.signIn);
+    } else if (isPurchased || !isPremium) {
       if (item.videoUrl != null && item.videoUrl!.isNotEmpty) {
+        if (item is ContentModel && item.is18Plus) {
+          final bool? isOver18 = await Get.dialog<bool>(
+            const AgeRestrictionPopup(),
+          );
+          if (isOver18 != true) return;
+        }
         Get.toNamed(
           AppRoutes.videoPlayer,
           arguments: {'url': item.videoUrl!, 'title': item.title},
@@ -976,7 +988,17 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
     final userLoggedIn = authController.isLoggedIn.value;
     final sub = premiumController.subscriptionData.value;
     final bool isPurchased = sub != null && sub['status'] == 'active';
-    _handlePlay(episode, isPurchased, userLoggedIn);
+
+    // An episode is considered premium if it is individually marked as premium
+    // OR if the series it belongs to is marked as premium.
+    final bool effectivePremium = episode.isPremium || widget.content.isPremium;
+
+    _handlePlay(
+      episode,
+      isPurchased,
+      userLoggedIn,
+      isPremiumOverride: effectivePremium,
+    );
   }
 
   void _downloadEpisode(ContentModel episode) {

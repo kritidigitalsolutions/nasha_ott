@@ -10,11 +10,13 @@ import '../../data/network/api_network_service.dart';
 /// Simple model to hold a category section with its content and priority,
 /// so the UI can render sections in guaranteed priority order.
 class CategorySection {
+  // final String name;
   final String title;
   final int priority;
   final List<ContentModel> content;
 
   CategorySection({
+    // required.th
     required this.title,
     required this.priority,
     required this.content,
@@ -27,7 +29,7 @@ class ContentController extends GetxController {
     NetworkApiService(),
   );
   var contentDetail = Rxn<ContentModel>();
-var isContentDetailLoading = false.obs;
+  var isContentDetailLoading = false.obs;
   var isLoading = true.obs;
   var isCategoryLoading = true.obs;
 
@@ -58,7 +60,19 @@ var isContentDetailLoading = false.obs;
   Future<void> fetchContent() async {
     try {
       isLoading.value = true;
-      final content = await _repository.getAllContent();
+      final rawContent = await _repository.getAllContent();
+
+      final content = rawContent.where((c) {
+        if (c.isPublished != true) {
+          return false;
+        }
+        if (c.is18Plus) {
+          if (c.isHide == true) {
+            return false;
+          }
+        }
+        return true;
+      }).toList();
 
       // Sort content by priority (lower number = higher priority, e.g. 1 is top)
       content.sort((a, b) => (a.priority ?? 999).compareTo(b.priority ?? 999));
@@ -74,6 +88,7 @@ var isContentDetailLoading = false.obs;
 
       // Fetch stats for each item to enable sorting by likes
       _fetchAllStats();
+      _buildCategorizedContent();
     } catch (e) {
       print("Error in ContentController: $e");
     } finally {
@@ -92,6 +107,7 @@ var isContentDetailLoading = false.obs;
         ..sort((a, b) => a.priority.compareTo(b.priority));
 
       allCategory.assignAll(activeCategories);
+      _buildCategorizedContent();
     } catch (e) {
       print("Error fetching categories: $e");
     } finally {
@@ -99,25 +115,32 @@ var isContentDetailLoading = false.obs;
     }
   }
 
-  /// Builds an ORDERED list of category sections.
-  /// - "trending" category -> filtered by content.isTrending
-  /// - all other categories -> filtered by content.category.contains(slug)
-  /// Order follows allCategory (already sorted ascending by priority),
-  /// so priority 10 will always render above priority 11.
   void _buildCategorizedContent() {
     final List<CategorySection> sections = [];
+
+    // Normalize: lowercase, trim, collapse spaces/hyphens/underscores
+    String normalize(String s) =>
+        s.trim().toLowerCase().replaceAll(RegExp(r'[\s\-_]+'), '');
 
     for (var cat in allCategory) {
       List<ContentModel> items;
 
-      if (cat.slug.toLowerCase() == 'trending') {
+      final normalizedSlug = normalize(cat.slug);
+
+      if (normalizedSlug == 'trending') {
+        // "trending" category uses isTrending flag
         items = allContent
             .where((c) => c.isTrending == true && c.isComingSoon == false)
             .toList();
       } else {
+        // Match content.category values against category slug (case/space insensitive)
         items = allContent
             .where(
-              (c) => c.category.contains(cat.slug) && c.isComingSoon == false,
+              (c) =>
+                  c.category.any(
+                    (catName) => normalize(catName) == normalizedSlug,
+                  ) &&
+                  c.isComingSoon == false,
             )
             .toList();
       }
@@ -132,6 +155,9 @@ var isContentDetailLoading = false.obs;
         );
       }
     }
+
+    // Sort sections: priority 1 = highest importance = shown first (ascending sort)
+    sections.sort((a, b) => a.priority.compareTo(b.priority));
 
     categorySections.assignAll(sections);
   }
@@ -164,15 +190,17 @@ var isContentDetailLoading = false.obs;
     } catch (e) {
       print("Error fetching stats for $contentId: $e");
     }
-  }Future<void> fetchContentDetail(String id) async {
-  try {
-    isContentDetailLoading.value = true;
-    final result = await _repository.getContentDetail(id);
-    contentDetail.value = result;
-  } catch (e) {
-    print("Error in fetchContentDetail: $e");
-  } finally {
-    isContentDetailLoading.value = false;
   }
-}
+
+  Future<void> fetchContentDetail(String id) async {
+    try {
+      isContentDetailLoading.value = true;
+      final result = await _repository.getContentDetail(id);
+      contentDetail.value = result;
+    } catch (e) {
+      print("Error in fetchContentDetail: $e");
+    } finally {
+      isContentDetailLoading.value = false;
+    }
+  }
 }

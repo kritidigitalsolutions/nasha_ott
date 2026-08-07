@@ -298,7 +298,21 @@ class AuthController extends GetxController {
     try {
       final response = await repository.getProfile();
       if (response != null && response['user'] != null) {
-        userData.value = Map<String, dynamic>.from(response['user']);
+        final user = Map<String, dynamic>.from(response['user']);
+
+        // 🚫 Block check: if user is blocked, log them out
+        if (user['isBlocked'] == true) {
+          await logout();
+          CustomSnackbar.show(
+            title: "Account Blocked",
+            message:
+                "Your account has been blocked. Please contact support.",
+            isError: true,
+          );
+          return;
+        }
+
+        userData.value = user;
         await storage.write('user_data', userData.value);
       }
     } catch (e) {

@@ -264,20 +264,13 @@ class PremiumController extends GetxController with WidgetsBindingObserver {
         // Use the updated numeric phone or fallback
         body["mobileNo"] = currentPhone.length == 10
             ? currentPhone
-            : "9870123456";
+            : "9874563210";
       }
 
       debugPrint("🔗 Creating Order for Web: $body");
       final response = await apiService.postApi(AppConstants.createOrder, body);
 
       if (response != null && response['success'] == true) {
-        // // Log Initiate Checkout
-        // FacebookEventsService.logInitiateCheckout(
-        //   amount: discountedPrice.value > 0 ? discountedPrice.value : originalPrice.value,
-        //   currency: "INR",
-        //   contentId: planId,
-        // );
-
         String? paymentUrl =
             response['checkoutUrl'] ??
             response['paymentUrl'] ??
@@ -343,7 +336,7 @@ class PremiumController extends GetxController with WidgetsBindingObserver {
       // Using the real production web link
       String baseUrl = "https://nazarott.com";
 
-      //String baseUrl = "http://localhost:11251";
+      // String baseUrl = "http://localhost:7032";
 
       // Redirect to GoPremium page with token and plan details
       final Uri uri = Uri.parse("$baseUrl/goPremium").replace(
@@ -404,16 +397,6 @@ class PremiumController extends GetxController with WidgetsBindingObserver {
           isSuccess: true,
         );
 
-        // Log Meta Purchase Event
-        // final selectedPlan = plans.firstWhereOrNull((p) => p.id == planId);
-        // if (selectedPlan != null) {
-        //   FacebookEventsService.logPurchase(
-        //     amount: discountedPrice.value > 0 ? discountedPrice.value : originalPrice.value,
-        //     currency: "INR",
-        //     contentId: planId,
-        //   );
-        // }
-
         fetchSubscriptionStatus();
         try {
           if (Get.isRegistered<ContentController>()) {
@@ -441,18 +424,6 @@ class PremiumController extends GetxController with WidgetsBindingObserver {
     }
   }
 
-  // void _setDemoActiveSubscription(String planId) {
-  //   subscriptionData.value = {
-  //     'status': 'active',
-  //     'planId': planId,
-  //     'plan': plans.firstWhere((p) => p.id == planId).toJson(),
-  //     'endDate': DateTime.now().add(const Duration(days: 30)).toIso8601String(),
-  //     'expiryDate': DateTime.now().add(const Duration(days: 30)).toString(), // Keep for fallback
-  //   };
-  //   GetStorage().write('demo_subscription', subscriptionData.value);
-  //   CustomSnackbar.show(title: "Success", message: "Plan purchased successfully (Demo Mode)", isSuccess: true);
-  // }
-
   Future<void> redeemVoucher(String code) async {
     try {
       isRedeeming.value = true;
@@ -463,10 +434,6 @@ class PremiumController extends GetxController with WidgetsBindingObserver {
           message: "Redeemed successfully",
           isSuccess: true,
         );
-
-        // FacebookEventsService.logEvent(name: "fb_mobile_achievement_unlocked", parameters: {
-        //   "fb_description": "Voucher Redeemed: $code"
-        // });
 
         fetchSubscriptionStatus();
         try {

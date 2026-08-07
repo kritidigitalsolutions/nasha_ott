@@ -147,6 +147,15 @@ class _GoPremiumPageState extends State<GoPremiumPage> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: Obx(() {
+                        if (controller.isLoading.value) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 30),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                  color: AppColors.primary),
+                            ),
+                          );
+                        }
                         if (controller.plans.isEmpty) {
                           return const Center(
                             child: Text(
@@ -193,7 +202,7 @@ class _GoPremiumPageState extends State<GoPremiumPage> {
                                       message: "Already Purchased",
                                     );
                                   } else {
-                                    controller.subscribeToPlan(plan.id!);
+                                    controller.subscribeToPlan(plan.id);
                                   }
                                 },
                               );
