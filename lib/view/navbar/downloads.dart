@@ -10,9 +10,6 @@ import '../../widgets/golden_button.dart';
 import '../../widgets/golden_text.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
 import '../../view_model/home_controller/home_controller.dart';
-import '../auth/signInPage.dart';
-import '../dramaDetails/dramaDetailsPage.dart';
-import '../videoPlayer/video_player.dart';
 import '../../utils/custom_snackbar.dart';
 
 class DownloadsPage extends StatelessWidget {

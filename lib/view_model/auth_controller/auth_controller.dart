@@ -126,6 +126,10 @@ class AuthController extends GetxController {
           setLoginStatus(true);
         }
 
+        if (phoneNumber.contains('@')) {
+          await _syncNumericPhoneIfNeeded(response.user);
+        }
+
         return response;
       }
       return null;
@@ -157,8 +161,6 @@ class AuthController extends GetxController {
   ]) async {
     isGoogleLoading.value = true;
     try {
-      // The web GIS button supplies an authenticated account containing an ID
-      // token. Calling signIn() directly on web only returns an access token.
       final GoogleSignInAccount? googleUser =
           authenticatedUser ?? await googleSignIn.signIn();
 
@@ -193,8 +195,6 @@ class AuthController extends GetxController {
           userData.value = response.user;
           await storage.write('user_data', response.user);
         }
-
-        // ✅ Direct login for Google users (even if new)
         setLoginStatus(true);
 
         return response;
@@ -305,8 +305,7 @@ class AuthController extends GetxController {
           await logout();
           CustomSnackbar.show(
             title: "Account Blocked",
-            message:
-                "Your account has been blocked. Please contact support.",
+            message: "Your account has been blocked. Please contact support.",
             isError: true,
           );
           return;
@@ -330,6 +329,39 @@ class AuthController extends GetxController {
     // Clear notifications locally on logout
     if (Get.isRegistered<NotificationService>()) {
       NotificationService.to.clearNotifications();
+    }
+  }
+
+  bool isPhoneMissing(Map<String, dynamic>? user) {
+    String currentPhone = user?['phone']?.toString() ?? "";
+
+    return currentPhone.isEmpty ||
+        currentPhone.contains(RegExp(r'[a-zA-Z]')) ||
+        currentPhone.length != 10;
+  }
+
+  Future<bool> generateAndSaveDummyPhone() async {
+    try {
+      String uniqueDummy =
+          "9${DateTime.now().millisecondsSinceEpoch.toString().substring(4, 13)}";
+      debugPrint("🛠 Generating dummy phone: $uniqueDummy");
+      return await updatePhoneNumber(uniqueDummy);
+    } catch (e) {
+      debugPrint("⚠️ Failed to generate dummy phone: $e");
+      return false;
+    }
+  }
+
+  Future<void> _syncNumericPhoneIfNeeded(Map<String, dynamic>? user) async {
+    try {
+      if (isPhoneMissing(user)) {
+        debugPrint(
+          "🛠 Syncing numeric dummy phone for numeric-only API requirements...",
+        );
+        await generateAndSaveDummyPhone();
+      }
+    } catch (e) {
+      debugPrint("⚠️ Failed to sync numeric phone: $e");
     }
   }
 }

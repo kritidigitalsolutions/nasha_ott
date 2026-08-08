@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import '../../app/routes/app_routes.dart';
 import '../../utils/responsive.dart';
 import '../../widgets/golden_text.dart';
-import 'help_page.dart';
 import '../../app/theme/app_colors.dart';
 import '../../view_model/profile/settings_controller.dart';
 

@@ -548,7 +548,7 @@ class MainHomePage extends StatelessWidget {
           ),
           const SizedBox(height: 30),
           const Text(
-            "The ultimate destination for premium regional content. Watch the latest web series, movies, and originals anytime, anywhere.",
+            "The ultimate destination for premium regional content. Watc the latest web series, movies, and originals anytime, anywhere.",
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.white70, fontSize: 16, height: 1.5),
           ),

@@ -83,13 +83,13 @@ class NetworkApiService extends BaseApiService {
   @override
   Future<dynamic> pacthApi(String url, dynamic data) async {
     try {
-      debugPrint("POST API CALL => $url");
-      debugPrint("POST DATA => $data");
+      debugPrint("PATCH API CALL => $url");
+      debugPrint("PATCH DATA => $data");
 
       final response = await _dio.patch(url, data: data);
       return returnResponse(response);
     } on DioException catch (e) {
-      debugPrint("POST API ERROR => ${e.message}");
+      debugPrint("PATCH API ERROR => ${e.message}");
       throw _handleDioError(e);
     }
   }
@@ -122,13 +122,16 @@ class NetworkApiService extends BaseApiService {
   }
 
   @override
-  Future<dynamic> postMultipartApi(String url, Map<String, dynamic> data,
-      Map<String, dynamic> files) async {
+  Future<dynamic> postMultipartApi(
+    String url,
+    Map<String, dynamic> data,
+    Map<String, dynamic> files,
+  ) async {
     try {
       debugPrint("POST MULTIPART API CALL => $url");
-      
+
       Map<String, dynamic> formDataMap = Map.from(data);
-      
+
       for (var entry in files.entries) {
         if (entry.value is String && entry.value.isNotEmpty) {
           formDataMap[entry.key] = await MultipartFile.fromFile(
@@ -139,10 +142,12 @@ class NetworkApiService extends BaseApiService {
           List<MultipartFile> multipartFiles = [];
           for (String path in entry.value) {
             if (path.isNotEmpty) {
-              multipartFiles.add(await MultipartFile.fromFile(
-                path,
-                filename: path.split('/').last,
-              ));
+              multipartFiles.add(
+                await MultipartFile.fromFile(
+                  path,
+                  filename: path.split('/').last,
+                ),
+              );
             }
           }
           formDataMap[entry.key] = multipartFiles;
@@ -154,9 +159,7 @@ class NetworkApiService extends BaseApiService {
       final response = await _dio.post(
         url,
         data: formData,
-        options: Options(
-          headers: {"Content-Type": "multipart/form-data"},
-        ),
+        options: Options(headers: {"Content-Type": "multipart/form-data"}),
       );
       return returnResponse(response);
     } on DioException catch (e) {

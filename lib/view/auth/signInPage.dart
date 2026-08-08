@@ -52,6 +52,28 @@ class _SignInPageState extends State<SignInPage> {
     }
   }
 
+  /// ✅ NEW: Central place to decide what happens right after a successful
+  /// Google sign-in response comes back.
+  ///
+  /// - New user (first time Google sign-in)  -> show bottom sheet asking for
+  ///   a phone number. User can fill it in, or skip (in which case a dummy
+  ///   numeric phone is generated & saved automatically).
+  /// - Existing user -> do NOT show any bottom sheet. Just silently make sure
+  ///   the stored phone is valid; if it's missing/invalid, fix it in the
+  ///   background without blocking navigation. Then navigate as usual.
+  Future<void> _handlePostGoogleLogin(dynamic response) async {
+    final bool isNew = response.isNewUser == true;
+
+    if (isNew) {
+      _showPhoneNumberBottomSheet();
+    } else {
+      if (authController.isPhoneMissing(response.user)) {
+        await authController.generateAndSaveDummyPhone();
+      }
+      _handleLoginSuccess();
+    }
+  }
+
   @override
   void dispose() {
     phoneController.dispose();
@@ -173,7 +195,7 @@ class _SignInPageState extends State<SignInPage> {
                                 final response = await authController
                                     .signInWithGoogle(googleUser);
                                 if (response != null) {
-                                  _handleLoginSuccess();
+                                  await _handlePostGoogleLogin(response);
                                 }
                               },
                             )
@@ -190,7 +212,9 @@ class _SignInPageState extends State<SignInPage> {
                                           final response = await authController
                                               .signInWithGoogle();
                                           if (response != null) {
-                                            _handleLoginSuccess();
+                                            await _handlePostGoogleLogin(
+                                              response,
+                                            );
                                           }
                                         },
                                   child: authController.isGoogleLoading.value
@@ -247,37 +271,147 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
-  void _showEmailPicker() {
-    final TextEditingController emailPicker = TextEditingController();
+  // void _showEmailPicker() {
+  //   final TextEditingController emailPicker = TextEditingController();
+  //   Get.bottomSheet(
+  //     Container(
+  //       padding: const EdgeInsets.all(20),
+  //       decoration: const BoxDecoration(
+  //         color: Colors.black,
+  //         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  //         border: Border(top: BorderSide(color: Colors.white12)),
+  //       ),
+  //       child: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           const Text(
+  //             "Login with Email",
+  //             style: TextStyle(
+  //               color: Colors.white,
+  //               fontSize: 18,
+  //               fontWeight: FontWeight.bold,
+  //             ),
+  //           ),
+  //           const SizedBox(height: 20),
+  //           AutofillGroup(
+  //             child: TextFormField(
+  //               controller: emailPicker,
+  //               autofocus: true,
+  //               autofillHints: const [AutofillHints.email],
+  //               keyboardType: TextInputType.emailAddress,
+  //               style: const TextStyle(color: Colors.white),
+  //               decoration: InputDecoration(
+  //                 hintText: "Select or type email",
+  //                 hintStyle: const TextStyle(color: Colors.white54),
+  //                 filled: true,
+  //                 fillColor: Colors.grey[900],
+  //                 border: OutlineInputBorder(
+  //                   borderRadius: BorderRadius.circular(12),
+  //                   borderSide: BorderSide.none,
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //           const SizedBox(height: 20),
+  //           GoldenButton(
+  //             height: 50,
+  //             onPressed: () async {
+  //               if (emailPicker.text.contains('@')) {
+  //                 String email = emailPicker.text.trim();
+  //                 Get.back();
+  //                 await Future.delayed(const Duration(milliseconds: 250));
+  //                 bool success = await authController.sendOtp(email);
+  //                 if (success) {
+  //                   Get.toNamed(
+  //                     AppRoutes.otpPage,
+  //                     arguments: {'phoneNumber': email, ...?Get.arguments},
+  //                   );
+  //                 }
+  //               } else {
+  //                 Get.snackbar(
+  //                   "Error",
+  //                   "Please enter a valid email",
+  //                   snackPosition: SnackPosition.BOTTOM,
+  //                   backgroundColor: Colors.red,
+  //                   colorText: Colors.white,
+  //                 );
+  //               }
+  //             },
+  //             child: const Text(
+  //               "Continue",
+  //               style: TextStyle(color: Colors.white),
+  //             ),
+  //           ),
+  //           const SizedBox(height: 10),
+  //         ],
+  //       ),
+  //     ),
+  //     isScrollControlled: true,
+  //   );
+  // }
+
+  void _showPhoneNumberBottomSheet() {
+    final TextEditingController phoneSheetController = TextEditingController();
+    final GlobalKey<FormState> sheetFormKey = GlobalKey<FormState>();
+    final RxBool isSaving = false.obs;
+
     Get.bottomSheet(
       Container(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.only(
+          left: 20,
+          right: 20,
+          top: 20,
+          bottom: MediaQuery.of(Get.context!).viewInsets.bottom + 20,
+        ),
         decoration: const BoxDecoration(
           color: Colors.black,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           border: Border(top: BorderSide(color: Colors.white12)),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              "Login with Email",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+        child: Form(
+          key: sheetFormKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                "Add your mobile number",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            AutofillGroup(
-              child: TextFormField(
-                controller: emailPicker,
-                autofocus: true,
-                autofillHints: const [AutofillHints.email],
-                keyboardType: TextInputType.emailAddress,
+              const SizedBox(height: 8),
+              const Text(
+                "This helps us keep your account secure. You can skip this for now.",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white54, fontSize: 13),
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: phoneSheetController,
+                keyboardType: TextInputType.phone,
                 style: const TextStyle(color: Colors.white),
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(10),
+                ],
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return null; // optional field, skip allowed
+                  }
+                  if (value.length != 10) {
+                    return "Phone number must be 10 digits";
+                  }
+                  if (!RegExp(r'^[6789]').hasMatch(value)) {
+                    return "Number must start with 6, 7, 8, or 9";
+                  }
+                  return null;
+                },
                 decoration: InputDecoration(
-                  hintText: "Select or type email",
+                  prefixText: "+91 ",
+                  prefixStyle: const TextStyle(color: Colors.white),
+                  hintText: "Phone Number",
                   hintStyle: const TextStyle(color: Colors.white54),
                   filled: true,
                   fillColor: Colors.grey[900],
@@ -287,42 +421,81 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            GoldenButton(
-              height: 50,
-              onPressed: () async {
-                if (emailPicker.text.contains('@')) {
-                  String email = emailPicker.text.trim();
-                  Get.back();
-                  await Future.delayed(const Duration(milliseconds: 250));
-                  bool success = await authController.sendOtp(email);
-                  if (success) {
-                    Get.toNamed(
-                      AppRoutes.otpPage,
-                      arguments: {'phoneNumber': email, ...?Get.arguments},
-                    );
-                  }
-                } else {
-                  Get.snackbar(
-                    "Error",
-                    "Please enter a valid email",
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: Colors.red,
-                    colorText: Colors.white,
-                  );
-                }
-              },
-              child: const Text(
-                "Continue",
-                style: TextStyle(color: Colors.white),
+              const SizedBox(height: 20),
+              Obx(
+                () => SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: GoldenButton(
+                    onPressed: isSaving.value
+                        ? null
+                        : () async {
+                            if (!sheetFormKey.currentState!.validate()) {
+                              return;
+                            }
+
+                            isSaving.value = true;
+                            final entered = phoneSheetController.text.trim();
+
+                            bool ok;
+                            if (entered.isEmpty) {
+                              // ✅ User didn't fill a number -> generate dummy
+                              ok = await authController
+                                  .generateAndSaveDummyPhone();
+                            } else {
+                              // ✅ User filled a number -> save it as-is
+                              ok = await authController.updatePhoneNumber(
+                                entered,
+                              );
+                            }
+
+                            isSaving.value = false;
+                            if (ok) {
+                              Get.back(); // close bottom sheet
+                              _handleLoginSuccess();
+                            }
+                          },
+                    child: isSaving.value
+                        ? const SizedBox(
+                            height: 22,
+                            width: 22,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Text(
+                            "Save & Continue",
+                            style: TextStyle(color: AppColors.buttonTextColor),
+                          ),
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(height: 10),
-          ],
+              const SizedBox(height: 10),
+              Obx(
+                () => TextButton(
+                  onPressed: isSaving.value
+                      ? null
+                      : () async {
+                          isSaving.value = true;
+                          await authController.generateAndSaveDummyPhone();
+                          isSaving.value = false;
+                          Get.back();
+                          _handleLoginSuccess();
+                        },
+                  child: const Text(
+                    "Skip for now",
+                    style: TextStyle(color: Colors.white54),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
       isScrollControlled: true,
+      isDismissible: false,
+      enableDrag: false,
     );
   }
 

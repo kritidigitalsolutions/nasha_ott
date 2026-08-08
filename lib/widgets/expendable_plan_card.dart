@@ -12,7 +12,7 @@ class ExpandablePlanCard extends StatefulWidget {
   final VoidCallback? onSelect;
 
   const ExpandablePlanCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.price,
     required this.duration,
@@ -21,7 +21,7 @@ class ExpandablePlanCard extends StatefulWidget {
     this.isPurchased = false,
     this.onBuy,
     this.onSelect,
-  }) : super(key: key);
+  });
 
   @override
   State<ExpandablePlanCard> createState() => _ExpandablePlanCardState();

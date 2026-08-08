@@ -10,8 +10,6 @@ import '../../data/models/response_model/content_response_model/content_model.da
 import '../../view_model/auth_controller/auth_controller.dart';
 import '../../view_model/home_controller/home_controller.dart';
 import '../../view_model/watchlist_controller/watchlist_controller.dart';
-import '../dramaDetails/dramaDetailsPage.dart';
-import '../homePages/mainHomepage.dart';
 
 class WatchlistPage extends StatelessWidget {
   const WatchlistPage({super.key});
