@@ -34,7 +34,7 @@ class _AutoSliderState extends State<AutoSlider> {
   void initState() {
     super.initState();
     _pageController = PageController(
-      viewportFraction: Responsive.isDesktop(Get.context!) ? 0.9 : 0.85,
+      viewportFraction: Responsive.isDesktop(Get.context!) ? 0.92 : 0.85,
       initialPage: 1000,
     );
     currentPage = 1000;
@@ -43,12 +43,12 @@ class _AutoSliderState extends State<AutoSlider> {
 
   void _startTimer() {
     if (_timer?.isActive ?? false) return;
-    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 4), (timer) {
       if (_pageController.hasClients) {
         currentPage++;
         _pageController.animateToPage(
           currentPage,
-          duration: const Duration(milliseconds: 1000),
+          duration: const Duration(milliseconds: 600),
           curve: Curves.easeInOutQuart,
         );
       }
@@ -74,7 +74,9 @@ class _AutoSliderState extends State<AutoSlider> {
     if (widget.content.isEmpty) {
       return const SizedBox(
         height: 200,
-        child: Center(child: CircularProgressIndicator(color: AppColors.primary)),
+        child: Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        ),
       );
     }
 
@@ -94,7 +96,9 @@ class _AutoSliderState extends State<AutoSlider> {
       child: Column(
         children: [
           SizedBox(
-            height: isDesktop ? 750 : MediaQuery.of(context).size.height * 0.40,
+            height: isDesktop
+                ? MediaQuery.of(context).size.height * 0.8
+                : MediaQuery.of(context).size.height * 0.40,
             child: PageView.builder(
               controller: _pageController,
               itemCount: null,
@@ -104,30 +108,28 @@ class _AutoSliderState extends State<AutoSlider> {
                 bool isSelected = currentPage == index;
 
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  padding: EdgeInsets.symmetric(horizontal: isDesktop ? 0 : 8),
                   child: GestureDetector(
                     onTap: () {
-                      Get.toNamed(AppRoutes.dramaDetails, arguments: {
-                        'isSignedIn': widget.isSignedIn,
-                        'content': item,
-                      });
+                      Get.toNamed(AppRoutes.dramaDetails, arguments: item);
                     },
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.black,
-                        borderRadius: BorderRadius.circular(15),
+                        borderRadius: BorderRadius.circular(isDesktop ? 0 : 15),
                       ),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(15),
+                        borderRadius: BorderRadius.circular(isDesktop ? 0 : 15),
                         child: Stack(
                           fit: StackFit.expand,
                           children: [
                             /// CINEMATIC IMAGE
                             CustomNetworkImage(
                               imageUrl: isDesktop ? item.banner : item.poster,
-                              fit: BoxFit.fill,
-                              borderRadius: 15,
+                              fit: isDesktop ? BoxFit.fill : BoxFit.fill,
+                              borderRadius: isDesktop ? 0 : 15,
                             ),
+
                             /// TOP GRADIENT
                             Container(
                               decoration: BoxDecoration(
@@ -142,6 +144,7 @@ class _AutoSliderState extends State<AutoSlider> {
                                 ),
                               ),
                             ),
+
                             /// BOTTOM GRADIENT
                             Container(
                               decoration: BoxDecoration(

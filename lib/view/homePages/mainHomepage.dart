@@ -486,7 +486,7 @@ class MainHomePage extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: isDesktop ? 340 : 170,
+          height: isDesktop ? 340 : 220,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -501,7 +501,7 @@ class MainHomePage extends StatelessWidget {
             },
           ),
         ),
-        const SizedBox(height: 30),
+        //const SizedBox(height: 30),
       ],
     );
   }
@@ -698,7 +698,7 @@ class _ContentHoverCardState extends State<_ContentHoverCard> {
       onExit: (_) => setState(() => isHovered = false),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
-        width: widget.isDesktop ? (isHovered ? 230 : 200) : 130,
+        width: widget.isDesktop ? (isHovered ? 230 : 200) : 150,
         margin: const EdgeInsets.only(right: 32),
         transform: isHovered
             ? (Matrix4.identity()
