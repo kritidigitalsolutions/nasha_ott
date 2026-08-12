@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:nazar_ott/utils/facebook_meta_events.dart';
+import 'package:nazar_ott/utils/firebase_analytics_event.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../data/models/response_model/plan_response/plan_model.dart';
 import '../../data/network/base_api_service.dart';
@@ -270,6 +272,20 @@ class PremiumController extends GetxController with WidgetsBindingObserver {
       final response = await apiService.postApi(AppConstants.createOrder, body);
 
       if (response != null && response['success'] == true) {
+        FacebookEventsService.logInitiateCheckout(
+          amount: discountedPrice.value > 0
+              ? discountedPrice.value
+              : originalPrice.value,
+          currency: "INR",
+          contentId: planId,
+        );
+        FirebaseAnalyticsService.logInitiateCheckout(
+          amount: discountedPrice.value > 0
+              ? discountedPrice.value
+              : originalPrice.value,
+          currency: "INR",
+          contentId: planId,
+        );
         String? paymentUrl =
             response['checkoutUrl'] ??
             response['paymentUrl'] ??
@@ -390,6 +406,20 @@ class PremiumController extends GetxController with WidgetsBindingObserver {
           });
 
       if (verifyResponse != null && verifyResponse['success'] == true) {
+        FacebookEventsService.logPurchase(
+          amount: discountedPrice.value > 0
+              ? discountedPrice.value
+              : originalPrice.value,
+          currency: "INR",
+          contentId: planId,
+        );
+        FirebaseAnalyticsService.logPurchase(
+          amount: discountedPrice.value > 0
+              ? discountedPrice.value
+              : originalPrice.value,
+          currency: "INR",
+          contentId: planId,
+        );
         CustomSnackbar.show(
           title: "Success",
           message: "Payment Verified Successfully!",
@@ -435,6 +465,10 @@ class PremiumController extends GetxController with WidgetsBindingObserver {
         );
 
         fetchSubscriptionStatus();
+        FacebookEventsService.logEvent(
+          name: "fb_mobile_achievement_unlocked",
+          parameters: {"fb_description": "Voucher Redeemed: $code"},
+        );
         try {
           if (Get.isRegistered<ContentController>()) {
             Get.find<ContentController>().fetchContent();

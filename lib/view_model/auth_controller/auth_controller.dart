@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:nazar_ott/utils/facebook_meta_events.dart';
+import 'package:nazar_ott/utils/firebase_analytics_event.dart';
 import '../../data/repositories/auth_repository.dart';
 import '../../data/network/api_network_service.dart';
 import '../../data/network/base_api_service.dart';
@@ -124,6 +126,8 @@ class AuthController extends GetxController {
         // ✅ Fix: Set login status if NOT a new user (Existing user is now logged in)
         if (!response.isNewUser) {
           setLoginStatus(true);
+          FacebookEventsService.logLogin(method: "otp");
+          FirebaseAnalyticsService.logLogin(method: "otp");
         }
 
         if (phoneNumber.contains('@')) {
@@ -197,6 +201,17 @@ class AuthController extends GetxController {
         }
         setLoginStatus(true);
 
+        //
+
+        FacebookEventsService.logLogin(method: "google");
+        FirebaseAnalyticsService.logLogin(method: "google");
+
+        CustomSnackbar.show(
+          title: 'Welcome!',
+          message: 'Signed in successfully with Google',
+          isSuccess: true,
+        );
+
         return response;
       } else {
         print("❌ Google Login Failed: ${response?.message}");
@@ -241,7 +256,9 @@ class AuthController extends GetxController {
           await storage.write('user_data', response.user);
         }
         setLoginStatus(true);
-        //  FacebookEventsService.logLogin(method: "website");
+        FacebookEventsService.logLogin(method: "website");
+        FirebaseAnalyticsService.logLogin(method: "website");
+
         return true;
       }
       return false;
@@ -280,6 +297,9 @@ class AuthController extends GetxController {
 
         // ✅ User is fully registered and logged in now
         setLoginStatus(true);
+
+        FacebookEventsService.logRegistration(method: "profile_completion");
+        FirebaseAnalyticsService.logRegistration(method: "profile_completion");
         return true;
       }
       return false;

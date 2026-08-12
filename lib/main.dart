@@ -9,6 +9,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:nazar_ott/utils/facebook_meta_events.dart';
+import 'package:nazar_ott/utils/firebase_analytics_event.dart';
 
 import 'app/routes/app_pages.dart';
 import 'view_model/like_dislike_controller/like_dislike_controller.dart';
@@ -54,6 +56,8 @@ Future<void> main() async {
     ),
   );
 
+  FacebookEventsService.logActivatedApp();
+
   /// 🔥 Firebase Init
   try {
     if (kIsWeb) {
@@ -72,6 +76,8 @@ Future<void> main() async {
       await Firebase.initializeApp();
     }
     print("✅ Firebase Initialized");
+
+    FirebaseAnalyticsService.logAppOpen();
   } catch (e) {
     print("⚠️ Firebase Initialization Failed: $e");
     print(
