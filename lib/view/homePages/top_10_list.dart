@@ -8,10 +8,16 @@ import '../../widgets/golden_text.dart';
 import '../../widgets/custom_network_image.dart';
 
 class Top10List extends StatelessWidget {
+  final String title;
   final List<ContentModel> content;
   final bool isSignedIn;
 
-  const Top10List({super.key, required this.content, required this.isSignedIn});
+  const Top10List({
+    super.key,
+    required this.content,
+    required this.isSignedIn,
+    required this.title,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,16 +31,25 @@ class Top10List extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: InkWell(
-            onTap: () {},
-            child: const Row(
+            onTap: () {
+              Get.toNamed(
+                AppRoutes.categoryGrid,
+                arguments: {'title': title, 'content': content},
+              );
+            },
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 GoldenText(
-                  "Trending on Nazar",
+                  title,
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(width: 8),
-                Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  color: AppColors.goldBase,
+                  size: 16,
+                ),
               ],
             ),
           ),

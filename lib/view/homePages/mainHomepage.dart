@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:nazar_ott/data/models/response_model/content_response_model/content_model.dart';
+import 'package:nazar_ott/view/homePages/top_10_list.dart';
 import 'package:nazar_ott/view/popUp/confirmation_popup.dart';
 import 'package:nazar_ott/view_model/company_info_controller/company_info_controller.dart';
 import '../../app/routes/app_routes.dart';
@@ -433,26 +435,41 @@ class MainHomePage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 5),
-                        AutoSlider(
-                          content: sliderContent,
-                          isSignedIn: authController.isLoggedIn.value,
-                        ),
+                        isDesktop
+                            ? AutoSlider(
+                                content: contentController.allWebBannerContent,
+
+                                isSignedIn: authController.isLoggedIn.value,
+                              )
+                            : AutoSlider(
+                                content: sliderContent,
+                                isSignedIn: authController.isLoggedIn.value,
+                              ),
                         SizedBox(height: isDesktop ? 30 : 10),
                       ],
                     ),
 
-                  // Dynamic sections in explicit priority order
-                  for (var section in categorySections)
-                    _buildAnimatedSection(
-                      isDesktop: isDesktop,
-                      delay: 200,
-                      child: _buildCategorySection(
+                  if (kIsWeb) ...[
+                    for (var section in contentController.webSections)
+                      if (section.items.isNotEmpty)
+                        _buildSectionItem(
+                          title: section.title,
+                          categorySlug: section.categorySlug,
+                          content: section.items,
+                          isDesktop: isDesktop,
+                          isSignedIn: authController.isLoggedIn.value,
+                        ),
+                  ] else ...[
+                    // Dynamic sections in explicit priority order
+                    for (var section in categorySections)
+                      _buildSectionItem(
                         title: section.title,
+                        categorySlug: section.categorySlug,
                         content: section.content,
-                        isSignedIn: authController.isLoggedIn.value,
                         isDesktop: isDesktop,
+                        isSignedIn: authController.isLoggedIn.value,
                       ),
-                    ),
+                  ],
 
                   _buildFooter(companyController),
                   const SizedBox(height: 120),
@@ -463,6 +480,40 @@ class MainHomePage extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Widget _buildSectionItem({
+    required String title,
+    required String categorySlug,
+    required List<ContentModel> content,
+    required bool isDesktop,
+    required bool isSignedIn,
+  }) {
+    if (categorySlug.toLowerCase().contains('top10')) {
+      return _buildAnimatedSection(
+        isDesktop: isDesktop,
+        delay: 200,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 30),
+          child: Top10List(
+            title: title,
+            content: content,
+            isSignedIn: isSignedIn,
+          ),
+        ),
+      );
+    } else {
+      return _buildAnimatedSection(
+        isDesktop: isDesktop,
+        delay: 200,
+        child: _buildCategorySection(
+          title: title,
+          content: content,
+          isSignedIn: isSignedIn,
+          isDesktop: isDesktop,
+        ),
+      );
+    }
   }
 
   Widget _buildCategorySection({
@@ -476,15 +527,31 @@ class MainHomePage extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: GoldenText(
-            title,
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.2,
+          child: InkWell(
+            onTap: () {
+              Get.toNamed(
+                AppRoutes.categoryGrid,
+                arguments: {'title': title, 'content': content},
+              );
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GoldenText(
+                  title,
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(width: 8),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  color: AppColors.goldBase,
+                  size: 16,
+                ),
+              ],
             ),
           ),
         ),
+
         SizedBox(
           height: isDesktop ? 340 : 220,
           child: ListView.builder(
@@ -501,7 +568,7 @@ class MainHomePage extends StatelessWidget {
             },
           ),
         ),
-        //const SizedBox(height: 30),
+        const SizedBox(height: 10),
       ],
     );
   }

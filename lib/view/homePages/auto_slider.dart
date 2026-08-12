@@ -111,7 +111,13 @@ class _AutoSliderState extends State<AutoSlider> {
                   padding: EdgeInsets.symmetric(horizontal: isDesktop ? 0 : 8),
                   child: GestureDetector(
                     onTap: () {
-                      Get.toNamed(AppRoutes.dramaDetails, arguments: item);
+                      Get.toNamed(
+                        AppRoutes.dramaDetails,
+                        arguments: {
+                          'content': item,
+                          'isSignedIn': widget.isSignedIn,
+                        },
+                      );
                     },
                     child: Container(
                       decoration: BoxDecoration(

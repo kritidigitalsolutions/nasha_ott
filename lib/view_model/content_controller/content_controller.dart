@@ -13,12 +13,14 @@ class CategorySection {
   // final String name;
   final String title;
   final int priority;
+  final String categorySlug;
   final List<ContentModel> content;
 
   CategorySection({
     // required.th
     required this.title,
     required this.priority,
+    required this.categorySlug,
     required this.content,
   });
 }
@@ -35,6 +37,9 @@ class ContentController extends GetxController {
 
   var allContent = <ContentModel>[].obs;
   var allCategory = <CategoryModel>[].obs;
+
+  var allWebBannerContent = <ContentModel>[].obs;
+  var webSections = <WebSectionModel>[].obs;
 
   var trendingContent = <ContentModel>[].obs;
   var seriesEpisodes = <ContentModel>[].obs;
@@ -85,6 +90,16 @@ class ContentController extends GetxController {
             .where((c) => c.isTrending == true && c.isComingSoon == false)
             .toList(),
       );
+
+      // -----------------------------
+      // web banner content
+      //-------------------------------------------------
+
+      final webBannerContent = await _repository.getAllWebSiteBannerContent();
+      allWebBannerContent.assignAll(webBannerContent);
+
+      final sections = await _repository.getWebSections();
+      webSections.assignAll(sections);
 
       // Fetch stats for each item to enable sorting by likes
       _fetchAllStats();
@@ -150,6 +165,7 @@ class ContentController extends GetxController {
           CategorySection(
             title: cat.name,
             priority: cat.priority,
+            categorySlug: cat.slug,
             content: items,
           ),
         );

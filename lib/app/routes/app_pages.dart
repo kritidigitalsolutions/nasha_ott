@@ -91,7 +91,7 @@ class AppPages {
       page: () => DramaDetailsPage(
         isSignedIn: Get.arguments?['isSignedIn'] ?? false,
         content: Get.arguments?['content'] ?? ContentModel.fromJson({}),
-        id: Get.arguments is Map ? Get.arguments['id'] : null, // NEW
+        id: Get.arguments?['id'],
       ),
       title: 'Drama Details | Nazar OTT',
     ),

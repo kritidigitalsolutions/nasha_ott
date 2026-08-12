@@ -1,7 +1,7 @@
 class AppConstants {
   // static const String serverUrl = 'http://192.168.1.24:5000';
-  static const String serverUrl = 'https://api.nazarott.com';
-  //static const String serverUrl = 'http://192.168.1.30:5000';
+  // static const String serverUrl = 'https://api.nazarott.com';
+  static const String serverUrl = 'http://192.168.1.14:5000';
   static const String baseUrl = '$serverUrl/api';
 
   // Auth Endpoints
@@ -44,6 +44,9 @@ class AppConstants {
   static String getEpisodes(String seriesId) =>
       '$baseUrl/series/episodes/$seriesId';
   static const String getCategories = '$baseUrl/categories';
+  static const webSiteBanner = "$baseUrl/webpage/banners";
+
+  static const webSetion = "$baseUrl/webpage/sections";
 
   /// shorts
   static const String getShortDramas = '$baseUrl/shortdramas';

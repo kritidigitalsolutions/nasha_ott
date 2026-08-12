@@ -116,8 +116,8 @@ class ContentModel {
       isTrending: json['isTrending'] ?? false,
       releaseDate: json['releaseDate'],
       priority: json['priority'],
-      totalSeasons: json['totalSeasons'],
-      totalEpisodes: json['totalEpisodes'],
+      totalSeasons: json['totalSeasons'] ?? (json['seasons'] as List?)?.length,
+      totalEpisodes: json['totalEpisodes'] ?? (json['seasons'] as List?)?.fold<int>(0, (sum, season) => sum + ((season['episodes'] as List?)?.length ?? 0)),
       seriesId: json['seriesId'],
       seasonNumber: json['seasonNumber'],
       episodeNumber: json['episodeNumber'],
@@ -185,5 +185,40 @@ class Cast {
 
   Map<String, dynamic> toJson() {
     return {'_id': id, 'name': name, 'image': image};
+  }
+}
+
+class WebSectionModel {
+  final String categorySlug;
+  final String title;
+  final List<ContentModel> items;
+
+  WebSectionModel({
+    required this.categorySlug,
+    required this.title,
+    required this.items,
+  });
+
+  factory WebSectionModel.fromJson(Map<String, dynamic> json) {
+    var itemsList = json['items'] as List? ?? [];
+    List<ContentModel> parsedItems = itemsList
+        .map((item) {
+          var itemJson = Map<String, dynamic>.from(item);
+          if (itemJson['category'] == null) {
+            itemJson['category'] = [json['categorySlug']];
+          }
+          return ContentModel.fromJson(itemJson);
+        })
+        .where((c) {
+          if (c.isHide == true) return false;
+          return true;
+        })
+        .toList();
+
+    return WebSectionModel(
+      categorySlug: json['categorySlug'] ?? '',
+      title: json['title'] ?? '',
+      items: parsedItems,
+    );
   }
 }

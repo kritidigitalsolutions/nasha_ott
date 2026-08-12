@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nazar_ott/app/theme/app_colors.dart';
 import '../app/routes/app_routes.dart';
 import '../data/models/response_model/content_response_model/content_model.dart';
 import '../utils/responsive.dart';
@@ -57,7 +58,7 @@ class CategoryGridPage extends StatelessWidget {
                         Text(
                           title,
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: AppColors.goldBase,
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
@@ -78,7 +79,7 @@ class CategoryGridPage extends StatelessWidget {
                       crossAxisCount: isDesktop ? 6 : 3,
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
-                      childAspectRatio: 0.7,
+                      childAspectRatio: 0.65,
                     ),
                     itemBuilder: (context, index) {
                       final item = content[index];
