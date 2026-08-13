@@ -152,7 +152,8 @@ class _GoPremiumPageState extends State<GoPremiumPage> {
                             padding: EdgeInsets.symmetric(vertical: 30),
                             child: Center(
                               child: CircularProgressIndicator(
-                                  color: AppColors.primary),
+                                color: AppColors.primary,
+                              ),
                             ),
                           );
                         }

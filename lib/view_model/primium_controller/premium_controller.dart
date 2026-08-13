@@ -260,6 +260,12 @@ class PremiumController extends GetxController with WidgetsBindingObserver {
       }
       body["paymentMethod"] = "sabpaisa";
 
+      // 🔽 NEW: tell backend whether this order originated from the mobile
+      // app (redirected to web with ?source=app) or a direct website visit.
+      final String? incomingSource = kIsWeb ? Get.parameters['source'] : null;
+      body["source"] = (incomingSource == 'app') ? 'app' : 'web';
+      debugPrint("📌 Order source resolved as: ${body['source']}");
+
       if (user != null) {
         body["email"] = user['email'] ?? "";
         // Use the updated numeric phone or fallback
@@ -349,9 +355,9 @@ class PremiumController extends GetxController with WidgetsBindingObserver {
       final token = AppSession.getToken() ?? " ";
 
       // Using the real production web link
-      String baseUrl = "https://nazarott.com";
+      //String baseUrl = "https://nazarott.com";
 
-      // String baseUrl = "http://localhost:7032";
+      String baseUrl = "http://localhost:14459";
 
       // Redirect to GoPremium page with token and plan details
       final Uri uri = Uri.parse("$baseUrl/goPremium").replace(
@@ -406,20 +412,48 @@ class PremiumController extends GetxController with WidgetsBindingObserver {
           });
 
       if (verifyResponse != null && verifyResponse['success'] == true) {
-        FacebookEventsService.logPurchase(
-          amount: discountedPrice.value > 0
-              ? discountedPrice.value
-              : originalPrice.value,
-          currency: "INR",
-          contentId: planId,
-        );
-        FirebaseAnalyticsService.logPurchase(
-          amount: discountedPrice.value > 0
-              ? discountedPrice.value
-              : originalPrice.value,
-          currency: "INR",
-          contentId: planId,
-        );
+        // 🔽 NEW: backend now returns the original order source ("app" or
+        // "web") that was captured at createOrder time. Use it to decide
+        // whether this purchase event should fire from here.
+        final String responseSource = (verifyResponse['source'] ?? 'web')
+            .toString();
+
+        debugPrint("📌 verifyPayment response source: $responseSource");
+
+        if (responseSource == 'app') {
+          FacebookEventsService.logPurchase(
+            amount: discountedPrice.value > 0
+                ? discountedPrice.value
+                : originalPrice.value,
+            currency: "INR",
+            contentId: planId,
+          );
+          FirebaseAnalyticsService.logPurchase(
+            amount: discountedPrice.value > 0
+                ? discountedPrice.value
+                : originalPrice.value,
+            currency: "INR",
+            contentId: planId,
+          );
+          debugPrint("✅ Purchase event fired (source=app)");
+        } else {
+          FacebookEventsService.logPurchase(
+            amount: discountedPrice.value > 0
+                ? discountedPrice.value
+                : originalPrice.value,
+            currency: "INR",
+            contentId: planId,
+          );
+          FirebaseAnalyticsService.logPurchase(
+            amount: discountedPrice.value > 0
+                ? discountedPrice.value
+                : originalPrice.value,
+            currency: "INR",
+            contentId: planId,
+          );
+          debugPrint("⏭️ Skipped purchase event (source=web)");
+        }
+
         CustomSnackbar.show(
           title: "Success",
           message: "Payment Verified Successfully!",
