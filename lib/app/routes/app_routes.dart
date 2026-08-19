@@ -34,6 +34,7 @@ abstract class AppRoutes {
   static const purchasedPlans = '/purchasedPlans';
   static const rateApp = '/rateApp';
   static const redeemVoucher = '/redeemVoucher';
+  static const paymentSuccess = '/paymentSuccess';
   static const shortsPlayer = '/shortsPlayer';
   static const shortsEpisodes = '/shortsEpisodes';
   static const categoryGrid = '/categoryGrid';

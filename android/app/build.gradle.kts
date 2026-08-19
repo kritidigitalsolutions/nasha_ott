@@ -15,8 +15,8 @@ if (keystorePropertiesFile.exists()) {
 }
 android {
     namespace = "com.company.nazarott"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    compileSdk = 36
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -31,9 +31,14 @@ android {
     defaultConfig {
         applicationId = "com.company.nazarott"
         minSdk = flutter.minSdkVersion // Required for desugaring and Firebase
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+    }
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
     }
     signingConfigs {
         create("release") {

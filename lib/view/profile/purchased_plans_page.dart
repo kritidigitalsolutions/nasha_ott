@@ -127,7 +127,7 @@ class PurchasedPlansPage extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                "Expires on: ${Get.find<PremiumController>().formatDate(sub['expiryDate'])}",
+                "Expires on: ${Get.find<PremiumController>().formatDate(sub['endDate'] ?? sub['expiryDate'])}",
                 style: const TextStyle(
                   color: AppColors.buttonTextColor,
                   fontSize: 14,
@@ -142,6 +142,7 @@ class PurchasedPlansPage extends StatelessWidget {
 
   Widget _buildDetailsSection(Map<String, dynamic> sub) {
     final plan = sub['plan'] ?? {};
+    final controller = Get.find<PremiumController>();
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -154,6 +155,10 @@ class PurchasedPlansPage extends StatelessWidget {
           _detailRow("Plan Price", "₹${plan['price'] ?? '0'}"),
           const Divider(color: Colors.white10, height: 30),
           _detailRow("Duration", "${plan['duration'] ?? '0'} Days"),
+          const Divider(color: Colors.white10, height: 30),
+          _detailRow("Start Date", controller.formatDate(sub['startDate'])),
+          const Divider(color: Colors.white10, height: 30),
+          _detailRow("Expiry Date", controller.formatDate(sub['endDate'] ?? sub['expiryDate'])),
           const Divider(color: Colors.white10, height: 30),
           _detailRow("Payment Status", "Success"),
           const Divider(color: Colors.white10, height: 30),

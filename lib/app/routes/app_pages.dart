@@ -15,6 +15,7 @@ import '../../view/profile/watchlist.dart';
 import '../../view/navbar/downloads.dart';
 import '../../view/search_pages/searchPage.dart';
 import '../../view/premium/goPremium.dart';
+import '../../view/premium/payment_success_page.dart';
 import '../../view/notifications/notification_page.dart';
 import '../../view/dramaDetails/dramaDetailsPage.dart';
 import '../../view/videoPlayer/video_player.dart';
@@ -99,6 +100,11 @@ class AppPages {
       name: AppRoutes.goPremium,
       page: () => GoPremiumPage(),
       title: 'Go Premium | Nazar OTT',
+    ),
+    GetPage(
+      name: AppRoutes.paymentSuccess,
+      page: () => const PaymentSuccessPage(),
+      title: 'Payment Success | Nazar OTT',
     ),
     GetPage(
       name: AppRoutes.watchList,

@@ -24,14 +24,13 @@ class SupportController extends GetxController {
 
   void pickFiles() async {
     try {
-      fp.FilePickerResult? result = await fp.FilePicker.pickFiles(
-        allowMultiple: true,
+      List<fp.PlatformFile> files = await fp.FilePicker.pickFiles(
         type: fp.FileType.custom,
         allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
       );
 
-      if (result != null) {
-        selectedFilePaths.addAll(result.paths.whereType<String>());
+      if (files.isNotEmpty) {
+        selectedFilePaths.addAll(files.map((file) => file.path).whereType<String>());
       }
     } catch (e) {
       print("Error picking files: $e");

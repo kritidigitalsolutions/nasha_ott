@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:nazar_ott/utils/facebook_meta_events.dart';
 import 'package:nazar_ott/utils/firebase_analytics_event.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../app/routes/app_routes.dart';
 import '../../data/models/response_model/plan_response/plan_model.dart';
 import '../../data/network/base_api_service.dart';
 import '../../data/repositories/premium_repository.dart';
@@ -35,6 +36,10 @@ class PremiumController extends GetxController with WidgetsBindingObserver {
 
   var subscriptionData = Rxn<Map<String, dynamic>>();
   var isLoadingStatus = false.obs;
+
+  // Track payment state to trigger success page on return
+  bool _isAwaitingPayment = false;
+  PlanModel? _lastAttemptedPlan;
 
   bool get hasActiveSubscription =>
       subscriptionData.value != null &&
@@ -77,7 +82,9 @@ class PremiumController extends GetxController with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) {
       // Refresh subscription status when user returns to app after payment
       if (isUserLoggedIn.value) {
-        fetchSubscriptionStatus();
+        // If we were waiting for payment, fetch status to check for success
+        fetchSubscriptionStatus(checkSuccess: _isAwaitingPayment);
+
         try {
           if (Get.isRegistered<ContentController>()) {
             Get.find<ContentController>().fetchContent();
@@ -134,13 +141,33 @@ class PremiumController extends GetxController with WidgetsBindingObserver {
     }
   }
 
-  Future<void> fetchSubscriptionStatus() async {
+  Future<void> fetchSubscriptionStatus({bool checkSuccess = false}) async {
     if (!isUserLoggedIn.value) return;
     try {
       isLoadingStatus.value = true;
       final response = await _repository.getSubscriptionStatus();
       if (response != null && response['success'] == true) {
+        bool previouslyActive = hasActiveSubscription;
         subscriptionData.value = response['subscription'];
+
+        // If it's now active and we were awaiting payment, navigate to success
+        if (checkSuccess &&
+            hasActiveSubscription &&
+            !previouslyActive &&
+            _isAwaitingPayment) {
+          _isAwaitingPayment = false;
+          Get.toNamed(
+            AppRoutes.paymentSuccess,
+            arguments: {
+              'amount':
+                  discountedPrice.value > 0
+                      ? discountedPrice.value
+                      : originalPrice.value,
+              'planId': _lastAttemptedPlan?.id,
+              'planName': _lastAttemptedPlan?.name,
+            },
+          );
+        }
       }
     } catch (e) {
       print("Error fetching subscription status: $e");
@@ -354,10 +381,14 @@ class PremiumController extends GetxController with WidgetsBindingObserver {
     try {
       final token = AppSession.getToken() ?? " ";
 
-      // Using the real production web link
-      //String baseUrl = "https://nazarott.com";
+      // Set flags for tracking return
+      _isAwaitingPayment = true;
+      _lastAttemptedPlan = plans.firstWhereOrNull((p) => p.id == planId);
 
-      String baseUrl = "http://localhost:14459";
+      // Using the real production web link
+      String baseUrl = "https://nazarott.com";
+
+      // String baseUrl = "http://localhost:14459";
 
       // Redirect to GoPremium page with token and plan details
       final Uri uri = Uri.parse("$baseUrl/goPremium").replace(
