@@ -6,6 +6,7 @@ import 'package:nazar_ott/utils/facebook_meta_events.dart';
 import 'package:nazar_ott/utils/firebase_analytics_event.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../app/routes/app_routes.dart';
+import '../../app/theme/app_colors.dart';
 import '../../data/models/response_model/plan_response/plan_model.dart';
 import '../../data/network/base_api_service.dart';
 import '../../data/repositories/premium_repository.dart';
@@ -523,10 +524,43 @@ class PremiumController extends GetxController with WidgetsBindingObserver {
       isRedeeming.value = true;
       final response = await _repository.redeemVoucher(code);
       if (response != null && response['success'] == true) {
-        CustomSnackbar.show(
-          title: "Success",
-          message: "Redeemed successfully",
-          isSuccess: true,
+        Get.dialog(
+          AlertDialog(
+            backgroundColor: Colors.grey[900],
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            title: const Text(
+              "Success",
+              style: TextStyle(
+                color: AppColors.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            content: const Text(
+              "your voucher reedam successfully now enjoy nazar ott",
+              style: TextStyle(color: Colors.white70),
+            ),
+            actions: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () {
+                  Get.back(); // Close dialog
+                  Get.offAllNamed(AppRoutes.navbar); // Redirect to home
+                },
+                child: const Text(
+                  "okk",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+          barrierDismissible: false,
         );
 
         fetchSubscriptionStatus();
