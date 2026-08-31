@@ -73,6 +73,22 @@ class ContentRepository {
     }
   }
 
+  Future<List<ContentModel>> getCategoryContent(String categoryId) async {
+    try {
+      final response = await apiProvider.getApi(
+        AppConstants.getCategoryContent(categoryId),
+      );
+      if (response['success'] == true) {
+        List<dynamic> data = response['data'] ?? [];
+        return data.map((item) => ContentModel.fromJson(item)).toList();
+      }
+      return [];
+    } catch (e) {
+      print("Error fetching category content: $e");
+      rethrow;
+    }
+  }
+
   Future<ContentModel?> getContentDetail(String id) async {
     try {
       final response = await apiProvider.getApi(

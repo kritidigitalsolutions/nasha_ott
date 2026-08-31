@@ -27,6 +27,7 @@ class ContentModel {
   final bool isTrending;
   final String? releaseDate;
   final int? priority;
+  final int? position;
 
   // Series/Episode specific fields
   final int? totalSeasons;
@@ -59,6 +60,7 @@ class ContentModel {
     this.isTrending = false,
     this.releaseDate,
     this.priority,
+    this.position,
     this.totalSeasons,
     this.totalEpisodes,
     this.seriesId,
@@ -79,7 +81,8 @@ class ContentModel {
     }
 
     // Determine content type from various possible keys
-    String type = json['type'] ?? json['contentType'] ?? '';
+    String type =
+        (json['type'] ?? json['contentType'] ?? '').toString().toLowerCase();
     if (type.isEmpty && json['itemModel'] != null) {
       type = json['itemModel'].toString().toLowerCase();
     }
@@ -115,7 +118,8 @@ class ContentModel {
       isComingSoon: json['isComingSoon'] ?? false,
       isTrending: json['isTrending'] ?? false,
       releaseDate: json['releaseDate'],
-      priority: json['priority'],
+      priority: int.tryParse(json['priority']?.toString() ?? ''),
+      position: int.tryParse(json['position']?.toString() ?? ''),
       totalSeasons: json['totalSeasons'] ?? (json['seasons'] as List?)?.length,
       totalEpisodes: json['totalEpisodes'] ?? (json['seasons'] as List?)?.fold<int>(0, (sum, season) => sum + ((season['episodes'] as List?)?.length ?? 0)),
       seriesId: json['seriesId'],
@@ -148,6 +152,7 @@ class ContentModel {
       'isTrending': isTrending,
       'releaseDate': releaseDate,
       'priority': priority,
+      'position': position,
       'totalSeasons': totalSeasons,
       'totalEpisodes': totalEpisodes,
       'seriesId': seriesId,

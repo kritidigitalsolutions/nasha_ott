@@ -136,8 +136,8 @@ class _DramaDetailsPageState extends State<DramaDetailsPage> {
                       children: [
                         const SizedBox(height: 20),
 
-                        /// WATCH & DOWNLOAD BUTTONS (Moved here from Banner)
-                        if (data.contentType != 'series') ...[
+                        /// WATCH & DOWNLOAD BUTTONS (Movies only)
+                        if (data.contentType == 'movie') ...[
                           Row(
                             children: [
                               Expanded(

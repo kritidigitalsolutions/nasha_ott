@@ -8,6 +8,7 @@ class GoldenButton extends StatelessWidget {
   final double height;
   final EdgeInsetsGeometry? padding;
   final BorderRadius? borderRadius;
+  final Color? backgroundColor;
 
   const GoldenButton({
     super.key,
@@ -17,6 +18,7 @@ class GoldenButton extends StatelessWidget {
     this.height = 55,
     this.padding,
     this.borderRadius,
+    this.backgroundColor,
   });
 
   @override
@@ -25,8 +27,10 @@ class GoldenButton extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        gradient: onPressed != null ? AppColors.buttonGradient : null,
-        color: onPressed == null ? Colors.grey : null,
+        gradient: (onPressed != null && backgroundColor == null)
+            ? AppColors.buttonGradient
+            : null,
+        color: backgroundColor ?? (onPressed == null ? Colors.grey : null),
         borderRadius: borderRadius ?? BorderRadius.circular(12),
         boxShadow: onPressed != null ? [
           BoxShadow(

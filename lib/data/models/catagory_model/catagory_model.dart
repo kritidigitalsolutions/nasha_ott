@@ -37,6 +37,7 @@ class CategoryModel {
   final String name;
   final bool isActive;
   final int priority;
+  final int? position;
   final int version;
   final String createdAt;
   final String updatedAt;
@@ -47,6 +48,7 @@ class CategoryModel {
     required this.name,
     required this.isActive,
     required this.priority,
+    this.position,
     required this.version,
     required this.createdAt,
     required this.updatedAt,
@@ -58,7 +60,8 @@ class CategoryModel {
       slug: json['slug'] ?? '',
       name: json['name'] ?? '',
       isActive: json['isActive'] ?? false,
-      priority: json['priority'] ?? 0,
+      priority: int.tryParse(json['priority']?.toString() ?? '') ?? 0,
+      position: int.tryParse(json['position']?.toString() ?? ''),
       version: json['__v'] ?? 0,
       createdAt: json['createdAt'] ?? '',
       updatedAt: json['updatedAt'] ?? '',
@@ -72,6 +75,7 @@ class CategoryModel {
       'name': name,
       'isActive': isActive,
       'priority': priority,
+      'position': position,
       '__v': version,
       'createdAt': createdAt,
       'updatedAt': updatedAt,

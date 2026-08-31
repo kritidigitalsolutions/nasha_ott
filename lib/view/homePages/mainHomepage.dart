@@ -22,6 +22,7 @@ import 'coming_soon.dart';
 import '../profile/profilePage.dart';
 import '../../view_model/home_controller/home_controller.dart';
 import '../../view_model/auth_controller/auth_controller.dart';
+import '../../view_model/primium_controller/premium_controller.dart';
 import '../../utils/notification_service.dart';
 
 class MainHomePage extends StatelessWidget {
@@ -102,13 +103,14 @@ class MainHomePage extends StatelessWidget {
                 _buildUpcomingContent(notificationService, authController),
                 RefreshIndicator(
                   onRefresh: () async {
-                    contentController.allContent();
+                    contentController.allContent.clear();
+                    contentController.categorySections.clear();
+                    contentController.homeBannerContent.clear();
                     await Future.wait([
-                      contentController.fetchContent(),
                       contentController.fetchCategory(),
+                      contentController.fetchContent(),
+                      companyController.fetchCompanyInfo(),
                     ]);
-                    contentController.trendingContent();
-                    await companyController.fetchCompanyInfo();
                   },
                   child: _buildHomeContent(
                     context,
@@ -240,19 +242,24 @@ class MainHomePage extends StatelessWidget {
           ),
           _buildNotificationIcon(notificationService),
           const SizedBox(width: 20),
-          GoldenButton(
-            onPressed: () => Get.toNamed(AppRoutes.goPremium),
-            width: 140,
-            height: 45,
-            borderRadius: BorderRadius.circular(25),
-            child: const Text(
-              "Go Premium",
-              style: TextStyle(
-                color: AppColors.buttonTextColor,
-                fontWeight: FontWeight.bold,
+          Obx(() {
+            final premiumController = Get.find<PremiumController>();
+            final bool isSubscribed = premiumController.hasActiveSubscription;
+            return GoldenButton(
+              onPressed: () => Get.toNamed(AppRoutes.goPremium),
+              width: 140,
+              height: 45,
+              borderRadius: BorderRadius.circular(25),
+              backgroundColor: isSubscribed ? Colors.green : null,
+              child: Text(
+                isSubscribed ? "Subscribed" : "Subscribe",
+                style: const TextStyle(
+                  color: AppColors.buttonTextColor,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-          ),
+            );
+          }),
         ],
       ),
     );
@@ -340,21 +347,27 @@ class MainHomePage extends StatelessWidget {
               ),
               _buildNotificationIcon(notificationService),
               const SizedBox(width: 4),
-              GoldenButton(
-                onPressed: () => Get.toNamed(AppRoutes.goPremium),
-                width: 100,
-                height: 28,
-                borderRadius: BorderRadius.circular(20),
-                child: const FittedBox(
-                  child: Text(
-                    "Go Premium",
-                    style: TextStyle(
-                      color: AppColors.buttonTextColor,
-                      fontSize: 10,
+              Obx(() {
+                final premiumController = Get.find<PremiumController>();
+                final bool isSubscribed =
+                    premiumController.hasActiveSubscription;
+                return GoldenButton(
+                  onPressed: () => Get.toNamed(AppRoutes.goPremium),
+                  width: 100,
+                  height: 28,
+                  borderRadius: BorderRadius.circular(20),
+                  backgroundColor: isSubscribed ? Colors.green : null,
+                  child: FittedBox(
+                    child: Text(
+                      isSubscribed ? "Subscribed" : "Subscribe",
+                      style: const TextStyle(
+                        color: AppColors.buttonTextColor,
+                        fontSize: 10,
+                      ),
                     ),
                   ),
-                ),
-              ),
+                );
+              }),
             ],
           ),
         ],
@@ -403,25 +416,12 @@ class MainHomePage extends StatelessWidget {
               );
             }
 
-            final List<ContentModel> allContent = List<ContentModel>.from(
-              contentController.allContent,
-            );
-
-            final List<ContentModel> availableContent = allContent
-                .where((c) => c.isComingSoon == false)
-                .toList();
-
-            final List<ContentModel> trendingContent = availableContent
-                .where((c) => c.isTrending == true)
-                .toList();
-
-            final List<ContentModel> sliderContent = trendingContent.isNotEmpty
-                ? trendingContent
-                : availableContent.take(10).toList();
-
-            // Already ordered ascending by priority (10 shows above 11, etc.)
+            // Already ordered ascending by priority (1 shows above 2, etc.)
             final List<CategorySection> categorySections =
                 contentController.categorySections;
+
+            final List<ContentModel> sliderContent =
+                contentController.homeBannerContent;
 
             return SingleChildScrollView(
               child: Column(
@@ -429,22 +429,16 @@ class MainHomePage extends StatelessWidget {
                 children: [
                   const SizedBox(height: 10),
 
-                  // Trending Slider Section
+                  // Home Banner Slider Section
                   if (sliderContent.isNotEmpty)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 5),
-                        isDesktop
-                            ? AutoSlider(
-                                content: contentController.allWebBannerContent,
-
-                                isSignedIn: authController.isLoggedIn.value,
-                              )
-                            : AutoSlider(
-                                content: sliderContent,
-                                isSignedIn: authController.isLoggedIn.value,
-                              ),
+                        AutoSlider(
+                          content: sliderContent,
+                          isSignedIn: authController.isLoggedIn.value,
+                        ),
                         SizedBox(height: isDesktop ? 30 : 10),
                       ],
                     ),
@@ -460,15 +454,16 @@ class MainHomePage extends StatelessWidget {
                           isSignedIn: authController.isLoggedIn.value,
                         ),
                   ] else ...[
-                    // Dynamic sections in explicit priority order
+                    // Dynamic sections in explicit priority order from API
                     for (var section in categorySections)
-                      _buildSectionItem(
-                        title: section.title,
-                        categorySlug: section.categorySlug,
-                        content: section.content,
-                        isDesktop: isDesktop,
-                        isSignedIn: authController.isLoggedIn.value,
-                      ),
+                      if (section.content.isNotEmpty)
+                        _buildSectionItem(
+                          title: section.title,
+                          categorySlug: section.categorySlug,
+                          content: section.content,
+                          isDesktop: isDesktop,
+                          isSignedIn: authController.isLoggedIn.value,
+                        ),
                   ],
 
                   _buildFooter(companyController),

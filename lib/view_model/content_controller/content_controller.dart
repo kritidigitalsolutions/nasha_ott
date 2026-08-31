@@ -39,6 +39,7 @@ class ContentController extends GetxController {
   var allCategory = <CategoryModel>[].obs;
 
   var allWebBannerContent = <ContentModel>[].obs;
+  var homeBannerContent = <ContentModel>[].obs; // Added for slider
   var webSections = <WebSectionModel>[].obs;
 
   var trendingContent = <ContentModel>[].obs;
@@ -58,54 +59,39 @@ class ContentController extends GetxController {
   }
 
   Future<void> _initData() async {
-    await Future.wait([fetchContent(), fetchCategory()]);
-    _buildCategorizedContent();
+    // Fetch categories first for progressive loading
+    fetchCategory();
+    // Web specific data can also load in parallel
+    fetchContent();
   }
 
   Future<void> fetchContent() async {
     try {
-      isLoading.value = true;
-      final rawContent = await _repository.getAllContent();
-
-      final content = rawContent.where((c) {
-        if (c.isPublished != true) {
-          return false;
-        }
-        if (c.is18Plus) {
-          if (c.isHide == true) {
-            return false;
-          }
-        }
-        return true;
-      }).toList();
-
-      // Sort content by priority (lower number = higher priority, e.g. 1 is top)
-      content.sort((a, b) => (a.priority ?? 999).compareTo(b.priority ?? 999));
-
-      allContent.assignAll(content);
-
-      // Trending is a dedicated boolean flag, not part of `category` list
-      trendingContent.assignAll(
-        content
-            .where((c) => c.isTrending == true && c.isComingSoon == false)
-            .toList(),
-      );
-
       // -----------------------------
       // web banner content
       //-------------------------------------------------
 
       final webBannerContent = await _repository.getAllWebSiteBannerContent();
+      // Sort web banners only by position
+      webBannerContent.sort((a, b) {
+        int posA = a.position ?? 999;
+        int posB = b.position ?? 999;
+        return posA.compareTo(posB);
+      });
       allWebBannerContent.assignAll(webBannerContent);
 
       final sections = await _repository.getWebSections();
+      // Sort items in web sections only by position
+      for (var section in sections) {
+        section.items.sort((a, b) {
+          int posA = a.position ?? 999;
+          int posB = b.position ?? 999;
+          return posA.compareTo(posB);
+        });
+      }
       webSections.assignAll(sections);
-
-      // Fetch stats for each item to enable sorting by likes
-      _fetchAllStats();
-      _buildCategorizedContent();
     } catch (e) {
-      print("Error in ContentController: $e");
+      print("Error in ContentController fetchContent: $e");
     } finally {
       isLoading.value = false;
     }
@@ -116,13 +102,27 @@ class ContentController extends GetxController {
       isCategoryLoading.value = true;
       final categories = await _repository.allCategory();
 
-      // Only active categories.
-      // Lower priority number = higher up (matches content.priority convention).
-      final activeCategories = categories.where((c) => c.isActive).toList()
-        ..sort((a, b) => a.priority.compareTo(b.priority));
+      // Sort categories only by position (1 is top)
+      categories.sort((a, b) {
+        int posA = a.position ?? 999;
+        int posB = b.position ?? 999;
+        return posA.compareTo(posB);
+      });
+      allCategory.assignAll(categories);
 
-      allCategory.assignAll(activeCategories);
-      _buildCategorizedContent();
+      // Clear existing data
+      categorySections.clear();
+      homeBannerContent.clear();
+
+      // Fetch all category content in parallel and AWAIT all of them
+      await Future.wait(categories.map((cat) => _fetchContentForCategory(cat)));
+
+      // Final sort of sections by category position to ensure correct order after parallel fetch
+      categorySections.sort((a, b) {
+        int posA = a.priority ?? 999;
+        int posB = b.priority ?? 999;
+        return posA.compareTo(posB);
+      });
     } catch (e) {
       print("Error fetching categories: $e");
     } finally {
@@ -130,52 +130,46 @@ class ContentController extends GetxController {
     }
   }
 
-  void _buildCategorizedContent() {
-    final List<CategorySection> sections = [];
+  Future<void> _fetchContentForCategory(CategoryModel cat) async {
+    try {
+      final contentList = await _repository.getCategoryContent(cat.id);
 
-    // Normalize: lowercase, trim, collapse spaces/hyphens/underscores
-    String normalize(String s) =>
-        s.trim().toLowerCase().replaceAll(RegExp(r'[\s\-_]+'), '');
+      // Filter by isPublished: true and isHide: false
+      final filteredContent =
+          contentList.where((c) {
+            return c.isPublished == true && c.isHide == false;
+          }).toList();
 
-    for (var cat in allCategory) {
-      List<ContentModel> items;
+      // Strict sorting by position only (ascending)
+      filteredContent.sort((a, b) {
+        int posA = a.position ?? 999;
+        int posB = b.position ?? 999;
+        return posA.compareTo(posB);
+      });
 
-      final normalizedSlug = normalize(cat.slug);
-
-      if (normalizedSlug == 'trending') {
-        // "trending" category uses isTrending flag
-        items = allContent
-            .where((c) => c.isTrending == true && c.isComingSoon == false)
-            .toList();
-      } else {
-        // Match content.category values against category slug (case/space insensitive)
-        items = allContent
-            .where(
-              (c) =>
-                  c.category.any(
-                    (catName) => normalize(catName) == normalizedSlug,
-                  ) &&
-                  c.isComingSoon == false,
-            )
-            .toList();
-      }
-
-      if (items.isNotEmpty) {
-        sections.add(
+      if (cat.slug == 'home-banners') {
+        homeBannerContent.assignAll(filteredContent);
+      } else if (filteredContent.isNotEmpty) {
+        // Only add section if it has content
+        categorySections.add(
           CategorySection(
             title: cat.name,
             priority: cat.priority,
             categorySlug: cat.slug,
-            content: items,
+            content: filteredContent,
           ),
         );
       }
+
+      // Populate allContent for "More Like This" feature
+      for (var item in filteredContent) {
+        if (!allContent.any((existing) => existing.id == item.id)) {
+          allContent.add(item);
+        }
+      }
+    } catch (e) {
+      print("Error fetching content for category ${cat.name}: $e");
     }
-
-    // Sort sections: priority 1 = highest importance = shown first (ascending sort)
-    sections.sort((a, b) => a.priority.compareTo(b.priority));
-
-    categorySections.assignAll(sections);
   }
 
   Future<void> fetchEpisodes(String seriesId) async {
@@ -188,12 +182,6 @@ class ContentController extends GetxController {
       print("Error fetching episodes: $e");
     } finally {
       isEpisodesLoading.value = false;
-    }
-  }
-
-  Future<void> _fetchAllStats() async {
-    for (var item in allContent) {
-      _fetchSingleStats(item.id);
     }
   }
 
@@ -213,6 +201,8 @@ class ContentController extends GetxController {
       isContentDetailLoading.value = true;
       final result = await _repository.getContentDetail(id);
       contentDetail.value = result;
+      // Fetch stats only when content detail is loaded
+      _fetchSingleStats(id);
     } catch (e) {
       print("Error in fetchContentDetail: $e");
     } finally {

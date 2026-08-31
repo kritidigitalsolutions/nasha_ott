@@ -33,11 +33,19 @@ class _AutoSliderState extends State<AutoSlider> {
   @override
   void initState() {
     super.initState();
+    // Start at a large multiple of length (if available) to ensure we start at index 0
+    int initialPage = 0;
+    if (widget.content.isNotEmpty) {
+      initialPage = 1000 - (1000 % widget.content.length);
+    } else {
+      initialPage = 1000;
+    }
+
     _pageController = PageController(
       viewportFraction: Responsive.isDesktop(Get.context!) ? 0.92 : 0.85,
-      initialPage: 1000,
+      initialPage: initialPage,
     );
-    currentPage = 1000;
+    currentPage = initialPage;
     _startTimer();
   }
 
