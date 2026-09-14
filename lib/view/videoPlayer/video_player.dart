@@ -650,7 +650,7 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer> {
                     icon: const Icon(Icons.share, color: Colors.white),
                     onPressed: () {
                       Share.share(
-                        'Watch ${widget.title} on Nazar OTT: ${widget.url}',
+                        'Watch ${widget.title} on BICHOO OTT: ${widget.url}',
                         subject: widget.title,
                       );
                     },

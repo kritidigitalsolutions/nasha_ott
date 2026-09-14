@@ -1,11 +1,11 @@
 {
-    "name": "Nazar OTT",
-    "short_name": "Nazar OTT",
+    "name": "BICHOO OTT",
+    "short_name": "BICHOO OTT",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#000000",
     "theme_color": "#000000",
-    "description": "Nazar OTT - Premium Regional Content",
+    "description": "BICHOO OTT - Premium Regional Content",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

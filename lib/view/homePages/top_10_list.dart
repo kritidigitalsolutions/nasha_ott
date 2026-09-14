@@ -27,7 +27,7 @@ class Top10List extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        /// 🔥 Trending on Nazar TITLE
+        /// 🔥 Trending on BICHOO TITLE
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: InkWell(

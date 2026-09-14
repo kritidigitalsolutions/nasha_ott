@@ -38,7 +38,7 @@ class ReviewPage extends StatelessWidget {
 
                   /// ⭐ Title
                   const Text(
-                    "Enjoying Nazar OTT?",
+                    "Enjoying BICHOO OTT?",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,

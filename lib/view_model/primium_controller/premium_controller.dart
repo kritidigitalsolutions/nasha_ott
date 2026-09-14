@@ -538,7 +538,7 @@ class PremiumController extends GetxController with WidgetsBindingObserver {
               ),
             ),
             content: const Text(
-              "your voucher reedam successfully now enjoy nazar ott",
+              "your voucher reedam successfully now enjoy BICHOO OTT",
               style: TextStyle(color: Colors.white70),
             ),
             actions: [

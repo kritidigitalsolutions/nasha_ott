@@ -60,7 +60,7 @@ class RefundPolicyPage extends StatelessWidget {
                   const SizedBox(height: 40),
                   const Center(
                     child: Text(
-                      "© 2026 Nazar OTT",
+                      "© 2026 BICHOO OTT",
                       style: TextStyle(color: Colors.white54),
                     ),
                   )

@@ -37,27 +37,27 @@ class AppPages {
     GetPage(
       name: AppRoutes.splash,
       page: () => SplashScreen(),
-      title: 'Splash | Nazar OTT',
+      title: 'Splash | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.home,
       page: () => MainHomePage(),
-      title: 'Home | Nazar OTT',
+      title: 'Home | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.upcoming,
       page: () => MainHomePage(),
-      title: 'Upcoming | Nazar OTT',
+      title: 'Upcoming | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.navbar,
       page: () => MainHomePage(),
-      title: 'Nazar OTT',
+      title: 'BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.profile,
       page: () => MainHomePage(),
-      title: 'Profile | Nazar OTT',
+      title: 'Profile | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.createProfile,
@@ -65,27 +65,27 @@ class AppPages {
         phone: Get.arguments is Map ? Get.arguments['phone'] : null,
         id: Get.arguments is Map ? Get.arguments['id'] : null, // NEW
       ),
-      title: 'Create Profile | Nazar OTT',
+      title: 'Create Profile | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.signIn,
       page: () => SignInPage(),
-      title: 'Sign In | Nazar OTT',
+      title: 'Sign In | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.otpPage,
       page: () => const OtpPage(),
-      title: 'OTP Verification | Nazar OTT',
+      title: 'OTP Verification | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.createTicket,
       page: () => CreateTicketPage(),
-      title: 'Create Ticket | Nazar OTT',
+      title: 'Create Ticket | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.ticketChat,
       page: () => TicketChatPage(ticket: Get.arguments),
-      title: 'Ticket Chat | Nazar OTT',
+      title: 'Ticket Chat | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.dramaDetails,
@@ -94,77 +94,77 @@ class AppPages {
         content: Get.arguments?['content'] ?? ContentModel.fromJson({}),
         id: Get.arguments?['id'],
       ),
-      title: 'Drama Details | Nazar OTT',
+      title: 'Drama Details | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.goPremium,
       page: () => GoPremiumPage(),
-      title: 'Go Premium | Nazar OTT',
+      title: 'Go Premium | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.paymentSuccess,
       page: () => const PaymentSuccessPage(),
-      title: 'Payment Success | Nazar OTT',
+      title: 'Payment Success | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.watchList,
       page: () => WatchlistPage(),
-      title: 'Watchlist | Nazar OTT',
+      title: 'Watchlist | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.setting,
       page: () => SettingsPage(),
-      title: 'Settings | Nazar OTT',
+      title: 'Settings | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.downloads,
       page: () => DownloadsPage(),
-      title: 'Downloads | Nazar OTT',
+      title: 'Downloads | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.search,
       page: () => SearchPage(),
-      title: 'Search | Nazar OTT',
+      title: 'Search | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.searchWithMic,
       page: () => VoiceListeningPage(),
-      title: 'Voice Search | Nazar OTT',
+      title: 'Voice Search | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.notification,
       page: () => NotificationPage(),
-      title: 'Notifications | Nazar OTT',
+      title: 'Notifications | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.privacyPolicy,
       page: () => PrivacyPolicyPage(),
-      title: 'Privacy Policy | Nazar OTT',
+      title: 'Privacy Policy | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.termsAndConditions,
       page: () => TermsAndConditionsPage(),
-      title: 'Terms & Conditions | Nazar OTT',
+      title: 'Terms & Conditions | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.refundPolicy,
       page: () => RefundPolicyPage(),
-      title: 'Refund Policy | Nazar OTT',
+      title: 'Refund Policy | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.helpSupport,
       page: () => HelpSupportPage(),
-      title: 'Help & Support | Nazar OTT',
+      title: 'Help & Support | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.purchasedPlans,
       page: () => PurchasedPlansPage(),
-      title: 'My Plans | Nazar OTT',
+      title: 'My Plans | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.rateApp,
       page: () => ReviewPage(),
-      title: 'Rate App | Nazar OTT',
+      title: 'Rate App | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.videoPlayer,
@@ -172,7 +172,7 @@ class AppPages {
         url: Get.arguments?['url'] ?? '',
         title: Get.arguments?['title'] ?? 'Video Player',
       ),
-      title: 'Watching | Nazar OTT',
+      title: 'Watching | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.castDetails,
@@ -180,12 +180,12 @@ class AppPages {
         castName: Get.arguments?['castName'] ?? '',
         castImage: Get.arguments?['castImage'] ?? '',
       ),
-      title: 'Cast Details | Nazar OTT',
+      title: 'Cast Details | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.redeemVoucher,
       page: () => RedeemVoucherPage(),
-      title: 'Redeem Voucher | Nazar OTT',
+      title: 'Redeem Voucher | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.shortsPlayer,
@@ -194,14 +194,14 @@ class AppPages {
         initialIndex: Get.arguments?['initialIndex'] ?? 0,
         dramaName: Get.arguments?['dramaName'] ?? '',
       ),
-      title: 'Shorts | Nazar OTT',
+      title: 'Shorts | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.shortsEpisodes,
       page: () => ShortsEpisodesGrid(
         drama: Get.arguments?['drama'] ?? ShortDrama.fromJson({}),
       ),
-      title: 'Episodes | Nazar OTT',
+      title: 'Episodes | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.categoryGrid,
@@ -210,12 +210,12 @@ class AppPages {
         content: Get.arguments?['content'] ?? [],
         isSignedIn: Get.arguments?['isSignedIn'] ?? false,
       ),
-      title: 'Category | Nazar OTT',
+      title: 'Category | BICHOO OTT',
     ),
     GetPage(
       name: AppRoutes.deleteAccount,
       page: () => const DeleteAccountPage(),
-      title: 'Delete Account | Nazar OTT',
+      title: 'Delete Account | BICHOO OTT',
     ),
   ];
 }

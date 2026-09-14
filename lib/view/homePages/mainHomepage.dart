@@ -598,17 +598,17 @@ class MainHomePage extends StatelessWidget {
       color: Colors.black,
       child: Column(
         children: [
-          Image.asset(AppImages.logo1, height: 80),
-          const SizedBox(height: 20),
-          const GoldenText(
-            "NAZAR OTT",
-            style: TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 2.0,
-            ),
-          ),
-          const SizedBox(height: 30),
+          Image.asset(AppImages.logo1, height: 120),
+          // const SizedBox(height: 20),
+          // const GoldenText(
+          //   "BICHOO OTT",
+          //   style: TextStyle(
+          //     fontSize: 26,
+          //     fontWeight: FontWeight.bold,
+          //     letterSpacing: 2.0,
+          //   ),
+          // ),
+          const SizedBox(height: 10),
           const Text(
             "The ultimate destination for premium regional content. Watch the latest web series, movies, and originals anytime, anywhere.",
             textAlign: TextAlign.center,
@@ -616,9 +616,9 @@ class MainHomePage extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           InkWell(
-            onTap: () => launchUrl(Uri.parse("mailto:support@nazarott.in")),
+            onTap: () => launchUrl(Uri.parse("mailto:support@bichooott.in")),
             child: const GoldenText(
-              "Email: support@nazarott.in",
+              "Email: support@bichooott.in",
               style: TextStyle(
                 color: AppColors.primary,
                 fontSize: 16,
@@ -642,7 +642,7 @@ class MainHomePage extends StatelessWidget {
           const Divider(color: Colors.white12),
           const SizedBox(height: 30),
           const Text(
-            "© 2024 Nazar OTT All Rights Reserved",
+            "© 2024 BICHOO OTT All Rights Reserved",
             style: TextStyle(color: Colors.white38, fontSize: 13),
           ),
           const SizedBox(height: 15),
