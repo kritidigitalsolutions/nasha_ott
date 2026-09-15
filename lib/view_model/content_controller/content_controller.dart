@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:nazar_ott/data/models/catagory_model/catagory_model.dart';
 import '../../data/models/response_model/content_response_model/content_model.dart';
@@ -59,14 +60,19 @@ class ContentController extends GetxController {
   }
 
   Future<void> _initData() async {
-    // Fetch categories first for progressive loading
-    fetchCategory();
-    // Web specific data can also load in parallel
-    fetchContent();
+    if (kIsWeb) {
+      isCategoryLoading.value = false;
+      fetchContent();
+    } else {
+      isLoading.value = false;
+      // Fetch categories first for progressive loading
+      fetchCategory();
+    }
   }
 
   Future<void> fetchContent() async {
     try {
+      isLoading.value = true;
       // -----------------------------
       // web banner content
       //-------------------------------------------------
@@ -80,6 +86,13 @@ class ContentController extends GetxController {
       });
       allWebBannerContent.assignAll(webBannerContent);
 
+      // Also add banners to allContent
+      for (var item in webBannerContent) {
+        if (!allContent.any((existing) => existing.id == item.id)) {
+          allContent.add(item);
+        }
+      }
+
       final sections = await _repository.getWebSections();
       // Sort items in web sections only by position
       for (var section in sections) {
@@ -88,6 +101,13 @@ class ContentController extends GetxController {
           int posB = b.position ?? 999;
           return posA.compareTo(posB);
         });
+
+        // Add section items to allContent
+        for (var item in section.items) {
+          if (!allContent.any((existing) => existing.id == item.id)) {
+            allContent.add(item);
+          }
+        }
       }
       webSections.assignAll(sections);
     } catch (e) {

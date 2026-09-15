@@ -104,13 +104,21 @@ class MainHomePage extends StatelessWidget {
                 RefreshIndicator(
                   onRefresh: () async {
                     contentController.allContent.clear();
-                    contentController.categorySections.clear();
-                    contentController.homeBannerContent.clear();
-                    await Future.wait([
-                      contentController.fetchCategory(),
-                      contentController.fetchContent(),
-                      companyController.fetchCompanyInfo(),
-                    ]);
+                    if (kIsWeb) {
+                      contentController.allWebBannerContent.clear();
+                      contentController.webSections.clear();
+                      await Future.wait([
+                        contentController.fetchContent(),
+                        companyController.fetchCompanyInfo(),
+                      ]);
+                    } else {
+                      contentController.categorySections.clear();
+                      contentController.homeBannerContent.clear();
+                      await Future.wait([
+                        contentController.fetchCategory(),
+                        companyController.fetchCompanyInfo(),
+                      ]);
+                    }
                   },
                   child: _buildHomeContent(
                     context,
@@ -420,8 +428,9 @@ class MainHomePage extends StatelessWidget {
             final List<CategorySection> categorySections =
                 contentController.categorySections;
 
-            final List<ContentModel> sliderContent =
-                contentController.homeBannerContent;
+            final List<ContentModel> sliderContent = kIsWeb
+                ? contentController.allWebBannerContent
+                : contentController.homeBannerContent;
 
             return SingleChildScrollView(
               child: Column(

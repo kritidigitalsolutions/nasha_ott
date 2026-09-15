@@ -145,7 +145,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'BICHOO OTT',
+      title: 'Bichoo OTT',
       debugShowCheckedModeBanner: false,
       initialRoute: AppRoutes.splash,
       getPages: AppPages.pages,
