@@ -1,5 +1,5 @@
 class AppConstants {
-  // static const String serverUrl = 'http://192.168.1.9:5001';
+  // static const String serverUrl = 'http://192.168.1.29:5001';
   static const String serverUrl = 'https://api.bichoo.app';
   // static const String serverUrl = 'http://192.168.1.14:5000';
   static const String baseUrl = '$serverUrl/api';

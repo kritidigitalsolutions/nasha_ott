@@ -387,7 +387,7 @@ class PremiumController extends GetxController with WidgetsBindingObserver {
       _lastAttemptedPlan = plans.firstWhereOrNull((p) => p.id == planId);
 
       // Using the real production web link
-      String baseUrl = "https://nazarott.com";
+      String baseUrl = "https://www.bichoo.app";
 
       // String baseUrl = "http://localhost:14459";
 

@@ -110,7 +110,7 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
                           final hasHelp = companyController.helpList.isNotEmpty;
                           final supportEmail = hasHelp
                               ? companyController.helpList[0].supportEmail
-                              : 'support@nazarott.in';
+                              : 'support@bichoo.app';
 
                           return InkWell(
                             onTap: () =>

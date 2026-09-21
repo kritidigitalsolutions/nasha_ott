@@ -625,9 +625,9 @@ class MainHomePage extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           InkWell(
-            onTap: () => launchUrl(Uri.parse("mailto:support@bichooott.in")),
+            onTap: () => launchUrl(Uri.parse("mailto:support@bichoo.app")),
             child: const GoldenText(
-              "Email: support@bichooott.in",
+              "Email: support@bichoo.app",
               style: TextStyle(
                 color: AppColors.primary,
                 fontSize: 16,
